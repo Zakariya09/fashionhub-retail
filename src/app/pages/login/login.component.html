@@ -1,0 +1,45 @@
+<div class="app-body">
+  <div class="hold-transition login-page gradient">
+    <div class="login-box">
+      <div class="login-logo">
+        <a><b class="white">KHAN</b>&nbsp; <span class="white">fashion-hub</span></a>
+      </div>
+      <div class="card">
+        <div class="card-body login-card-body">
+          <p class="login-box-msg">Sign in to start your session</p>
+          <form [formGroup]="frmLogin" (ngSubmit)="onSubmit()">
+            <div class="input-group mb-3">
+              <input type="email" name="email" formControlName="email" class="form-control" placeholder="Email"
+                [ngClass]="{ 'is-invalid': (submitted && f['email'].errors) || (f['email'].status == 'INVALID' && f['email'].touched)  }"
+                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" autocomplete="off" />
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-envelope"></span>
+                </div>
+              </div>
+            </div>
+            <div class="input-group mb-3">
+              <input type="password" name="password" formControlName="password" class="form-control"
+                placeholder="Password" [ngClass]="{ 'is-invalid': submitted && f['password'].errors }" />
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-lock"></span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-8">
+                <p (click)="isLogin = !isLogin" class="sign-up" >{{isLogin ? "Don't have account?" :
+                  "Login with credentials!"}}</p>
+              </div>
+              <div class="col-4">
+                <button type="submit" [disabled]="frmLogin.invalid" class="btn btn-primary btn-block">{{isLogin ?
+                  'Login' : 'Signup'}}</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

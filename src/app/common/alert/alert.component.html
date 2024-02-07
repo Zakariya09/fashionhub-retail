@@ -1,0 +1,4 @@
+<div *ngIf="showAlert" [ngClass]=" alertType.length ?  'align-alert alert alert-' + alertType : undefined" role="alert">
+    {{alertText}}
+    <span class="close-icon" (click)="showAlert = false">x</span>
+</div>
