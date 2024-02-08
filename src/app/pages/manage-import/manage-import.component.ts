@@ -16,17 +16,15 @@ export class ManageImportComponent implements OnInit {
   subscription: any;
   p =1;
   submitted = false;
-  textSearch = '';
-  userData = JSON.parse(localStorage.getItem('userData') || '');
   imports!:any;
   import!:ImportModel;
-  // @ViewChild('addImport', {static: false}) public addImport: ModalDirective;
+  textSearch:string = '';
 
   constructor(private commonService: CommonServiceService, private formBuilder: FormBuilder) { }
 
   ngOnInit() {
     this.frmImport =  this.formBuilder.group({
-      $key: [null],
+      id: [null],
       date: ['',Validators.required],
       amount: [, Validators.required],
       description: [""]
@@ -36,6 +34,7 @@ export class ManageImportComponent implements OnInit {
 
    //POST package
    onSubmit(){
+    console.log(this.frmImport.value);
     this.submitted = true;
     if (this.frmImport.invalid) {
       // this.toaster.warningToastr('Please enter mendatory fields.', 'Invalid!', {showCloseButton: true});
@@ -43,9 +42,11 @@ export class ManageImportComponent implements OnInit {
      }
      this.import = this.frmImport.value;
 
-     if(this.frmImport.get('$key')?.value == null){
+     if(this.frmImport.get('id')?.value == null){
     //  this.import.date = moment(this.frmImport.value.date).format('DD-MM-YYYY') ;
-      this.subscription = this.commonService.saveImport(this.import).then((response: any) => {
+      this.subscription = this.commonService.saveImport(this.import).subscribe((response: any) => {
+        console.log('response')
+        console.log(response)
       if (response) {
       //  this.toaster.successToastr('data saved successfully. ', 'Success!',{showCloseButton: true});
        this.getImports();
@@ -62,7 +63,10 @@ export class ManageImportComponent implements OnInit {
   }
   else{
     // this.import.date = moment(this.frmImport.value.date).format('DD-MM-YYYY') ;
-    this.subscription = this.commonService.updateImport(this.import);
+    this.subscription = this.commonService.updateImport(this.import).subscribe((response:any)=>{
+        console.log('update response')
+        console.log(response)
+    })
       if (this.subscription) {
       //  this.toaster.successToastr('Package updated successfully. ', 'Success!',{showCloseButton: true});
        this.getImports();
@@ -78,13 +82,10 @@ export class ManageImportComponent implements OnInit {
  //GET package
  getImports(){
   this.commonService.getImports().subscribe((response : any)=>{
+    console.log('this.imports');
+    console.log(response);
     if (response) {
-      this.imports = response.map((item:any)=>{
-        return {
-          $key: item.key,
-          ...item.payload.val()
-        }
-      });
+      this.imports = response;
       console.log('this.imports');
       console.log(this.imports);
 
@@ -102,11 +103,14 @@ export class ManageImportComponent implements OnInit {
   this.frmImport.controls['date']?.setValue(this.dateConverter(data.date));
   this.frmImport.controls['amount']?.setValue(data.amount);
   this.frmImport.controls['description']?.setValue(data.description);
-  this.frmImport.controls['key']?.setValue(data.$key);
+  this.frmImport.controls['id']?.setValue(data.id);
  }
 
  //Delete package
  deleteImport(id:any){
+
+
+  this.commonService.deleteImport(id).subscribe()
 //   Swal.fire({
 //     title: 'Are you sure?',
 //     text: 'You will not be able to recover this record!',

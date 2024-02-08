@@ -28,11 +28,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
   }
 
-  signUp() {
-    this.isLogin = !this.isLogin;
-  }
-
-  onSubmit() {
+ onSubmit() {
     this.submitted = true;
     this.login = this.frmLogin.value;
     this.frmLogin.touched;

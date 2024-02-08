@@ -1,6 +1,6 @@
 export interface ImportModel{
-  $key: Number
-  date: String,
-  amount: String,
-  description: String
+  id?: number;
+  date: string;
+  amount: string;
+  description: string
 }

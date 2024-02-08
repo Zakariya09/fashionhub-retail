@@ -19,6 +19,7 @@ import { FooterComponent } from '../common/footer/footer.component';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthService } from '../auth/auth.service';
 import { SharedModule } from '../shared/shared.module';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 const routes: Routes = [
   // { path: '', redirectTo: '/layout', pathMatch: 'full', data: { title: 'Layout' } },
@@ -117,7 +118,8 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forChild(routes),
-    SharedModule
+    SharedModule,
+    NgxPaginationModule,
   ],
   exports: [RouterModule],
   bootstrap: [DefaultlayoutComponent],
