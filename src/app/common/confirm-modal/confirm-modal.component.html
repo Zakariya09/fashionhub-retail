@@ -1,0 +1,23 @@
+<div class="modal fade" bsModal #ss id="ss" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-head">
+                <h4 class="modal-title">Delete {{module}}</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body delete-modal-body ">
+                <i class="fas fa-trash-alt text-danger f-rm"></i>
+                <h3>Are you sure?</h3>
+                <p>You will not be able to recover this record!</p>
+            </div>
+            <div class="modal-footer ">
+                <button type="submit" class="btn btn-primary btn-sm" (click)="onConfirmCallback.emit()">
+                    <i class="fas fa-trash"></i>&nbsp; Delete</button>
+                <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                        class="fas fa-times"></i>&nbsp; Close</button>
+            </div>
+        </div>
+    </div>
+</div>

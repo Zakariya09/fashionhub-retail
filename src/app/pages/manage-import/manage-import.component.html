@@ -48,13 +48,13 @@
           <td>
             <i class="fas fa-edit text-primary curser" (click)="editImport(data)" data-toggle="modal"
               data-target="#addImport"></i> &nbsp;
-            <i class="fas fa-trash text-danger curser" (click)="deleteImport(data.id)"></i>
+            <i class="fas fa-trash text-danger curser" (click)="confirmDelete(data)"></i>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
-  <h2 class="text-center text-danger" *ngIf="!imports">No Data Found</h2>
+  <h2 class="text-center text-danger" *ngIf="!imports?.length">No Data Found</h2>
   <pagination-controls (pageChange)="p = $event"></pagination-controls>
 </div>
 
@@ -62,7 +62,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header modal-head">
-        <h4 class="modal-title">Add Package</h4>
+        <h4 class="modal-title">{{isUpdate ? 'Update': 'Add'}} Package</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -101,9 +101,10 @@
             </div>
           </div>
           <div class="modal-footer ">
-            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Save</button>
+            <button type="submit" [disabled]="frmImport.invalid" class="btn btn-primary btn-sm">
+              <i class="fas fa-save"></i>&nbsp; {{isUpdate ? 'Update': 'Save'}}</button>
             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                class="fas fa-times"></i>Close</button>
+                class="fas fa-times"></i>&nbsp; Close</button>
           </div>
           <!-- /.card-body -->
         </form>
@@ -115,3 +116,6 @@
   <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+
+<app-confirm-modal [module]="'Import'" (onConfirmCallback)="deleteImport()"></app-confirm-modal>
+<app-alert></app-alert>

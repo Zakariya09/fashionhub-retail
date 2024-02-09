@@ -1,8 +1,9 @@
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ImportModel } from "../../models/import.model";
 import { CommonServiceService } from "../../core/services/common-service.service";
+import { Subscription } from "rxjs";
 
 declare var jQuery: any;
 
@@ -11,139 +12,104 @@ declare var jQuery: any;
   templateUrl: './manage-import.component.html',
   styleUrls: ['./manage-import.component.css']
 })
-export class ManageImportComponent implements OnInit {
+export class ManageImportComponent implements OnInit, OnDestroy {
   frmImport!: FormGroup;
-  subscription: any;
-  p =1;
+  subscription!: Subscription;
+  p = 1;
   submitted = false;
-  imports!:any;
-  import!:ImportModel;
-  textSearch:string = '';
-
+  imports!: any;
+  import!: ImportModel;
+  textSearch: string = '';
+  selectedRecord!: any;
+  isUpdate!: boolean;
   constructor(private commonService: CommonServiceService, private formBuilder: FormBuilder) { }
 
   ngOnInit() {
-    this.frmImport =  this.formBuilder.group({
+    this.frmImport = this.formBuilder.group({
       id: [null],
-      date: ['',Validators.required],
+      date: ['', Validators.required],
       amount: [, Validators.required],
       description: [""]
     });
     this.getImports();
   }
 
-   //POST package
-   onSubmit(){
+  //POST package
+  onSubmit() {
     console.log(this.frmImport.value);
     this.submitted = true;
     if (this.frmImport.invalid) {
-      // this.toaster.warningToastr('Please enter mendatory fields.', 'Invalid!', {showCloseButton: true});
-         return;
-     }
-     this.import = this.frmImport.value;
-
-     if(this.frmImport.get('id')?.value == null){
-    //  this.import.date = moment(this.frmImport.value.date).format('DD-MM-YYYY') ;
-      this.subscription = this.commonService.saveImport(this.import).subscribe((response: any) => {
-        console.log('response')
-        console.log(response)
-      if (response) {
-      //  this.toaster.successToastr('data saved successfully. ', 'Success!',{showCloseButton: true});
-       this.getImports();
-       jQuery('#addImport').modal('hide');
-      //  this.getpackage();
-      } else {
-      // this.toaster.errorToastr('Error while saving package.', 'Oops!',{showCloseButton: true});
-
-      }
-    }, (error: HttpErrorResponse) => {
-      // this.toaster.errorToastr('Error while saving package.', 'Oops!',{showCloseButton: true});
+      this.commonService.$alertSubject?.next({
+        type: 'danger',
+        showAlert: true,
+        message: 'Please enter mendatory fields.'
+      });
       return;
+    }
+    this.import = this.frmImport.value;
+    this.subscription = this.commonService.saveImport(this.import, this.isUpdate).subscribe((response: any) => {
+      this.getImports();
+      jQuery('#addImport').modal('hide');
+      this.isUpdate = false;
+    }, (error: HttpErrorResponse) => {
+      this.commonService.$alertSubject?.next({
+        type: 'danger',
+        showAlert: true,
+        message: error
+      });
     });
   }
-  else{
-    // this.import.date = moment(this.frmImport.value.date).format('DD-MM-YYYY') ;
-    this.subscription = this.commonService.updateImport(this.import).subscribe((response:any)=>{
-        console.log('update response')
-        console.log(response)
-    })
-      if (this.subscription) {
-      //  this.toaster.successToastr('Package updated successfully. ', 'Success!',{showCloseButton: true});
-       this.getImports();
-       jQuery('#addImport').modal('hide');
-      //  this.getpackage();
-      } else {
-      // this.toaster.errorToastr('Error while saving package.', 'Oops!',{showCloseButton: true});
-      }
-    }
-  }
+
   get f() { return this.frmImport.controls; }
 
- //GET package
- getImports(){
-  this.commonService.getImports().subscribe((response : any)=>{
-    console.log('this.imports');
-    console.log(response);
-    if (response) {
+  //GET package
+  getImports() {
+    this.commonService.getImports().subscribe((response: any) => {
       this.imports = response;
       console.log('this.imports');
       console.log(this.imports);
-
-    }else {
-      // this.toaster.errorToastr('No data found!.', 'Oops!',{showCloseButton: true});
-      }
     }, (error: HttpErrorResponse) => {
-      // this.toaster.errorToastr('No data found!.', 'Oops!',{showCloseButton: true});
-      return;
+      this.commonService.$alertSubject?.next({
+        type: 'danger',
+        showAlert: true,
+        message: error
+      });
     });
-}
+  }
 
-//Edit package
- editImport(data: ImportModel){
-  this.frmImport.controls['date']?.setValue(this.dateConverter(data.date));
-  this.frmImport.controls['amount']?.setValue(data.amount);
-  this.frmImport.controls['description']?.setValue(data.description);
-  this.frmImport.controls['id']?.setValue(data.id);
- }
+  //Edit package
+  editImport(data: ImportModel) {
+    this.isUpdate = true;
+    this.frmImport.patchValue(data);
+  }
 
- //Delete package
- deleteImport(id:any){
+  confirmDelete(data: any) {
+    this.selectedRecord = data;
+    this.commonService.$confirmSubject.next({ showModal: true, type: 'delete' })
+  }
 
+  //Delete package
+  deleteImport() {
+    this.commonService.deleteImport(this.selectedRecord?.id).subscribe((response) => {
+      this.commonService.$confirmSubject.next({ showModal: false });
+      this.getImports();
+    }, (error: HttpErrorResponse) => {
+      this.commonService.$alertSubject?.next({
+        type: 'danger',
+        showAlert: true,
+        message: error
+      });
+    });
+  }
 
-  this.commonService.deleteImport(id).subscribe()
-//   Swal.fire({
-//     title: 'Are you sure?',
-//     text: 'You will not be able to recover this record!',
-//     icon: 'warning',
-//     showCancelButton: true,
-//     cancelButtonColor: '#d33',
-//     confirmButtonText: 'Delete',
-//     cancelButtonText: 'Cancel'
-//   })
-//   .then((result) => {
-//     if (result.value) {
+  // clear form value
+  clearForm() {
+    this.isUpdate = false;
+    this.frmImport.reset();
+    this.submitted = false;
+  }
 
-//  let response =  this.commonService.deleteImport(id)
-//     if (response) {
-//       // this.toaster.successToastr('Deleted successfully. ', 'Success!',{showCloseButton: true});
-//       this.getImports();
-//     }else {
-//       // this.toaster.errorToastr('Error while deleting import.', 'Oops!',{showCloseButton: true});
-//       }
-//     }});
-}
-
-//package Date Conversion
-dateConverter(date:any){
-  var dateArray = date.split('-');
-  var dateStr = dateArray[1] + '/' + dateArray[0] + '/' + dateArray[2];
-  var newDate = new Date( dateStr);
-  return newDate;
-}
-
- // clear form value
- clearForm() {
-  this.frmImport.reset();
-  this.submitted = false;
-}
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
 }

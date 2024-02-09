@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import { ImportModel } from '../../models/import.model';
+import { ConfirmModalModel } from '../../common/confirm-modal/confirm-modal.component';
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +11,7 @@ import { ImportModel } from '../../models/import.model';
 export class CommonServiceService {
   response = 'true';
   $alertSubject = new Subject();
+  $confirmSubject = new Subject<ConfirmModalModel>();
   constructor(
     private http: HttpClient,
   ) { }
@@ -95,8 +97,6 @@ export class CommonServiceService {
   }
 
   getImports() {
-    // this.importList = this.firebase.list('imports');
-    // return this.importList.snapshotChanges();
     return this.http.get(`${this.baseUrl}imports.json`)?.pipe(map((resp: any) => {
       const importsArr: ImportModel[] = [];
       for (const key in resp) {
@@ -104,37 +104,21 @@ export class CommonServiceService {
           importsArr.push({ id: key, ...resp[key] })
         }
       }
-
       return importsArr;
     }))
   }
 
   //POST Import
-  saveImport(importData: ImportModel) {
-    return this.http.post<ImportModel>(`${this.baseUrl}imports.json`, importData)
-    // return  this.import`List.push({
-    //   date: importData.date,
-    //   amount: importData.amount,
-    //   description: importData.description,
-    // });
-  }
-
-  //Update Import
-  updateImport(importData: any) {
-    console.log('update importData')
-    console.log(importData)
-    // this.importList.update(importData.$key,
-    //   {
-    //     date: importData.date,
-    //     amount: importData.amount,
-    //     description: importData.description,
-    //   });
-    return this.http.put(`${this.baseUrl}imports/${importData?.id}.json`, importData)
+  saveImport(importData: ImportModel, isUpdate: boolean) {
+    if (isUpdate) {
+      return this.http.put(`${this.baseUrl}imports/${importData?.id}.json`, importData)
+    }else{
+      return this.http.post<ImportModel>(`${this.baseUrl}imports.json`, importData);
+    }
   }
 
   //Delete Import
   deleteImport(id: any) {
-    // this.importList.remove(id);
     return this.http.delete(`${this.baseUrl}imports/${id}.json`)
   }
 

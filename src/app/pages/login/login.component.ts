@@ -42,8 +42,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
     console.log(this.frmLogin?.value)
     this.auth.validate(this.login, this.isLogin)?.pipe(takeUntil(this.destroy$)).subscribe((response: any) => {
-      console.log('response')
-      console.log(response)
       if (response?.registered) {
         this.commonService.$alertSubject?.next({
           type: 'success',
