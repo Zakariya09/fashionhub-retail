@@ -3,12 +3,12 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1>Manage Package</h1>
+        <h1>Manage Import</h1>
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
           <li class="breadcrumb-item"><a href="#">Home</a></li>
-          <li class="breadcrumb-item active">Manage Package</li>
+          <li class="breadcrumb-item active">Manage Import</li>
         </ol>
       </div>
     </div>
@@ -22,7 +22,7 @@
     <div class="col-md-4 pull-right">
       <button type="button" class="btn btn-sm btn-primary" (click)="clearForm()" data-toggle="modal"
         data-target="#addImport">
-        <i class="fas fa-plus"></i> New Package
+        <i class="fas fa-plus"></i> New Import
       </button>
     </div>
   </div>
@@ -38,7 +38,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let data of imports | paginate: { itemsPerPage: 10, currentPage: p }; let i = index ">
+        <tr
+          *ngFor="let data of imports|filter: textSearch| paginate: { itemsPerPage: 10, currentPage: p }; let i = index; trackBy:identify">
           <td>{{i+1}}</td>
           <td>
             {{data.date}}
@@ -62,7 +63,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header modal-head">
-        <h4 class="modal-title">{{isUpdate ? 'Update': 'Add'}} Package</h4>
+        <h4 class="modal-title">{{isUpdate ? 'Update': 'Add'}} Import</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -103,19 +104,16 @@
           <div class="modal-footer ">
             <button type="submit" [disabled]="frmImport.invalid" class="btn btn-primary btn-sm">
               <i class="fas fa-save"></i>&nbsp; {{isUpdate ? 'Update': 'Save'}}</button>
-            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                class="fas fa-times"></i>&nbsp; Close</button>
+            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;
+              Close</button>
           </div>
-          <!-- /.card-body -->
         </form>
       </div>
 
     </div>
-    <!-- /.modal-content -->
   </div>
-  <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
 
 <app-confirm-modal [module]="'Import'" (onConfirmCallback)="deleteImport()"></app-confirm-modal>
 <app-alert></app-alert>
+<app-loader></app-loader>

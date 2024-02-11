@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import { ImportModel } from '../../models/import.model';
 import { ConfirmModalModel } from '../../common/confirm-modal/confirm-modal.component';
+import { Loader } from '../../common/loader/loader.component';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +13,8 @@ export class CommonServiceService {
   response = 'true';
   $alertSubject = new Subject();
   $confirmSubject = new Subject<ConfirmModalModel>();
+  $loaderSubject = new Subject<Loader>();
+
   constructor(
     private http: HttpClient,
   ) { }
@@ -97,7 +100,7 @@ export class CommonServiceService {
   }
 
   getImports() {
-    return this.http.get(`${this.baseUrl}imports.json`)?.pipe(map((resp: any) => {
+    return this.http.get<ImportModel>(`${this.baseUrl}imports.json`)?.pipe(map((resp: any) => {
       const importsArr: ImportModel[] = [];
       for (const key in resp) {
         if (resp.hasOwnProperty(key)) {

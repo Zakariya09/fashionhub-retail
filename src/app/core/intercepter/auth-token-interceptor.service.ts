@@ -14,10 +14,8 @@ export class AuthTokenInterceptorService implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     return this.authService.userSub.pipe(
       tap(data =>{
-console.log('datasssssssssssss')
-console.log(data)
       }),
-      take(1),
+      // take(1),
       exhaustMap((user) => {
         if (!user) {
           return next.handle(req);

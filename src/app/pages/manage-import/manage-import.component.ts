@@ -3,7 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ImportModel } from "../../models/import.model";
 import { CommonServiceService } from "../../core/services/common-service.service";
-import { Subscription } from "rxjs";
+import { Subject, Subscription, takeUntil } from "rxjs";
 
 declare var jQuery: any;
 
@@ -14,7 +14,6 @@ declare var jQuery: any;
 })
 export class ManageImportComponent implements OnInit, OnDestroy {
   frmImport!: FormGroup;
-  subscription!: Subscription;
   p = 1;
   submitted = false;
   imports!: any;
@@ -22,6 +21,8 @@ export class ManageImportComponent implements OnInit, OnDestroy {
   textSearch: string = '';
   selectedRecord!: any;
   isUpdate!: boolean;
+  subscriptiona = new Subject();
+
   constructor(private commonService: CommonServiceService, private formBuilder: FormBuilder) { }
 
   ngOnInit() {
@@ -47,11 +48,14 @@ export class ManageImportComponent implements OnInit, OnDestroy {
       return;
     }
     this.import = this.frmImport.value;
-    this.subscription = this.commonService.saveImport(this.import, this.isUpdate).subscribe((response: any) => {
+    this.commonService.$loaderSubject?.next({ showLoader: true });
+    this.commonService.saveImport(this.import, this.isUpdate)?.pipe(takeUntil(this.subscriptiona)).subscribe(() => {
       this.getImports();
+      this.commonService.$loaderSubject?.next({ showLoader: false });
       jQuery('#addImport').modal('hide');
       this.isUpdate = false;
     }, (error: HttpErrorResponse) => {
+      this.commonService.$loaderSubject?.next({ showLoader: false });
       this.commonService.$alertSubject?.next({
         type: 'danger',
         showAlert: true,
@@ -60,11 +64,15 @@ export class ManageImportComponent implements OnInit, OnDestroy {
     });
   }
 
+  identify(index:number, item:ImportModel){
+    return item.id
+ }
+
   get f() { return this.frmImport.controls; }
 
   //GET package
-  getImports() {
-    this.commonService.getImports().subscribe((response: any) => {
+  getImports(): void {
+    this.commonService.getImports().pipe(takeUntil(this.subscriptiona)).subscribe((response: ImportModel[]) => {
       this.imports = response;
       console.log('this.imports');
       console.log(this.imports);
@@ -80,6 +88,7 @@ export class ManageImportComponent implements OnInit, OnDestroy {
   //Edit package
   editImport(data: ImportModel) {
     this.isUpdate = true;
+    this.frmImport.reset();
     this.frmImport.patchValue(data);
   }
 
@@ -90,10 +99,13 @@ export class ManageImportComponent implements OnInit, OnDestroy {
 
   //Delete package
   deleteImport() {
-    this.commonService.deleteImport(this.selectedRecord?.id).subscribe((response) => {
+    this.commonService.$loaderSubject?.next({ showLoader: true });
+    this.commonService.deleteImport(this.selectedRecord?.id)?.pipe(takeUntil(this.subscriptiona)).subscribe((response) => {
       this.commonService.$confirmSubject.next({ showModal: false });
+      this.commonService.$loaderSubject?.next({ showLoader: false });
       this.getImports();
     }, (error: HttpErrorResponse) => {
+      this.commonService.$loaderSubject?.next({ showLoader: false });
       this.commonService.$alertSubject?.next({
         type: 'danger',
         showAlert: true,
@@ -110,6 +122,6 @@ export class ManageImportComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.subscriptiona.next(false)
   }
 }
