@@ -46,7 +46,7 @@ export class ManageImportComponent implements OnInit, OnDestroy {
 
   }
 
-  //POST package
+  //POST import
   onSubmit() {
     console.log(this.frmImport.value);
     this.submitted = true;
@@ -81,7 +81,7 @@ export class ManageImportComponent implements OnInit, OnDestroy {
 
   get f() { return this.frmImport.controls; }
 
-  //GET package
+  //GET import
   getImports(): void {
     this.warningText = 'Loading Data...';
     this.commonService.getImports().pipe(takeUntil(this.subscription)).subscribe((response: ImportModel[]) => {
@@ -99,7 +99,7 @@ export class ManageImportComponent implements OnInit, OnDestroy {
     });
   }
 
-  //Edit package
+  //Edit import
   editImport(data: ImportModel) {
     this.isUpdate = true;
     this.frmImport.reset();
@@ -111,7 +111,7 @@ export class ManageImportComponent implements OnInit, OnDestroy {
     this.commonService.$confirmSubject.next({ showModal: true, type: 'delete' })
   }
 
-  //Delete package
+  //Delete import
   deleteImport() {
     this.commonService.$loaderSubject?.next({ showLoader: true });
     this.commonService.deleteImport(this.selectedRecord?.id)?.pipe(takeUntil(this.subscription)).subscribe((response) => {
