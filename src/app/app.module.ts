@@ -33,21 +33,6 @@ import { SharedModule } from './shared/shared.module';
     SharedModule
   ],
   providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptorService,
-      multi: true,
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: LoggingInterceptorService,
-      multi: true,
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthTokenInterceptorService,
-      multi: true,
-    },
     AuthGuardService,
     AuthGuard,
   ],

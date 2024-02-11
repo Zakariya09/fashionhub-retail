@@ -3,12 +3,12 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1>Manage Import</h1>
+        <h1>{{appStrings['manageImport']}}</h1>
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="#">Home</a></li>
-          <li class="breadcrumb-item active">Manage Import</li>
+          <li class="breadcrumb-item"><a href="#">{{appStrings['home']}}</a></li>
+          <li class="breadcrumb-item active">{{appStrings['manageImport']}}</li>
         </ol>
       </div>
     </div>
@@ -22,7 +22,7 @@
     <div class="col-md-4 pull-right">
       <button type="button" class="btn btn-sm btn-primary" (click)="clearForm()" data-toggle="modal"
         data-target="#addImport">
-        <i class="fas fa-plus"></i> New Import
+        <i class="fas fa-plus"></i> {{appStrings['newImport']}}
       </button>
     </div>
   </div>
@@ -30,11 +30,9 @@
     <table class="table table-bordered table-striped">
       <thead class="gradient">
         <tr>
-          <th>#</th>
-          <th>Date</th>
-          <th>Amount</th>
-          <th>Description</th>
-          <th>Action</th>
+          @for (column of IMPORT_GRID_COLUMNS; track $index) {
+          <th>{{column}}</th>
+          }
         </tr>
       </thead>
       <tbody>
@@ -42,7 +40,7 @@
           *ngFor="let data of imports|filter: textSearch| paginate: { itemsPerPage: 10, currentPage: p }; let i = index; trackBy:identify">
           <td>{{i+1}}</td>
           <td>
-            {{data.date}}
+            {{data.date | date:'dd-MM-yyyy'}}
           </td>
           <td>{{data.amount}}</td>
           <td>{{data.description}}</td>
@@ -55,7 +53,9 @@
       </tbody>
     </table>
   </div>
-  <h2 class="text-center text-danger" *ngIf="!imports?.length">No Data Found</h2>
+  @if(!imports.length){
+  <h2 class="text-center text-danger">{{warningText}}</h2>
+  }
   <pagination-controls (pageChange)="p = $event"></pagination-controls>
 </div>
 
@@ -63,7 +63,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header modal-head">
-        <h4 class="modal-title">{{isUpdate ? 'Update': 'Add'}} Import</h4>
+        <h4 class="modal-title">{{isUpdate ? 'Update': 'Add'}} {{appStrings['import']}}</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -73,29 +73,29 @@
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
-                <label for="date">Import Date :</label>&nbsp;<i class="fa fa-asterisk"
+                <label for="date">{{appStrings['importDate']}} :</label>&nbsp;<i class="fa fa-asterisk"
                   style="color:red; font-size:10px;"></i>
                 <input type="date" placeholder="Import date" class="form-control" formControlName="date"
                   [ngClass]="{ 'is-invalid': submitted && f['date'].errors }">
                 <div *ngIf="submitted && f['date'].errors" class="text-danger">
-                  <div *ngIf="f['date'].errors['required']"> Please enter date.</div>
+                  <div *ngIf="f['date'].errors['required']"> {{appStrings['enterDateText']}}</div>
                 </div>
               </div>
             </div>
             <div class="col-md-12">
               <div class="form-group">
-                <label for="amount">Amount :</label>&nbsp;<i class="fa fa-asterisk"
+                <label for="amount">{{appStrings['amount']}} :</label>&nbsp;<i class="fa fa-asterisk"
                   style="color:red; font-size:10px;"></i>
                 <input type="number" class="form-control" formControlName="amount" id="amount" placeholder="Amount"
                   min="0" [ngClass]="{ 'is-invalid': submitted && f['amount'].errors }" />
                 <div *ngIf="submitted && f['amount'].errors" class="text-danger">
-                  <div *ngIf="f['amount'].errors['required']"> Please enter amount.</div>
+                  <div *ngIf="f['amount'].errors['required']">{{appStrings['enterAmountText']}}</div>
                 </div>
               </div>
             </div>
             <div class="col-md-12">
               <div class="form-group">
-                <label for="description">Description :</label>
+                <label for="description">{{appStrings['description']}} :</label>
                 <textarea name="description" id="description" placeholder="Description" class="form-control"
                   formControlName="description" cols="30" rows="2"></textarea>
               </div>
@@ -105,7 +105,7 @@
             <button type="submit" [disabled]="frmImport.invalid" class="btn btn-primary btn-sm">
               <i class="fas fa-save"></i>&nbsp; {{isUpdate ? 'Update': 'Save'}}</button>
             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;
-              Close</button>
+              {{appStrings['close']}} </button>
           </div>
         </form>
       </div>

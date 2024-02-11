@@ -4,6 +4,8 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ImportModel } from "../../models/import.model";
 import { CommonServiceService } from "../../core/services/common-service.service";
 import { Subject, Subscription, takeUntil } from "rxjs";
+import { appStrings } from "../../shared/app-strings";
+import { AppConstants } from "../../shared/app-contants.service";
 
 declare var jQuery: any;
 
@@ -16,23 +18,32 @@ export class ManageImportComponent implements OnInit, OnDestroy {
   frmImport!: FormGroup;
   p = 1;
   submitted = false;
-  imports!: any;
+  imports: ImportModel[] = [];
   import!: ImportModel;
   textSearch: string = '';
-  selectedRecord!: any;
+  selectedRecord!: ImportModel;
   isUpdate!: boolean;
-  subscriptiona = new Subject();
-
-  constructor(private commonService: CommonServiceService, private formBuilder: FormBuilder) { }
+  subscription = new Subject();
+  warningText: string = '';
+  appStrings: any;
+  IMPORT_GRID_COLUMNS: string[] = [];
+  constructor(
+    private commonService: CommonServiceService,
+    private formBuilder: FormBuilder,
+    private appConstants: AppConstants
+  ) { }
 
   ngOnInit() {
+    this.appStrings = appStrings;
     this.frmImport = this.formBuilder.group({
       id: [null],
       date: ['', Validators.required],
       amount: [, Validators.required],
       description: [""]
     });
+    this.IMPORT_GRID_COLUMNS = this.appConstants.IMPORT_GRID_COLUMNS;
     this.getImports();
+
   }
 
   //POST package
@@ -49,7 +60,7 @@ export class ManageImportComponent implements OnInit, OnDestroy {
     }
     this.import = this.frmImport.value;
     this.commonService.$loaderSubject?.next({ showLoader: true });
-    this.commonService.saveImport(this.import, this.isUpdate)?.pipe(takeUntil(this.subscriptiona)).subscribe(() => {
+    this.commonService.saveImport(this.import, this.isUpdate)?.pipe(takeUntil(this.subscription)).subscribe(() => {
       this.getImports();
       this.commonService.$loaderSubject?.next({ showLoader: false });
       jQuery('#addImport').modal('hide');
@@ -64,19 +75,22 @@ export class ManageImportComponent implements OnInit, OnDestroy {
     });
   }
 
-  identify(index:number, item:ImportModel){
+  identify(index: number, item: ImportModel) {
     return item.id
- }
+  }
 
   get f() { return this.frmImport.controls; }
 
   //GET package
   getImports(): void {
-    this.commonService.getImports().pipe(takeUntil(this.subscriptiona)).subscribe((response: ImportModel[]) => {
+    this.warningText = 'Loading Data...';
+    this.commonService.getImports().pipe(takeUntil(this.subscription)).subscribe((response: ImportModel[]) => {
       this.imports = response;
       console.log('this.imports');
       console.log(this.imports);
+      this.warningText = 'No Data Found!';
     }, (error: HttpErrorResponse) => {
+      this.warningText = 'No Data Found!';
       this.commonService.$alertSubject?.next({
         type: 'danger',
         showAlert: true,
@@ -92,7 +106,7 @@ export class ManageImportComponent implements OnInit, OnDestroy {
     this.frmImport.patchValue(data);
   }
 
-  confirmDelete(data: any) {
+  confirmDelete(data: ImportModel) {
     this.selectedRecord = data;
     this.commonService.$confirmSubject.next({ showModal: true, type: 'delete' })
   }
@@ -100,7 +114,7 @@ export class ManageImportComponent implements OnInit, OnDestroy {
   //Delete package
   deleteImport() {
     this.commonService.$loaderSubject?.next({ showLoader: true });
-    this.commonService.deleteImport(this.selectedRecord?.id)?.pipe(takeUntil(this.subscriptiona)).subscribe((response) => {
+    this.commonService.deleteImport(this.selectedRecord?.id)?.pipe(takeUntil(this.subscription)).subscribe((response) => {
       this.commonService.$confirmSubject.next({ showModal: false });
       this.commonService.$loaderSubject?.next({ showLoader: false });
       this.getImports();
@@ -122,6 +136,6 @@ export class ManageImportComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscriptiona.next(false)
+    this.subscription.next(false)
   }
 }
