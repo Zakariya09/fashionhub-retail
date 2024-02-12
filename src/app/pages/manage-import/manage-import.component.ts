@@ -8,7 +8,6 @@ import { appStrings } from "../../shared/app-strings";
 import { AppConstants } from "../../shared/app-contants.service";
 
 declare var jQuery: any;
-
 @Component({
   selector: 'app-manage-import',
   templateUrl: './manage-import.component.html',
@@ -16,7 +15,7 @@ declare var jQuery: any;
 })
 export class ManageImportComponent implements OnInit, OnDestroy {
   frmImport!: FormGroup;
-  p = 1;
+  p: number = 1;
   submitted = false;
   imports: ImportModel[] = [];
   import!: ImportModel;
@@ -43,11 +42,13 @@ export class ManageImportComponent implements OnInit, OnDestroy {
     });
     this.IMPORT_GRID_COLUMNS = this.appConstants.IMPORT_GRID_COLUMNS;
     this.getImports();
-
   }
 
-  //POST import
-  onSubmit() {
+  /**
+   * saving import data
+   * @returns 
+   */
+  onSubmit(): void {
     console.log(this.frmImport.value);
     this.submitted = true;
     if (this.frmImport.invalid) {
@@ -66,6 +67,8 @@ export class ManageImportComponent implements OnInit, OnDestroy {
       jQuery('#addImport').modal('hide');
       this.isUpdate = false;
     }, (error: HttpErrorResponse) => {
+      console.log('error text')
+      console.log(error)
       this.commonService.$loaderSubject?.next({ showLoader: false });
       this.commonService.$alertSubject?.next({
         type: 'danger',
@@ -75,13 +78,25 @@ export class ManageImportComponent implements OnInit, OnDestroy {
     });
   }
 
-  identify(index: number, item: ImportModel) {
+  /**
+   * tracking import loop
+   * @param index 
+   * @param item 
+   * @returns 
+   */
+  trackImport(index: number, item: ImportModel) {
     return item.id
   }
 
+  /**
+   * capturing form controls
+   * @returns
+   */
   get f() { return this.frmImport.controls; }
 
-  //GET import
+  /**
+   * get Imports data
+   */
   getImports(): void {
     this.warningText = 'Loading Data...';
     this.commonService.getImports().pipe(takeUntil(this.subscription)).subscribe((response: ImportModel[]) => {
@@ -90,6 +105,8 @@ export class ManageImportComponent implements OnInit, OnDestroy {
       console.log(this.imports);
       this.warningText = 'No Data Found!';
     }, (error: HttpErrorResponse) => {
+      console.log('error text')
+      console.log(error)
       this.warningText = 'No Data Found!';
       this.commonService.$alertSubject?.next({
         type: 'danger',
@@ -99,19 +116,28 @@ export class ManageImportComponent implements OnInit, OnDestroy {
     });
   }
 
-  //Edit import
+  /**
+   * edit import
+   * @param data 
+   */
   editImport(data: ImportModel) {
     this.isUpdate = true;
     this.frmImport.reset();
     this.frmImport.patchValue(data);
   }
 
+  /**
+   * confirm delete popup
+   * @param data 
+   */
   confirmDelete(data: ImportModel) {
     this.selectedRecord = data;
     this.commonService.$confirmSubject.next({ showModal: true, type: 'delete' })
   }
 
-  //Delete import
+  /**
+   * delete import record
+   */
   deleteImport() {
     this.commonService.$loaderSubject?.next({ showLoader: true });
     this.commonService.deleteImport(this.selectedRecord?.id)?.pipe(takeUntil(this.subscription)).subscribe((response) => {
@@ -128,7 +154,9 @@ export class ManageImportComponent implements OnInit, OnDestroy {
     });
   }
 
-  // clear form value
+  /**
+   * clearing form value
+   */
   clearForm() {
     this.isUpdate = false;
     this.frmImport.reset();
