@@ -5,6 +5,7 @@ import { finalize, map } from 'rxjs/operators';
 import { ImportModel } from '../../models/import.model';
 import { ConfirmModalModel } from '../../common/confirm-modal/confirm-modal.component';
 import { Loader } from '../../common/loader/loader.component';
+import { SaleModel } from '../../models/sale.model';
 
 @Injectable({
   providedIn: 'root',
@@ -120,6 +121,15 @@ export class CommonServiceService {
     }
   }
 
+    //POST Import
+    saveSale(saleData: SaleModel, isUpdate: boolean) {
+      if (isUpdate) {
+        return this.http.put(`${this.baseUrl}sales/${saleData?.id}.json`, saleData)
+      }else{
+        return this.http.post<SaleModel>(`${this.baseUrl}sales.json`, saleData);
+      }
+    }
+
   //Delete Import
   deleteImport(id: any) {
     return this.http.delete(`${this.baseUrl}imports/${id}.json`)
@@ -131,19 +141,6 @@ export class CommonServiceService {
     // return this.saleList.snapshotChanges();
 
     return new Observable();
-  }
-
-  //POST Sale
-  saveSale(saleData: any) {
-    // return  this.saleList.push({
-    //   date: saleData.date,
-    //   actualAmount: saleData.actualAmount,
-    //   saleAmount: saleData.saleAmount,
-    //   profitAmount: saleData.profitAmount,
-    // });
-
-    return new Promise(() => { });
-
   }
 
   //Update Sale

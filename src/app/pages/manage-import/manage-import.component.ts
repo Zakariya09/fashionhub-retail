@@ -4,8 +4,8 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ImportModel } from "../../models/import.model";
 import { CommonServiceService } from "../../core/services/common-service.service";
 import { Subject, Subscription, takeUntil } from "rxjs";
-import { appStrings } from "../../shared/app-strings";
 import { AppConstants } from "../../shared/app-contants.service";
+import { AppStrings } from "../../shared/app-strings.service";
 
 declare var jQuery: any;
 @Component({
@@ -26,20 +26,22 @@ export class ManageImportComponent implements OnInit, OnDestroy {
   warningText: string = '';
   appStrings: any;
   IMPORT_GRID_COLUMNS: string[] = [];
+
   constructor(
     private commonService: CommonServiceService,
     private formBuilder: FormBuilder,
-    private appConstants: AppConstants
+    private appConstants: AppConstants,
+    private appStringsService: AppStrings
   ) { }
 
   ngOnInit() {
-    this.appStrings = appStrings;
     this.frmImport = this.formBuilder.group({
       id: [null],
       date: ['', Validators.required],
       amount: [, Validators.required],
       description: [""]
     });
+    this.appStrings = this.appStringsService.appStrings;
     this.IMPORT_GRID_COLUMNS = this.appConstants.IMPORT_GRID_COLUMNS;
     this.getImports();
   }

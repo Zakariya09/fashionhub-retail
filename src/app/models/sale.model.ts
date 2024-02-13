@@ -1,7 +1,7 @@
 export interface SaleModel{
-  _id: Number
+  id: Number
   date: String,
-  actualAmount: Number,
-  saleAmount: Number,
+  actualPrice: Number,
+  sellingPrice: Number,
   profitAmount: Number,
 }
