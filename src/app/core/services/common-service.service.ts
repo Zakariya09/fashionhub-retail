@@ -95,11 +95,16 @@ export class CommonServiceService {
   getProducts() {
     return this.http.get(this.baseUrl + 'products');
   }
+
   //Delete Product
   deleteProduct(id: any) {
     return this.http.delete(this.baseUrl + 'products/' + id);
   }
 
+  /**
+   * 
+   * @returns 
+   */
   getImports() {
     return this.http.get<ImportModel>(`${this.baseUrl}imports.json`)?.pipe(map((resp: any) => {
       const importsArr: ImportModel[] = [];
@@ -112,55 +117,67 @@ export class CommonServiceService {
     }))
   }
 
-  //POST Import
+  /**
+   * 
+   * @param importData 
+   * @param isUpdate 
+   * @returns 
+   */
   saveImport(importData: ImportModel, isUpdate: boolean) {
     if (isUpdate) {
       return this.http.put(`${this.baseUrl}imports/${importData?.id}.json`, importData)
-    }else{
+    } else {
       return this.http.post<ImportModel>(`${this.baseUrl}imports.json`, importData);
     }
   }
 
-    //POST Import
-    saveSale(saleData: SaleModel, isUpdate: boolean) {
-      if (isUpdate) {
-        return this.http.put(`${this.baseUrl}sales/${saleData?.id}.json`, saleData)
-      }else{
-        return this.http.post<SaleModel>(`${this.baseUrl}sales.json`, saleData);
-      }
-    }
-
-  //Delete Import
+  /**
+ * 
+ * @param id 
+ * @returns 
+ */
   deleteImport(id: any) {
     return this.http.delete(`${this.baseUrl}imports/${id}.json`)
   }
 
-  //GET Sales
+  /**
+   * 
+   * @returns 
+   */
   getSales() {
-    // this.saleList = this.firebase.list('sales');
-    // return this.saleList.snapshotChanges();
-
-    return new Observable();
+    return this.http.get<SaleModel>(`${this.baseUrl}sales.json`)?.pipe(map((resp: any) => {
+      const importsArr: SaleModel[] = [];
+      for (const key in resp) {
+        if (resp.hasOwnProperty(key)) {
+          importsArr.push({ id: key, ...resp[key] })
+        }
+      }
+      return importsArr;
+    }))
   }
 
-  //Update Sale
-  updateSale(saleData: any) {
-    // this.saleList.update(saleData.$key,
-    //   {
-    //     date: saleData.date,
-    //     actualAmount: saleData.actualAmount,
-    //     saleAmount: saleData.saleAmount,
-    //     profitAmount: saleData.profitAmount,
-    //   });
-    return JSON.parse(this.response)
+  /**
+   * 
+   * @param saleData 
+   * @param isUpdate 
+   * @returns 
+   */
+  saveSale(saleData: SaleModel, isUpdate: boolean) {
+    if (isUpdate) {
+      return this.http.put(`${this.baseUrl}sales/${saleData?.id}.json`, saleData)
+    } else {
+      return this.http.post<SaleModel>(`${this.baseUrl}sales.json`, saleData);
+    }
   }
 
-  //Delete Product
+  /**
+   * 
+   * @param id 
+   * @returns 
+   */
   deleteSale(id: any) {
-    // this.saleList.remove(id);
-    return this.response;
+    return this.http.delete(`${this.baseUrl}sales/${id}.json`)
   }
-
 
   //GET Sales
   getCredits() {

@@ -26,5 +26,6 @@ export class AppStrings {
         enterSellingPrice:'Please enter sale price.',
         profit:'Profit',
         enterProfit:'Please enter profit.',
+        updateSale:'Update Sale',
     }
 }

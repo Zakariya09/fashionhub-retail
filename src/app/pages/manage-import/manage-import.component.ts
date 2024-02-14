@@ -3,9 +3,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ImportModel } from "../../models/import.model";
 import { CommonServiceService } from "../../core/services/common-service.service";
-import { Subject, Subscription, takeUntil } from "rxjs";
+import { Subject, takeUntil } from "rxjs";
 import { AppConstants } from "../../shared/app-contants.service";
 import { AppStrings } from "../../shared/app-strings.service";
+import { AppUtilityService } from "../../core/services/app-utility.service";
 
 declare var jQuery: any;
 @Component({
@@ -31,7 +32,8 @@ export class ManageImportComponent implements OnInit, OnDestroy {
     private commonService: CommonServiceService,
     private formBuilder: FormBuilder,
     private appConstants: AppConstants,
-    private appStringsService: AppStrings
+    private appStringsService: AppStrings,
+    private utilityService: AppUtilityService
   ) { }
 
   ngOnInit() {
@@ -75,19 +77,9 @@ export class ManageImportComponent implements OnInit, OnDestroy {
       this.commonService.$alertSubject?.next({
         type: 'danger',
         showAlert: true,
-        message: error
+        message: this.utilityService.getErrorText(error?.message)
       });
     });
-  }
-
-  /**
-   * tracking import loop
-   * @param index 
-   * @param item 
-   * @returns 
-   */
-  trackImport(index: number, item: ImportModel) {
-    return item.id
   }
 
   /**
@@ -113,7 +105,7 @@ export class ManageImportComponent implements OnInit, OnDestroy {
       this.commonService.$alertSubject?.next({
         type: 'danger',
         showAlert: true,
-        message: error
+        message: this.utilityService.getErrorText(error?.message)
       });
     });
   }
@@ -151,7 +143,7 @@ export class ManageImportComponent implements OnInit, OnDestroy {
       this.commonService.$alertSubject?.next({
         type: 'danger',
         showAlert: true,
-        message: error
+        message: this.utilityService.getErrorText(error?.message)
       });
     });
   }

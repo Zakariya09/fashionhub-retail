@@ -11,7 +11,7 @@
         </ol>
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 <div class="container card">
   <div class="row pr-0">
@@ -22,7 +22,7 @@
     <div class="col-md-4 align-right pr-0">
       <button type="button" class="btn btn-sm btn-primary " (click)="clearForm()" data-toggle="modal"
         data-target="#addSale">
-        <i class="fas fa-plus"></i> {{appStrings['newSale']}}
+        <i class="fas fa-plus"></i>&nbsp; {{appStrings['newSale']}}
       </button>
     </div>
   </div>
@@ -40,13 +40,13 @@
         <tr>
           <td>{{$index+1}}</td>
           <td>
-            {{data.date}}
+            {{data.date | date:'dd-MM-yyyy'}}
           </td>
           <td>{{data.actualPrice}}</td>
           <td>{{data.sellingPrice}}</td>
           <td>{{data.profitAmount}}</td>
           <td>
-            <i class="fas fa-edit text-primary curser" (click)="editImport(data)" data-toggle="modal"
+            <i class="fas fa-edit text-primary curser" (click)="editSale(data)" data-toggle="modal"
               data-target="#addSale"></i> &nbsp;
             <i class="fas fa-trash text-danger curser" (click)="confirmDelete(data)"></i>
           </td>
@@ -68,7 +68,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header modal-head">
-        <h4 class="modal-title">{{appStrings['addSale']}}</h4>
+        <h4 class="modal-title">{{isUpdate ? appStrings['updateSale'] : appStrings['addSale']}}</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -76,7 +76,7 @@
       <div class="modal-body">
         <form (ngSubmit)="onSubmit()" role="form" [formGroup]='frmSale'>
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-xs-12 col-sm-12 col-md-6">
               <div class="form-group">
                 <label for="date">{{appStrings['sellingDate']}} :</label>&nbsp;<i class="fa fa-asterisk"
                   style="color:red; font-size:10px;"></i>
@@ -87,12 +87,12 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-xs-12 col-sm-12 col-md-6">
               <div class="form-group">
                 <label for="actualPrice">{{appStrings['actualPrice']}} :</label>&nbsp;<i class="fa fa-asterisk"
                   style="color:red; font-size:10px;"></i>
                 <input type="number" class="form-control" formControlName="actualPrice" id="actualPrice"
-                  placeholder="Actual amount" min="0"
+                  placeholder="Actual price" min="0"
                   [ngClass]="{ 'is-invalid': submitted && f['actualPrice'].errors }" />
                 <div *ngIf="submitted && f['actualPrice'].errors" class="text-danger">
                   <div *ngIf="f['actualPrice'].errors['required']"> {{appStrings['enterActualPrice']}}</div>
@@ -101,25 +101,25 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-xs-12 col-sm-12 col-md-6">
               <div class="form-group">
                 <label for="sellingPrice">{{appStrings['sellingPrice']}} :</label>&nbsp;<i class="fa fa-asterisk"
                   style="color:red; font-size:10px;"></i>
                 <input type="number" class="form-control" formControlName="sellingPrice" id="sellingPrice"
-                  placeholder="Sale amount" min="0"
+                  placeholder="Selling price" min="0"
                   [ngClass]="{ 'is-invalid': submitted && f['sellingPrice'].errors }" />
                 <div *ngIf="submitted && f['sellingPrice'].errors" class="text-danger">
                   <div *ngIf="f['sellingPrice'].errors['required']"> {{appStrings['enterSellingPrice']}}</div>
                 </div>
               </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-xs-12 col-sm-12 col-md-6">
               <div class="form-group">
                 <label for="profitAmount">{{appStrings['profit']}} :</label>&nbsp;<i class="fa fa-asterisk"
                   style="color:red; font-size:10px;"></i>
                 <input type="number" class="form-control" formControlName="profitAmount" id="profitAmount"
-                  placeholder="profitAmount" min="0"
-                  [ngClass]="{ 'is-invalid': submitted && f['profitAmount'].errors }" />
+                   placeholder="Profit" min="0" [ngClass]="{ 'is-invalid': submitted && f['profitAmount'].errors }"
+                  readonly />
                 <div *ngIf="submitted && f['profitAmount'].errors" class="text-danger">
                   <div *ngIf="f['profitAmount'].errors['required']"> {{appStrings['enterProfit']}}</div>
                 </div>
@@ -138,5 +138,3 @@
   </div>
 </div>
 <app-confirm-modal [module]="'Import'" (onConfirmCallback)="deleteSale()"></app-confirm-modal>
-<app-alert></app-alert>
-<app-loader></app-loader>

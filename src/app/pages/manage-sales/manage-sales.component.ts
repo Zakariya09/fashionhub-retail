@@ -6,6 +6,7 @@ import { CommonServiceService } from '../../core/services/common-service.service
 import { AppConstants } from '../../shared/app-contants.service';
 import { AppStrings } from '../../shared/app-strings.service';
 import { Subject, takeUntil } from 'rxjs';
+import { AppUtilityService } from '../../core/services/app-utility.service';
 declare var jQuery: any;
 
 @Component({
@@ -20,7 +21,7 @@ export class ManageSalesComponent implements OnInit, OnDestroy {
   p = 1;
   submitted = false;
   textSearch: string = '';
-  sales!: any[];
+  sales!: SaleModel[];
   selectedFile = null;
   appStrings: any;
   SALES_GRID_COLUMNS: string[] = [];
@@ -32,7 +33,8 @@ export class ManageSalesComponent implements OnInit, OnDestroy {
     private commonService: CommonServiceService,
     private formBuilder: FormBuilder,
     private appConstants: AppConstants,
-    private appStringsService: AppStrings
+    private appStringsService: AppStrings,
+    private utilityService: AppUtilityService
   ) { }
 
   ngOnInit() {
@@ -45,18 +47,19 @@ export class ManageSalesComponent implements OnInit, OnDestroy {
     });
     this.appStrings = this.appStringsService.appStrings;
     this.SALES_GRID_COLUMNS = this.appConstants.SALES_GRID_COLUMNS;
-
     this.getSales();
-    this.calculateCredit();
+    this.calculateProfit();
   }
 
 
-  //Calculate Credit amount
-  calculateCredit() {
+  /**
+   * Calculating profit on sales
+   * @returns 
+   */
+  calculateProfit() {
     let actualPrice = 0;
     let sellingPrice = 0;
     let profitAmount = 0;
-
     if (this.frmSale?.get('actualPrice')?.value == undefined) {
       this.frmSale?.get('profitAmount')?.setValue(0);
       return;
@@ -65,28 +68,26 @@ export class ManageSalesComponent implements OnInit, OnDestroy {
       this.frmSale?.get('profitAmount')?.setValue(0);
       return;
     }
-    this.frmSale?.get('actualPrice')?.valueChanges.subscribe((item) => {
+    this.frmSale?.get('actualPrice')?.valueChanges?.pipe(takeUntil(this.subscription)).subscribe((item) => {
       actualPrice = item;
       profitAmount = sellingPrice - actualPrice;
       this.frmSale?.get('profitAmount')?.setValue(profitAmount);
-    })
-    this.frmSale?.get('sellingPrice')?.valueChanges.subscribe((item) => {
+    });
+    this.frmSale?.get('sellingPrice')?.valueChanges?.pipe(takeUntil(this.subscription))?.subscribe((item) => {
       sellingPrice = item;
       if (this.frmSale?.get('sellingPrice')?.value == 'null') {
         this.frmSale?.get('profitAmount')?.setValue(0);
       }
-
       profitAmount = sellingPrice - actualPrice;
       this.frmSale?.get('profitAmount')?.setValue(profitAmount);
-    })
-
+    });
   }
+
   /**
-     * saving import data
+     * saving sale data
      * @returns 
      */
   onSubmit(): void {
-    console.log(this.frmSale.value);
     this.submitted = true;
     if (this.frmSale.invalid) {
       this.commonService.$alertSubject?.next({
@@ -104,48 +105,46 @@ export class ManageSalesComponent implements OnInit, OnDestroy {
       jQuery('#addSale').modal('hide');
       this.isUpdate = false;
     }, (error: HttpErrorResponse) => {
-      console.log('error text')
-      console.log(error)
       this.commonService.$loaderSubject?.next({ showLoader: false });
       this.commonService.$alertSubject?.next({
         type: 'danger',
         showAlert: true,
-        message: error
+        message: this.utilityService.getErrorText(error?.message)
       });
     });
   }
 
-
+  /**
+   * Providing access to form controls
+   * @returns
+   */
   get f() { return this.frmSale.controls; }
 
-
-  //Edit package
-  editImport(data: SaleModel) {
-    this.frmSale.controls?.['date']?.setValue(this.dateConverter(data.date));
-    this.frmSale.controls?.['actualPrice']?.setValue(data.actualPrice);
-    this.frmSale.controls?.['sellingPrice']?.setValue(data.sellingPrice);
-    this.frmSale.controls?.['profitAmount']?.setValue(data.profitAmount);
-    this.frmSale.controls?.['id']?.setValue(data.id);
+  /**
+     * edit sale
+     * @param data 
+     */
+  editSale(data: SaleModel) {
+    this.isUpdate = true;
+    this.frmSale.reset();
+    this.frmSale.patchValue(data);
   }
 
-  //GET sales
-  getSales() {
-    this.commonService.getSales().subscribe((response: any) => {
-      if (response) {
-        this.sales = response.map((item: any) => {
-          return {
-            id: item.key,
-            ...item.payload.val()
-          }
-        });
-        console.log('this.sales');
-        console.log(this.sales);
-      } else {
-        // this.toaster.errorToastr('No sale found!.', 'Oops!',{showCloseButton: true});
-      }
+  /**
+ * get Sales data
+ */
+  getSales(): void {
+    this.warningText = 'Loading Data...';
+    this.commonService.getSales().pipe(takeUntil(this.subscription)).subscribe((response: SaleModel[]) => {
+      this.sales = response;
+      this.warningText = 'No Data Found!';
     }, (error: HttpErrorResponse) => {
-      // this.toaster.errorToastr('No sale found!.', 'Oops!',{showCloseButton: true});
-      return;
+      this.warningText = 'No Data Found!';
+      this.commonService.$alertSubject?.next({
+        type: 'danger',
+        showAlert: true,
+        message: this.utilityService.getErrorText(error?.message)
+      });
     });
   }
 
@@ -158,20 +157,30 @@ export class ManageSalesComponent implements OnInit, OnDestroy {
     this.commonService.$confirmSubject.next({ showModal: true, type: 'delete' })
   }
 
-  //Delete package
+  /**
+   * Deleting sale record
+   */
   deleteSale() {
+    this.commonService.$loaderSubject?.next({ showLoader: true });
+    this.commonService.deleteSale(this.selectedRecord?.id)?.pipe(takeUntil(this.subscription)).subscribe((response) => {
+      this.commonService.$confirmSubject.next({ showModal: false });
+      this.commonService.$loaderSubject?.next({ showLoader: false });
+      this.getSales();
+    }, (error: HttpErrorResponse) => {
+      this.commonService.$loaderSubject?.next({ showLoader: false });
+      this.commonService.$alertSubject?.next({
+        type: 'danger',
+        showAlert: true,
+        message: this.utilityService.getErrorText(error?.message)
+      });
+    });
   }
 
-  //package Date Conversion
-  dateConverter(date: any) {
-    var dateArray = date.split('-');
-    var dateStr = dateArray[1] + '/' + dateArray[0] + '/' + dateArray[2];
-    var newDate = new Date(dateStr);
-    return newDate;
-  }
-
-  // clear form value
+  /**
+   * Resetting form
+   */
   clearForm() {
+    this.isUpdate = false;
     this.frmSale.reset();
     this.submitted = false;
   }

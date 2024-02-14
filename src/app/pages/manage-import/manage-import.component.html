@@ -12,7 +12,7 @@
         </ol>
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 <div class="container card">
   <div class="row">
@@ -36,11 +36,6 @@
         </tr>
       </thead>
       <tbody>
-        <!-- <tr *ngFor="let data of imports |
-          filter: textSearch | 
-          paginate: { itemsPerPage: 10, currentPage: p }; 
-          let i = index; 
-          trackBy:trackImport"> -->
         @for (data of imports | filter: textSearch | paginate: { itemsPerPage: 10, currentPage: p } ; track $index ) {
         <tr>
           <td>{{$index+1}}</td>
@@ -123,5 +118,3 @@
 </div>
 
 <app-confirm-modal [module]="'Import'" (onConfirmCallback)="deleteImport()"></app-confirm-modal>
-<app-alert></app-alert>
-<app-loader></app-loader>
