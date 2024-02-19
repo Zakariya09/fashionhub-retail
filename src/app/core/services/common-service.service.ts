@@ -6,6 +6,7 @@ import { ImportModel } from '../../models/import.model';
 import { ConfirmModalModel } from '../../common/confirm-modal/confirm-modal.component';
 import { Loader } from '../../common/loader/loader.component';
 import { SaleModel } from '../../models/sale.model';
+import { CreditModel } from '../../models/credit.model';
 
 @Injectable({
   providedIn: 'root',
@@ -179,46 +180,45 @@ export class CommonServiceService {
     return this.http.delete(`${this.baseUrl}sales/${id}.json`)
   }
 
-  //GET Sales
-  getCredits() {
-    // this.creditList = this.firebase.list('credits');
-    // return this.creditList.snapshotChanges();
-
-    return new Observable();
-  }
-  //POST Sale
-  saveCredit(creditData: any) {
-    // return  this.creditList.push({
-    //   date: creditData.date,
-    //   name: creditData.name,
-    //   creditAmount: creditData.creditAmount,
-    //   paidAmount: creditData.paidAmount,
-    //   remainingAmount: creditData.remainingAmount,
-    // });
-    return new Promise(() => {
-
-    });
-
+   /**
+   * 
+   * @returns 
+   */
+   getCredits() {
+    return this.http.get<CreditModel>(`${this.baseUrl}credits.json`)?.pipe(map((resp: any) => {
+      const crediitsArr: CreditModel[] = [];
+      for (const key in resp) {
+        if (resp.hasOwnProperty(key)) {
+          crediitsArr.push({ id: key, ...resp[key] })
+        }
+      }
+      return crediitsArr;
+    }))
   }
 
-  //Update Product
-  updateCredit(creditData: any) {
-    // this.creditList.update(creditData.$key,
-    //   {
-    //     date: creditData.date,
-    //     name: creditData.name,
-    //     creditAmount: creditData.creditAmount,
-    //     paidAmount: creditData.paidAmount,
-    //     remainingAmount: creditData.remainingAmount,
-    //   });
-    return JSON.parse(this.response)
+ /**
+   * 
+   * @param saleData 
+   * @param isUpdate 
+   * @returns 
+   */
+ saveCredit(creaditData: CreditModel, isUpdate: boolean) {
+  if (isUpdate) {
+    return this.http.put(`${this.baseUrl}credits/${creaditData?.id}.json`, creaditData)
+  } else {
+    return this.http.post<CreditModel>(`${this.baseUrl}credits.json`, creaditData);
+  }
+}
+
+   /**
+   * 
+   * @param id 
+   * @returns 
+   */
+   deleteCredit(id: any) {
+    return this.http.delete(`${this.baseUrl}credits/${id}.json`)
   }
 
-  //Delete Credit
-  deleteCredit(id: any) {
-    // this.creditList.remove(id);
-    return this.response;
-  }
 
   //GET Users
   getUsers() {

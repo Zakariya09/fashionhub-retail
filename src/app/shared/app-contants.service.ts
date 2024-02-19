@@ -12,4 +12,8 @@ export class AppConstants {
     SALES_GRID_COLUMNS: string[] = [
         '#', 'Date', 'Actual Amount', 'Sale Amount', 'Profit Amount', 'Action'
     ];
+
+    CREDIT_GRID_COLUMNS: string[] = [
+        '#', 'Date', 'Buyer Name', 'Credit Amount', 'Paid Amount', 'Remaining Amount', 'Action'
+    ];
 }

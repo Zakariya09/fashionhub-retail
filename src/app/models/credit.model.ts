@@ -1,5 +1,5 @@
 export interface CreditModel{
-  $key: Number,
+  id: Number,
   name: String,
   date: String,
   creditAmount: Number,

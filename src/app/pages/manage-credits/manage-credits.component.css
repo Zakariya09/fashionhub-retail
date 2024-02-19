@@ -14,10 +14,10 @@ background: linear-gradient(to right, #69c9d8, #75c5d1); /* W3C, IE 10+/ Edge, F
 .text-white{
   color: whitesmoke;
 }
-.gradient{
-  background: linear-gradient(to top, #901962e0, #FF0099);
-  color: white;
-  }
+  .gradient{
+    background: linear-gradient(to top, #901962e0, #FF0099);
+    color: white;
+    }
   .modal-head{
     color: whitesmoke;
     background: #FF0099;  /* fallback for old browsers */

@@ -1,8 +1,12 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { HttpErrorResponse } from '@angular/common/http';
 import { CreditModel } from '../../models/credit.model';
 import { CommonServiceService } from '../../core/services/common-service.service';
+import { AppStrings } from '../../shared/app-strings.service';
+import { AppConstants } from '../../shared/app-contants.service';
+import { Subject, takeUntil } from 'rxjs';
+import { AppUtilityService } from '../../core/services/app-utility.service';
 declare var jQuery: any;
 
 @Component({
@@ -10,174 +14,184 @@ declare var jQuery: any;
   templateUrl: './manage-credits.component.html',
   styleUrls: ['./manage-credits.component.css']
 })
-export class ManageCreditsComponent implements OnInit {
+export class ManageCreditsComponent implements OnInit, OnDestroy {
   frmCredit!: FormGroup;
   credit!: CreditModel;
-  subscription: any;
-  p =1;
+  subscription = new Subject();
+  p = 1;
   submitted = false;
   textSearch = '';
-  credits!:any;
-  selectedFile = null;
-  // @ViewChild('addProject', {static: false}) public addProject: ModalDirective;
-  constructor(private commonService: CommonServiceService, private formBuilder: FormBuilder) { }
+  credits!: any;
+  appStrings: any;
+  CREDIT_GRID_COLUMNS: string[] = [];
+  warningText: string = '';
+  isUpdate!: boolean;
+  selectedRecord!: CreditModel;
+
+  constructor(private commonService: CommonServiceService,
+    private formBuilder: FormBuilder,
+    private appStringsService: AppStrings,
+    private appConstants: AppConstants,
+    private utilityService: AppUtilityService
+
+  ) { }
 
   ngOnInit() {
-    this.frmCredit =  this.formBuilder.group({
-      $key: [null],
+    this.frmCredit = this.formBuilder.group({
+      id: [null],
       date: [, Validators.required],
       name: [, Validators.required],
       creditAmount: [0, Validators.required],
       paidAmount: [0, Validators.required],
       remainingAmount: [0, Validators.required]
     });
-    this.getCredits();
+    this.appStrings = this.appStringsService.appStrings;
+    this.CREDIT_GRID_COLUMNS = this.appConstants.CREDIT_GRID_COLUMNS;
+    this.getCredit();
     this.calculateCredit();
   }
 
-  //Calculate Credit amount
-  calculateCredit(){
+  /**
+   * 
+   * @returns 
+   */
+  calculateCredit() {
     let creditAmount = 0;
     let paidAmount = 0;
     let remainingAmount = 0;
 
-    if(this.frmCredit.get('creditAmount')?.value == undefined){
+    if (this.frmCredit.get('creditAmount')?.value == undefined) {
       this.frmCredit.get('remainingAmount')?.setValue(0);
       return;
     }
-    if(this.frmCredit.get('paidAmount')?.value == undefined){
+    if (this.frmCredit.get('paidAmount')?.value == undefined) {
       this.frmCredit.get('remainingAmount')?.setValue(0);
       return;
     }
 
-    this.frmCredit.get('creditAmount')?.valueChanges.subscribe((item)=>{
+    this.frmCredit.get('creditAmount')?.valueChanges.subscribe((item) => {
       creditAmount = item;
-      if(creditAmount < paidAmount ){
-      this.frmCredit.get('remainingAmount')?.setValue(0);
+      if (creditAmount < paidAmount) {
+        this.frmCredit.get('remainingAmount')?.setValue(0);
         return
       }
       remainingAmount = creditAmount - paidAmount;
       this.frmCredit.get('remainingAmount')?.setValue(remainingAmount);
     })
-    this.frmCredit.get('paidAmount')?.valueChanges.subscribe((item)=>{
+    this.frmCredit.get('paidAmount')?.valueChanges.subscribe((item) => {
       paidAmount = item;
-      if(creditAmount < paidAmount ){
+      if (creditAmount < paidAmount) {
         this.frmCredit.get('remainingAmount')?.setValue(0);
-          return
-        }
+        return
+      }
       remainingAmount = creditAmount - paidAmount;
       this.frmCredit.get('remainingAmount')?.setValue(remainingAmount);
     })
 
   }
 
-  //POST package
-  onSubmit(){
+  /**
+       * saving sale data
+       * @returns 
+       */
+  onSubmit(): void {
     this.submitted = true;
     if (this.frmCredit.invalid) {
-      // this.toaster.warningToastr('Please enter mendatory fields.', 'Invalid!', {showCloseButton: true});
+      this.commonService.$alertSubject?.next({
+        type: 'danger',
+        showAlert: true,
+        message: 'Please enter mendatory fields.'
+      });
       return;
     }
     this.credit = this.frmCredit.value;
-    if(this.frmCredit?.get('$key')?.value == null){
-      // this.credit.date = moment(this.frmCredit.value.date).format('DD-MM-YYYY') ;
-      this.subscription = this.commonService.saveCredit(this.credit).then((response: any) => {
-        if (response) {
-          // this.toaster.successToastr('Data saved successfully. ', 'Success!',{showCloseButton: true});
-          this.getCredits();
-          jQuery('#addCredit').modal('hide');
-          //  this.getpackage();
-        } else {
-          // this.toaster.errorToastr('Error while saving credit.', 'Oops!',{showCloseButton: true});
-
-        }
-      }, (error: HttpErrorResponse) => {
-        // this.toaster.errorToastr('Error while saving credit.', 'Oops!',{showCloseButton: true});
-        return;
-      });
-    }
-    else{
-      // this.credit.date = moment(this.frmCredit.value.date).format('DD-MM-YYYY') ;
-      this.subscription = this.commonService.updateCredit(this.credit);
-      if (this.subscription) {
-        // this.toaster.successToastr('Credit updated successfully. ', 'Success!',{showCloseButton: true});
-        this.getCredits();
-        jQuery('#addCredit').modal('hide');
-        //  this.getpackage();
-      } else {
-        // this.toaster.errorToastr('Error while saving credit.', 'Oops!',{showCloseButton: true});
-      }
-    }
-  }
-  get f() { return this.frmCredit.controls; }
-
-
-  //GET credits
-  getCredits(){
-    this.commonService.getCredits().subscribe((response : any)=>{
-      if (response) {
-        this.credits = response.map((item:any)=>{
-          return {
-            $key: item.key,
-            ...item.payload.val()
-          }
-        });
-        console.log('this.credits');
-        console.log(this.credits);
-      }else {
-        // this.toaster.errorToastr('No credit found!.', 'Oops!',{showCloseButton: true});
-      }
+    this.commonService.$loaderSubject?.next({ showLoader: true });
+    this.commonService.saveCredit(this.credit, this.isUpdate)?.pipe(takeUntil(this.subscription)).subscribe(() => {
+      this.getCredit();
+      this.commonService.$loaderSubject?.next({ showLoader: false });
+      jQuery('#addCredit').modal('hide');
+      this.isUpdate = false;
     }, (error: HttpErrorResponse) => {
-      // this.toaster.errorToastr('No credit found!.', 'Oops!',{showCloseButton: true});
-      return;
+      this.commonService.$loaderSubject?.next({ showLoader: false });
+      this.commonService.$alertSubject?.next({
+        type: 'danger',
+        showAlert: true,
+        message: this.utilityService.getErrorText(error?.message)
+      });
     });
   }
-  //Edit package
-  editCredit(data: CreditModel){
-    this.frmCredit.controls?.['date']?.setValue(this.dateConverter(data.date));
-    this.frmCredit.controls?.['name']?.setValue(data.name);
-    this.frmCredit.controls?.['creditAmount']?.setValue(data.creditAmount);
-    this.frmCredit.controls?.['paidAmount']?.setValue(data.paidAmount);
-    this.frmCredit.controls?.['remainingAmount']?.setValue(data.remainingAmount);
-    this.frmCredit.controls?.['$key']?.setValue(data.$key);
+
+  /**
+   * @returns
+   */
+  get f() { return this.frmCredit.controls; }
+
+  /**
+ * get Sales data
+ */
+  getCredit(): void {
+    this.warningText = 'Loading Data...';
+    this.commonService.getCredits().pipe(takeUntil(this.subscription)).subscribe((response: CreditModel[]) => {
+      this.credits = response;
+      this.warningText = 'No Data Found!';
+    }, (error: HttpErrorResponse) => {
+      this.warningText = 'No Data Found!';
+      this.commonService.$alertSubject?.next({
+        type: 'danger',
+        showAlert: true,
+        message: this.utilityService.getErrorText(error?.message)
+      });
+    });
   }
 
-  //Delete package
-  deleteCredit(id:any){
-    // Swal.fire({
-    //   title: 'Are you sure?',
-    //   text: 'You will not be able to recover this record!',
-    //   icon: 'warning',
-    //   showCancelButton: true,
-    //   cancelButtonColor: '#d33',
-    //   confirmButtonText: 'Delete',
-    //   cancelButtonText: 'Cancel'
-    // })
-    // .then((result) => {
-    //   if (result.value) {
-
-    //     let response =  this.commonService.deleteCredit(id);
-    //     if (response) {
-    //       // this.toaster.successToastr('Deleted successfully. ', 'Success!',{showCloseButton: true});
-    //       this.getCredits();
-    //     }else {
-    //       // this.toaster.errorToastr('Error while deleting credit.', 'Oops!',{showCloseButton: true});
-    //     }
-    //   }
-    // });
+  /**
+   * 
+   * @param data 
+   */
+  editCredit(data: CreditModel) {
+    this.isUpdate = true;
+    this.frmCredit.reset();
+    this.frmCredit.patchValue(data);
   }
 
-  //package Date Conversion
-  dateConverter(date:any){
-    var dateArray = date.split('-');
-    var dateStr = dateArray[1] + '/' + dateArray[0] + '/' + dateArray[2];
-    var newDate = new Date( dateStr);
-    return newDate;
+  /**
+    * confirm delete popup
+    * @param data 
+    */
+  confirmDelete(data: CreditModel) {
+    this.selectedRecord = data;
+    this.commonService.$confirmSubject.next({ showModal: true, type: 'delete' })
   }
 
-  // clear form value
+  /**
+   * Deleting Credit record
+   */
+  deleteCredit() {
+    this.commonService.$loaderSubject?.next({ showLoader: true });
+    this.commonService.deleteCredit(this.selectedRecord?.id)?.pipe(takeUntil(this.subscription)).subscribe((response) => {
+      this.commonService.$confirmSubject.next({ showModal: false });
+      this.commonService.$loaderSubject?.next({ showLoader: false });
+      this.getCredit();
+    }, (error: HttpErrorResponse) => {
+      this.commonService.$loaderSubject?.next({ showLoader: false });
+      this.commonService.$alertSubject?.next({
+        type: 'danger',
+        showAlert: true,
+        message: this.utilityService.getErrorText(error?.message)
+      });
+    });
+  }
+
+  /**
+   * resetting credit form
+   */
   clearForm() {
+    this.isUpdate = false;
     this.frmCredit.reset();
     this.submitted = false;
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.next(false)
   }
 }
