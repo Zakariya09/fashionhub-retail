@@ -41,7 +41,7 @@ export class ManageCreditsComponent implements OnInit, OnDestroy {
       id: [null],
       date: [, Validators.required],
       name: [, Validators.required],
-      creditAmount: [0, Validators.required],
+      productPrice: [0, Validators.required],
       paidAmount: [0, Validators.required],
       remainingAmount: [0, Validators.required]
     });
@@ -56,11 +56,11 @@ export class ManageCreditsComponent implements OnInit, OnDestroy {
    * @returns 
    */
   calculateCredit() {
-    let creditAmount = 0;
+    let productPrice = 0;
     let paidAmount = 0;
     let remainingAmount = 0;
 
-    if (this.frmCredit.get('creditAmount')?.value == undefined) {
+    if (this.frmCredit.get('productPrice')?.value == undefined) {
       this.frmCredit.get('remainingAmount')?.setValue(0);
       return;
     }
@@ -69,22 +69,22 @@ export class ManageCreditsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.frmCredit.get('creditAmount')?.valueChanges.subscribe((item) => {
-      creditAmount = item;
-      if (creditAmount < paidAmount) {
+    this.frmCredit.get('productPrice')?.valueChanges.subscribe((item) => {
+      productPrice = item;
+      if (productPrice < paidAmount) {
         this.frmCredit.get('remainingAmount')?.setValue(0);
         return
       }
-      remainingAmount = creditAmount - paidAmount;
+      remainingAmount = productPrice - paidAmount;
       this.frmCredit.get('remainingAmount')?.setValue(remainingAmount);
     })
     this.frmCredit.get('paidAmount')?.valueChanges.subscribe((item) => {
       paidAmount = item;
-      if (creditAmount < paidAmount) {
+      if (productPrice < paidAmount) {
         this.frmCredit.get('remainingAmount')?.setValue(0);
         return
       }
-      remainingAmount = creditAmount - paidAmount;
+      remainingAmount = productPrice - paidAmount;
       this.frmCredit.get('remainingAmount')?.setValue(remainingAmount);
     })
 

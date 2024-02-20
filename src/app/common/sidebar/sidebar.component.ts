@@ -8,7 +8,7 @@ import { Router } from "@angular/router";
 })
 export class SidebarComponent implements OnInit {
 
-  userData = JSON.parse(localStorage.getItem('userData') || '');
+  // userData = JSON.parse(localStorage.getItem('userData') || '');
   constructor(private router: Router ) { }
 
   ngOnInit() {

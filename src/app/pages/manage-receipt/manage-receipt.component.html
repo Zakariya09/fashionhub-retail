@@ -1,96 +1,106 @@
-<link rel="stylesheet" href="https://unpkg.com/ngx-bootstrap/datepicker/bs-datepicker.css">
 <section class="content-header card">
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1>Manage Receipt</h1>
+        <h1>{{appStrings['manageReciept']}}</h1>
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="#">Home</a></li>
-          <li class="breadcrumb-item active">Manage Receipt</li>
+          <li class="breadcrumb-item"><a href="#">{{appStrings['home']}}</a></li>
+          <li class="breadcrumb-item active">{{appStrings['manageReciept']}}</li>
         </ol>
       </div>
     </div>
-  </div><!-- /.container-fluid -->
-</section><div class="container card">
+  </div>
+</section>
+<div class="container card">
   <div class="row">
     <div class="col-md-8">
-      <!-- <input type="text" class="form-control" [(ngModel)]="textSearch" placeholder="Type here to search..."/> -->
+      <input type="text" class="form-control" [(ngModel)]="textSearch"
+        placeholder="{{appStrings['filterPlaceholder']}}" />
     </div>
     <div class="col-md-4 pull-right">
       <button type="button" class="btn btn-sm btn-primary" (click)="addReceipt()">
-        <i class="fas fa-plus"></i>  New Receipt
+        <i class="fas fa-plus"></i> {{appStrings['newReciept']}}
       </button>
     </div>
   </div>
-
   <table class="table table-bordered ">
     <thead class="gradient">
       <tr>
-        <th>#</th>
-        <th>Receipt Date</th>
-        <th>Cutomer Name</th>
-        <th>Receipt Amount</th>
-        <th>Action</th>
+        @for (column of RECEIPT_GRID_COLUMNS; track $index) {
+        <th>{{column}}</th>
+        }
       </tr>
     </thead>
     <tbody>
-      <!-- <tr *ngFor="let data of receipts| filter: textSearch | paginate: { itemsPerPage: 10, currentPage: p }; let i = index "> -->
-        <tr *ngFor="let data of receipts; let i = index ">
-        <td>{{i+1}}</td>
+      @for (data of receipts | filter: textSearch | paginate: { itemsPerPage: 10, currentPage: p } ; track $index ) {
+      <tr>
+        <td>{{$index+1}}</td>
         <td>
           {{data.receiptDate}}
         </td>
         <td>{{data.name}}</td>
         <td>{{data.grandTotal}}</td>
         <td>
-          <i class="fas fa-eye text-success curser" (click)="viewRecipt(data)" data-toggle="modal" data-target="#viewReceipt"></i> &nbsp;
+          <i class="fas fa-eye text-success curser" (click)="viewRecipt(data)" data-toggle="modal"
+            data-target="#viewReceipt"></i> &nbsp;
           <i class="fas fa-edit text-primary curser" (click)="editReceipt(data)"></i> &nbsp;
           <i class="fas fa-trash text-danger curser" (click)="deleteReceipt(data?._id)"></i>
         </td>
       </tr>
+      }
     </tbody>
   </table>
-  <!-- <pagination-controls (pageChange)="p = $event"></pagination-controls> -->
+  <pagination-controls (pageChange)="p = $event"></pagination-controls>
 </div>
 
-<div class="modal fade" bsModal #viewReceipt  id="viewReceipt" data-keyboard="false" data-backdrop="static">
+<div class="modal fade" bsModal #viewReceipt id="viewReceipt" data-keyboard="false" data-backdrop="static">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header modal-head">
-        <h4 class="modal-title">Add Receipt</h4>
+        <h4 class="modal-title">{{appStrings['addReceipt']}}</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
         <div class="row" style="padding: 12px;" id="printNew" style="padding: 5px; border: 1px solid #999; ">
-         <!-- <div style="width: 100%;">
-          <div  style="width: 24%;display: inline-block;">
-            <img src="assets/dist/img/logo.jpg" alt="" style="width: 114px;margin: -53px 2px 6px 21px;">
+          <div style="width: 100%;">
+            <div style="width: 24%;display: inline-block;">
+              <img src="assets/dist/img/logo.jpg" alt="" style="width: 114px;margin: -53px 2px 6px 21px;">
+            </div>
+            <div style="width: 76%;display: inline-block;">
+              <p style="font-weight: 500;font-size: 26px;margin-bottom: -5px;">{{appStrings['brandName']}}
+              </p>
+              <p style="width: 100%; font-size:14px;margin-bottom: -5px;">
+                <label for="address">{{appStrings['address']}} :</label> {{appStrings['addressText']}}
+              </p>
+              <p style="width: 100%; font-size:14px;margin-bottom: -5px;">
+                <label for="email">{{appStrings['emailId']}} :</label>
+                {{appStrings['email']}} &nbsp;&nbsp;&nbsp;
+                <label for="mobile">{{appStrings['mobileNumber']}} :</label>
+                {{appStrings['contactNo']}}
+              </p>
+            </div>
           </div>
-          <div style="width: 76%;display: inline-block;">
-            <p style="font-weight: 500;font-size: 26px;margin-bottom: -5px;">KHAN fashio-hub</p>
-            <p style="width: 100%; font-size:14px;margin-bottom: -5px;"> <label for="address">Address :</label> 13b/12 Ganeshpuri, mehrun linking road, mehrun, jalgaon - 425001</p>
-            <p style="width: 100%; font-size:14px;margin-bottom: -5px;"> <label for="email">Email id :</label> zakariyakhan1@gmail.com &nbsp;&nbsp;&nbsp; <label for="mobile">Mobile Number :</label> zakariyakhan1@gmail.com</p>
-          </div>
-        </div> -->
-          <table class="table table-bordered  tooltipstered" name="table" id="table" cellspacing="0" style="margin-bottom: 12px;" width="100%" >
+          <table class="table table-bordered  tooltipstered" name="table" id="table" cellspacing="0"
+            style="margin-bottom: 12px;" width="100%">
             <tbody>
               <tr>
                 <td colspan="4" style="padding: 5px;text-align: left;font-size: 12px;font-family:Calibri;">
-                  Name : {{receiptData.name}}
+                  {{appStrings['name']}} : {{receiptData.name}}
                 </td>
               </tr>
               <tr>
-                <th  style="padding: 5px;text-align: left;font-size: 12px;font-family:Calibri;" >
-                  Date :
+                <th style="padding: 5px;text-align: left;font-size: 12px;font-family:Calibri;">
+                  {{appStrings['date']}} :
                 </th>
-                <td style="padding: 5px; text-align: left;font-size: 12px;font-family:Calibri;" >{{receiptData.receiptDate}} </td>
+                <td style="padding: 5px; text-align: left;font-size: 12px;font-family:Calibri;">
+                  {{receiptData.receiptDate}} </td>
 
-                <th  style="padding: 5px;text-align: left;font-size: 12px;font-family:Calibri;">
-                  Mobile Number
+                <th style="padding: 5px;text-align: left;font-size: 12px;font-family:Calibri;">
+                  {{appStrings['mobileNumber']}}
                 </th>
                 <td style=" text-align: left;font-size: 12px;font-family:Calibri;" *ngIf="receiptData.mobileNumber">
                   {{receiptData.mobileNumber}}
@@ -101,131 +111,148 @@
               </tr>
             </tbody>
           </table>
-          <table class="table table-bordered table-responsive  tooltipstered" name="table" id="table" cellspacing="0" style="margin-bottom: 12px;" width="100%" >
+          <table class="table table-bordered table-responsive  tooltipstered" name="table" id="table" cellspacing="0"
+            style="margin-bottom: 12px;" width="100%">
             <thead>
               <tr>
-                <th colspan="10" style="font-size: 13px;font-family:Calibri;text-align: center;">INVOICE</th>
+                <th colspan="10" style="font-size: 13px;font-family:Calibri;text-align: center;">
+                  {{appStrings['invoice']}}</th>
               </tr>
               <tr>
+                @for (column of RECEIPT_PRINT_GRID_COLUMNS; track $index) {
+                <th style="padding: 5px;font-size: 12px;font-family:Calibri;">{{column}}</th>
+                }
+              </tr>
+
+              <!-- <tr>
                 <th style="padding: 5px;font-size: 12px;font-family:Calibri;" width=10%>Sr. No.</th>
                 <th style="padding: 5px;font-size: 12px;font-family:Calibri;width: 50%">Particulars</th>
-                <th style="padding: 5px;font-size: 12px;font-family:Calibri;">Qty.</th >
-                  <th style="padding: 5px;font-size: 12px;font-family:Calibri;">Rate</th>
-                  <th style="padding: 5px;font-size: 12px;font-family:Calibri;">Taxable Amount</th>
-                  <th style="padding: 5px;font-size: 12px;font-family:Calibri;">GST (%)</th>
-                  <th style="padding: 5px;font-size: 12px;font-family:Calibri;">CGST Amount</th>
-                  <th style="padding: 5px;font-size: 12px;font-family:Calibri;">SGST Amount</th>
-                  <th style="padding: 5px;font-size: 12px;font-family:Calibri;">IGST Amount</th>
-                  <th style="padding: 5px;font-size: 12px;font-family:Calibri;">TOTAL</th>
-                </tr>
-              </thead>
-              <tbody>
+                <th style="padding: 5px;font-size: 12px;font-family:Calibri;">Qty.</th>
+                <th style="padding: 5px;font-size: 12px;font-family:Calibri;">Rate</th>
+                <th style="padding: 5px;font-size: 12px;font-family:Calibri;">Taxable Amount</th>
+                <th style="padding: 5px;font-size: 12px;font-family:Calibri;">GST (%)</th>
+                <th style="padding: 5px;font-size: 12px;font-family:Calibri;">CGST Amount</th>
+                <th style="padding: 5px;font-size: 12px;font-family:Calibri;">SGST Amount</th>
+                <th style="padding: 5px;font-size: 12px;font-family:Calibri;">IGST Amount</th>
+                <th style="padding: 5px;font-size: 12px;font-family:Calibri;">TOTAL</th>
+              </tr> -->
+            </thead>
+            <tbody>
+              @for (item of receiptData.products | filter: textSearch | paginate: { itemsPerPage: 10, currentPage: p } ;
+              track $index ) {
+              <!-- <tr *ngFor="let item of receiptData.products| filter: textSearch | paginate: { itemsPerPage: 5, currentPage: p }; let i = index "> -->
+              <!-- <tr *ngFor="let item of receiptData.products; let i = index "> -->
+              <tr>
+                <td style="padding: 5px;font-size: 12px;font-family:Calibri;">{{$index + 1}}</td>
+                <td style="padding: 5px; text-align: left; font-size: 11px;line-height: 13px;font-family:Calibri;">
+                  <!-- {{data.particular}} -->
+                  <span ng-repeat="part in data.name">{{item['productName']}}<br></span>
+                </td>
+                <td style="padding: 5px;font-size: 12px;font-family:Calibri;">{{item['quantity']}}</td>
+                <td style="padding: 5px;font-size: 12px;font-family:Calibri;">{{item['rate']}}</td>
+                <td style="padding: 5px;font-size: 12px;font-family:Calibri;">{{item['taxableAmount']}}</td>
+                <td style="font-size: 12px;font-family:Calibri;">{{item['gst']}}</td>
+                <td style="font-size: 12px;font-family:Calibri;">{{item['cgst']}}</td>
+                <td style="font-size: 12px;font-family:Calibri;">{{item['sgst']}}</td>
+                <td style="font-size: 12px;font-family:Calibri;">{{item['igst']}}</td>
+                <td style="font-size: 12px;font-family:Calibri;">{{item['total']}}</td>
+              </tr>
+              }
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <th style="font-size: 12px;font-family:Calibri;">{{appStrings['total']}}</th>
+                <td style="font-size: 12px;font-family:Calibri;">{{receiptData.taxableAmount}}</td>
+                <td style="font-size: 12px;font-family:Calibri;"></td>
+                <td style="font-size: 12px;font-family:Calibri;">{{receiptData.cgst}}</td>
+                <td style="font-size: 12px;font-family:Calibri;">{{receiptData.sgst}}</td>
+                <td style="font-size: 12px;font-family:Calibri;">0</td>
+                <td style="font-size: 12px;font-family:Calibri;">{{receiptData.grandTotal}}</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px; text-align: left;font-size: 12px;font-family:Calibri;" colspan="10">
+                  <span
+                    style="font-weight: 600;margin-left: 10px;font-size: 12px;font-family:Calibri;">{{appStrings['rupeesInWords']}}
+                  </span> : &nbsp;
+                  {{receiptData.totalInWords}} /-
+                </td>
+              </tr>
 
-                <!-- <tr *ngFor="let item of receiptData.products| filter: textSearch | paginate: { itemsPerPage: 5, currentPage: p }; let i = index "> -->
-                  <tr *ngFor="let item of receiptData.products; let i = index ">
-                  <td style="padding: 5px;font-size: 12px;font-family:Calibri;" >{{i + 1}}</td>
-                  <td style="padding: 5px; text-align: left; font-size: 11px;line-height: 13px;font-family:Calibri;">
-                    <!-- {{data.particular}} -->
-                    <span ng-repeat="part in data.name">{{item['productName']}}<br></span>
-                  </td>
-                  <td style="padding: 5px;font-size: 12px;font-family:Calibri;">{{item['quantity']}}</td>
-                  <td style="padding: 5px;font-size: 12px;font-family:Calibri;">{{item['rate']}}</td>
-                  <td style="padding: 5px;font-size: 12px;font-family:Calibri;">{{item['taxableAmount']}}</td>
-                  <td style="font-size: 12px;font-family:Calibri;">{{item['gst']}}</td>
-                  <td style="font-size: 12px;font-family:Calibri;">{{item['cgst']}}</td>
-                  <td style="font-size: 12px;font-family:Calibri;">{{item['sgst']}}</td>
-                  <td style="font-size: 12px;font-family:Calibri;">{{item['igst']}}</td>
-                  <td style="font-size: 12px;font-family:Calibri;">{{item['total']}}</td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <th style="font-size: 12px;font-family:Calibri;" >Total</th>
-                  <td style="font-size: 12px;font-family:Calibri;">{{receiptData.taxableAmount}}</td>
-                  <td style="font-size: 12px;font-family:Calibri;"></td>
-                  <td style="font-size: 12px;font-family:Calibri;">{{receiptData.cgst}}</td>
-                  <td style="font-size: 12px;font-family:Calibri;">{{receiptData.sgst}}</td>
-                  <td style="font-size: 12px;font-family:Calibri;">0</td>
-                  <td style="font-size: 12px;font-family:Calibri;">{{receiptData.grandTotal}}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 5px; text-align: left;font-size: 12px;font-family:Calibri;" colspan="10" >
-                    <span style="font-weight: 600;margin-left: 10px;font-size: 12px;font-family:Calibri;">Rupees in Words </span>   : &nbsp;
-                    {{receiptData.totalInWords}} /-
-                  </td>
-                </tr>
+            </tbody>
+          </table>
+          <table class="table table-bordered   tooltipstered" name="table" id="table" cellspacing="0"
+            style="margin-bottom: 12px;" width="100%">
+            <tbody>
+              <tr>
+                <td rowspan="4">
+                  <table class="table table-bordered tooltipstered" name="table" id="table" cellspacing="0"
+                    width="100%">
+                    <tbody>
+                      <tr>
+                        <td style="padding: 5px; text-align: left;font-size: 12px;font-family:Calibri;">
+                          {{appStrings['gstPercent']}}
+                        </td>
+                        <td style="padding: 5px; text-align: left;font-size: 12px;font-family:Calibri;">
+                          {{appStrings['taxableAmount']}}
+                        </td>
 
-              </tbody>
-            </table>
-            <table class="table table-bordered   tooltipstered" name="table" id="table" cellspacing="0" style="margin-bottom: 12px;" width="100%" >
-              <tbody>
-                <tr>
-                  <td rowspan="4" >
-                    <table class="table table-bordered tooltipstered" name="table" id="table" cellspacing="0" width="100%" >
-                      <tbody>
-                        <tr>
-                          <td style="padding: 5px; text-align: left;font-size: 12px;font-family:Calibri;">
-                            GST (%)
-                          </td>
-                          <td style="padding: 5px; text-align: left;font-size: 12px;font-family:Calibri;">
-                            Taxable Amount
-                          </td>
-
-                          <td style="padding: 5px; text-align: left;font-size: 12px;font-family:Calibri;">
-                            CGST Amount
-                          </td>
-                          <td style="padding: 5px; text-align: left;font-size: 12px;font-family:Calibri;">
-                            SGST Amount
-                          </td>
-                          <td style="padding: 5px; text-align: left;font-size: 12px;font-family:Calibri;">
-                            IGST Amount
-                          </td>
-                        </tr>
-                        <!-- <tr *ngFor="let item of receiptData.products| filter: textSearch | paginate: { itemsPerPage: 5, currentPage: p }; let i = index "> -->
-                          <tr *ngFor="let item of receiptData.products; let i = index ">
-                          <td style="font-size: 12px;font-family:Calibri;">{{item['gst']}}</td>
-                          <td style="font-size: 12px;font-family:Calibri;">{{item['taxableAmount']}}</td>
-                          <td style="font-size: 12px;font-family:Calibri;">{{item['cgst']}}</td>
-                          <td style="font-size: 12px;font-family:Calibri;">{{item['sgst']}}</td>
-                          <td style="font-size: 12px;font-family:Calibri;">{{item['igst']}}</td>
-                        </tr>
-                        <tr>
-                          <td colspan="3"></td>
-                          <td style="font-size: 12px;font-family:Calibri;">Total</td>
-                          <td style="font-size: 12px;font-size: 12px;font-family:Calibri;">{{receiptData.cgst}}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </td>
-                  <th style="font-size: 12px;font-family:Calibri;width: 20%;">Total</th>
-                  <td style="padding: 5px;font-size: 12px;font-family:Calibri;">{{receiptData.cgst}}</td>
-                </tr>
-                <tr>
-
-                  <td style="font-size: 12px;font-family:Calibri;width: 20%;">Total Amount GST</td>
-                  <td style="padding: 5px;font-size: 12px;font-family:Calibri;">{{receiptData.cgst}}</td>
-                </tr>
-                <tr>
-                  <td style="font-size: 12px;font-family:Calibri;width: 20%;">Packing</td>
-                  <td style="padding: 5px;font-size: 12px;font-family:Calibri;">-</td>
-                </tr>
-                <tr>
-                  <th style="font-size: 12px;font-family:Calibri;">Total Amt. [Incl. GST]</th>
-                  <td style="padding: 5px;font-size: 12px;font-family:Calibri;">{{receiptData.grandTotal}}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="modal-footer ">
-            <button type="submit" class="btn btn-primary btn-sm" (click)="PrintPanel('printNew')"><i class="fas fa-print"></i> Print</button>
-            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fas fa-times"></i> Close</button>
-          </div>
+                        <td style="padding: 5px; text-align: left;font-size: 12px;font-family:Calibri;">
+                          {{appStrings['cgstAmount']}}
+                        </td>
+                        <td style="padding: 5px; text-align: left;font-size: 12px;font-family:Calibri;">
+                          {{appStrings['sgstAmount']}}
+                        </td>
+                        <td style="padding: 5px; text-align: left;font-size: 12px;font-family:Calibri;">
+                          {{appStrings['igstAmount']}}
+                        </td>
+                      </tr>
+                      @for (item of receiptData.products | filter: textSearch | paginate: { itemsPerPage: 10,
+                      currentPage: p } ;
+                      track $index ) {
+                      <!-- <tr *ngFor="let item of receiptData.products| filter: textSearch | paginate: { itemsPerPage: 5, currentPage: p }; let i = index "> -->
+                      <!-- <tr *ngFor="let item of receiptData.products; let i = index "> -->
+                      <tr>
+                        <td style="font-size: 12px;font-family:Calibri;">{{item['gst']}}</td>
+                        <td style="font-size: 12px;font-family:Calibri;">{{item['taxableAmount']}}</td>
+                        <td style="font-size: 12px;font-family:Calibri;">{{item['cgst']}}</td>
+                        <td style="font-size: 12px;font-family:Calibri;">{{item['sgst']}}</td>
+                        <td style="font-size: 12px;font-family:Calibri;">{{item['igst']}}</td>
+                      </tr>
+                      }
+                      <tr>
+                        <td colspan="3"></td>
+                        <td style="font-size: 12px;font-family:Calibri;">{{appStrings['total']}}</td>
+                        <td style="font-size: 12px;font-size: 12px;font-family:Calibri;">{{receiptData.cgst}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+                <th style="font-size: 12px;font-family:Calibri;width: 20%;">{{appStrings['total']}}</th>
+                <td style="padding: 5px;font-size: 12px;font-family:Calibri;">{{receiptData.cgst}}</td>
+              </tr>
+              <tr>
+                <td style="font-size: 12px;font-family:Calibri;width: 20%;">{{appStrings['totalAmountGST']}}</td>
+                <td style="padding: 5px;font-size: 12px;font-family:Calibri;">{{receiptData.cgst}}</td>
+              </tr>
+              <tr>
+                <td style="font-size: 12px;font-family:Calibri;width: 20%;">{{appStrings['packing']}}</td>
+                <td style="padding: 5px;font-size: 12px;font-family:Calibri;">-</td>
+              </tr>
+              <tr>
+                <th style="font-size: 12px;font-family:Calibri;">{{appStrings['grandTotal']}}</th>
+                <td style="padding: 5px;font-size: 12px;font-family:Calibri;">{{receiptData.grandTotal}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer ">
+          <button type="submit" class="btn btn-primary btn-sm" (click)="PrintPanel('printNew')"><i
+              class="fas fa-print"></i> {{appStrings['print']}}</button>
+          <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fas fa-times"></i>
+            {{appStrings['close']}}</button>
         </div>
       </div>
-
-      <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
   </div>
-  <!-- /.modal -->
+</div>

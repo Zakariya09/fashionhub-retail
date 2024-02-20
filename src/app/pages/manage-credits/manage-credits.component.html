@@ -18,7 +18,7 @@
     <div class="col-md-8">
       <input type="text" class="form-control" [(ngModel)]="textSearch" placeholder="Type here to search..." />
     </div>
-    <div class="col-md-4 pull-right">
+    <div class="col-md-4 align-right pull-right">
       <button type="button" class="btn btn-sm btn-primary" (click)="clearForm()" data-toggle="modal"
         data-target="#addCredit">
         <i class="fas fa-plus"></i> {{appStrings['newCredit']}}
@@ -39,10 +39,10 @@
         <tr>
           <td>{{$index+1}}</td>
           <td>
-            {{data['date']}}
+            {{data['date'] | date:'dd-MM-yyyy'}}
           </td>
           <td>{{data['name']}}</td>
-          <td>{{data['creditAmount']}}</td>
+          <td>{{data['productPrice']}}</td>
           <td>{{data['paidAmount']}}</td>
           <td>{{data['remainingAmount']}}</td>
           <td>
@@ -90,12 +90,12 @@
             </div>
             <div class="col-md-6">
               <div class="form-group">
-                <label for="name">{{appStrings['buyerName']}} :</label>&nbsp;<i class="fa fa-asterisk"
+                <label for="name">{{appStrings['customerName']}} :</label>&nbsp;<i class="fa fa-asterisk"
                   style="color:red; font-size:10px;"></i>
-                <input type="text" class="form-control" formControlName="name" id="name" placeholder="name" min="0"
+                <input type="text" class="form-control" formControlName="name" id="name" placeholder="Customer name" min="0"
                   [ngClass]="{ 'is-invalid': submitted && f['name'].errors }" />
                 <div *ngIf="submitted && f['name'].errors" class="text-danger">
-                  <div *ngIf="f['name'].errors['required']"> {{appStrings['buyerNameWarningText']}}</div>
+                  <div *ngIf="f['name'].errors['required']"> {{appStrings['customerNameWarningText']}}</div>
                 </div>
               </div>
             </div>
@@ -104,13 +104,13 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="creditAmount">{{appStrings['creditAmount']}} :</label>&nbsp;<i class="fa fa-asterisk"
+                <label for="productPrice">{{appStrings['productPrice']}} :</label>&nbsp;<i class="fa fa-asterisk"
                   style="color:red; font-size:10px;"></i>
-                <input type="number" class="form-control" formControlName="creditAmount" id="creditAmount"
-                  placeholder="Credit amount" min="0"
-                  [ngClass]="{ 'is-invalid': submitted && f['creditAmount'].errors }" />
-                <div *ngIf="submitted && f['creditAmount'].errors" class="text-danger">
-                  <div *ngIf="f['creditAmount'].errors['required']"> {{appStrings['creditAmountText']}}</div>
+                <input type="number" class="form-control" formControlName="productPrice" id="productPrice"
+                  placeholder="Product price" min="0"
+                  [ngClass]="{ 'is-invalid': submitted && f['productPrice'].errors }" />
+                <div *ngIf="submitted && f['productPrice'].errors" class="text-danger">
+                  <div *ngIf="f['productPrice'].errors['required']"> {{appStrings['productPriceText']}}</div>
                 </div>
               </div>
             </div>
@@ -133,7 +133,7 @@
                   style="color:red; font-size:10px;"></i>
                 <input type="number" class="form-control" formControlName="remainingAmount" id="remainingAmount"
                   placeholder="Remaining amount" min="0"
-                  [ngClass]="{ 'is-invalid': submitted && f['remainingAmount'].errors }" />
+                  [ngClass]="{ 'is-invalid': submitted && f['remainingAmount'].errors }" readonly="true"/>
                 <div *ngIf="submitted && f['remainingAmount'].errors" class="text-danger">
                   <div *ngIf="f['remainingAmount'].errors['required']"> {{appStrings['remainingAmountWarningText']}}
                   </div>

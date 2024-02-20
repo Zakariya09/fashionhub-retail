@@ -14,6 +14,27 @@ export class AppConstants {
     ];
 
     CREDIT_GRID_COLUMNS: string[] = [
-        '#', 'Date', 'Buyer Name', 'Credit Amount', 'Paid Amount', 'Remaining Amount', 'Action'
+        '#', 'Date', 'Customer Name', 'Product Price', 'Paid Amount', 'Remaining Amount', 'Action'
     ];
+
+    RECEIPT_GRID_COLUMNS: string[] = [
+        '#', 'Receipt Date', 'Customer Name', 'Receipt Amount', 'Action'
+    ];
+
+    RECEIPT_PRINT_GRID_COLUMNS: string[] = [
+        'Sr. No.', 'Particulars', 'Qty.', 'Rate', 'Taxable Amount', 'GST (%)', 'CGST Amount', 'SGST Amount', 'IGST Amount', 'TOTAL'
+    ];
+
+    RECEIPT_INVOICE_COLUMNS: string[] = ['#',
+        'Product',
+        'Quantity',
+        'Rate',
+        'Taxable Amount',
+        'GST (%)',
+        'CGST',
+        'SGST',
+        'IGST',
+        'Total',
+        'Action'
+    ]
 }

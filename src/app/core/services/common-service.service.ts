@@ -91,11 +91,22 @@ export class CommonServiceService {
     return this.http.delete(this.baseUrl + 'receipt/' + id);
   }
 
-
-
+  /**
+   * 
+   * @returns 
+   */
   getProducts() {
-    return this.http.get(this.baseUrl + 'products');
+    return this.http.get<ImportModel>(`${this.baseUrl}products.json`)?.pipe(map((resp: any) => {
+      const importsArr: ImportModel[] = [];
+      for (const key in resp) {
+        if (resp.hasOwnProperty(key)) {
+          importsArr.push({ id: key, ...resp[key] })
+        }
+      }
+      return importsArr;
+    }))
   }
+
 
   //Delete Product
   deleteProduct(id: any) {
@@ -180,11 +191,11 @@ export class CommonServiceService {
     return this.http.delete(`${this.baseUrl}sales/${id}.json`)
   }
 
-   /**
-   * 
-   * @returns 
-   */
-   getCredits() {
+  /**
+  * 
+  * @returns 
+  */
+  getCredits() {
     return this.http.get<CreditModel>(`${this.baseUrl}credits.json`)?.pipe(map((resp: any) => {
       const crediitsArr: CreditModel[] = [];
       for (const key in resp) {
@@ -196,26 +207,26 @@ export class CommonServiceService {
     }))
   }
 
- /**
-   * 
-   * @param saleData 
-   * @param isUpdate 
-   * @returns 
-   */
- saveCredit(creaditData: CreditModel, isUpdate: boolean) {
-  if (isUpdate) {
-    return this.http.put(`${this.baseUrl}credits/${creaditData?.id}.json`, creaditData)
-  } else {
-    return this.http.post<CreditModel>(`${this.baseUrl}credits.json`, creaditData);
+  /**
+    * 
+    * @param saleData 
+    * @param isUpdate 
+    * @returns 
+    */
+  saveCredit(creaditData: CreditModel, isUpdate: boolean) {
+    if (isUpdate) {
+      return this.http.put(`${this.baseUrl}credits/${creaditData?.id}.json`, creaditData)
+    } else {
+      return this.http.post<CreditModel>(`${this.baseUrl}credits.json`, creaditData);
+    }
   }
-}
 
-   /**
-   * 
-   * @param id 
-   * @returns 
-   */
-   deleteCredit(id: any) {
+  /**
+  * 
+  * @param id 
+  * @returns 
+  */
+  deleteCredit(id: any) {
     return this.http.delete(`${this.baseUrl}credits/${id}.json`)
   }
 
