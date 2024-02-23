@@ -1,14 +1,13 @@
-<link rel="stylesheet" href="https://unpkg.com/ngx-bootstrap/datepicker/bs-datepicker.css">
 <section class="content-header card">
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1>Manage Product</h1>
+        <h1>{{appStrings['manageProduct']}}</h1>
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="#">Home</a></li>
-          <li class="breadcrumb-item active">Manage Product</li>
+          <li class="breadcrumb-item"><a href="#">{{appStrings['home']}}</a></li>
+          <li class="breadcrumb-item active">{{appStrings['manageProduct']}}</li>
         </ol>
       </div>
     </div>
@@ -17,113 +16,139 @@
 <div class="container card">
   <div class="row">
     <div class="col-md-8">
-    <input type="text" class="form-control" [(ngModel)]="textSearch" placeholder="Type here to search..."/>
+      <input type="text" class="form-control" [(ngModel)]="textSearch"
+        placeholder="{{appStrings['filterPlaceholder']}}" />
+    </div>
+    <div class="col-md-4 pull-right">
+      <button type="button" class="btn btn-sm btn-primary " (click)="clearForm()" data-toggle="modal"
+        data-target="#addProduct">
+        <i class="fas fa-plus"></i> {{appStrings['newProduct']}}
+      </button>
+    </div>
   </div>
-  <div class="col-md-4 pull-right">
-    <button type="button" class="btn btn-sm btn-primary " (click)="clearForm()"  data-toggle="modal" data-target="#addProduct">
-      <i class="fas fa-plus"></i>  New Product
-    </button>
-  </div>
-  </div>
-<table class="table table-bordered table-striped">
-  <thead class="gradient">
-    <tr>
-      <th>#</th>
-      <th>Name</th>
-      <th>Price</th>
-      <th>Image</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody>
- <!-- <tr *ngFor="let item of products| filter: textSearch | paginate: { itemsPerPage: 5, currentPage: p }; let i = index "> -->
-  <tr *ngFor="let item of products ;let i = index ">
-   <td>{{i+1}}</td>
-  <td>
-  {{item?.name}}
-</td>
-<td>{{item?.price}}</td>
-  <td>
-    <img src="{{item.url}}{{item.productImage}}" alt="product image" style="width: 120px;height: 120px;">
-  </td>
-<td>
-  <!-- <i class="fas fa-edit text-primary cursor" (click)="editProduct(item)" data-toggle="modal" data-target="#addProduct"></i> &nbsp; -->
-  <i class="fas fa-trash text-danger cursor" (click)="delete(item.$key)"></i>
-</td>
- </tr>
-  </tbody>
-</table>
-<!-- <pagination-controls (pageChange)="p = $event"></pagination-controls> -->
+  <table class="table table-bordered table-striped">
+    <thead class="gradient">
+      <tr>
+        @for (column of PRODUCT_GRID_COLUMNS; track $index) {
+        <th>{{column}}</th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of products | filter: textSearch | paginate: { itemsPerPage: 10, currentPage: p } ; track $index ) {
+      <tr>
+        <td>{{$index+1}}</td>
+        <td>
+          {{item?.name}}
+        </td>
+        <td>{{item?.price}}</td>
+        <td>
+          <img src="{{item.url}}{{item.productImage}}" alt="product image" style="width: 120px;height: 120px;">
+        </td>
+        <td>
+          <i class="fas fa-edit text-primary cursor" (click)="editProduct(item)" data-toggle="modal"
+            data-target="#addProduct"></i> &nbsp;
+          <i class="fas fa-trash text-danger cursor" (click)="delete(item.$key)"></i>
+        </td>
+      </tr>
+      }@empty {
+      <tr>
+        <td colspan="5">
+          <h2 class="text-center text-danger">{{warningText}}</h2>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  <pagination-controls (pageChange)="p = $event"></pagination-controls>
 </div>
 
-<div class="modal fade" bsModal #addProduct  id="addProduct" data-keyboard="false" data-backdrop="static">
+<div class="modal fade" bsModal #addProduct id="addProduct" data-keyboard="false" data-backdrop="static">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header modal-head">
-        <h4 class="modal-title">Add Product</h4>
+        <h4 class="modal-title">{{isUpdate ? appStrings['updateProduct'] : appStrings['addProduct']}}</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <form  (ngSubmit)="upload()" role="form" [formGroup] = 'frmProduct' autocomplete="off" >
-        <div class="row">
-          <div class="col-md-12">
-            <div class="form-group">
-              <label for="productName">Name :</label>&nbsp;<i class="fa fa-asterisk" style="color:red; font-size:10px;"></i>
-              <input type="text" name="productName" class="form-control" formControlName="productName" id="productName" placeholder="Name" [ngClass]="{ 'is-invalid': submitted && f['productName'].errors }"/>
-              <div *ngIf="submitted && f['productName'].errors" class="text-danger">
-                <!-- <div *ngIf="f['productName']?.errors?.required"> Please enter product name.</div> -->
+        <form (ngSubmit)="upload()" role="form" [formGroup]='frmProduct' autocomplete="off">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="name">{{appStrings['name']}} :</label>&nbsp;<i class="fa fa-asterisk"
+                  style="color:red; font-size:10px;"></i>
+                <input type="text" name="name" class="form-control" formControlName="name" id="name"
+                  placeholder="{{appStrings['name']}}" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }" />
+                <div *ngIf="submitted && f['name'].errors" class="text-danger">
+                  <div *ngIf="f['name']?.errors?.['required']">{{appStrings['productNameWarningText']}}</div>
+                </div>
               </div>
-            </div>
             </div>
             <div class="col-md-12">
               <div class="form-group">
-                <label for="price">Price :</label>&nbsp;<i class="fa fa-asterisk" style="color:red; font-size:10px;"></i>
-                <input type="number" class="form-control" formControlName="price" id="price" placeholder="Price" [ngClass]="{ 'is-invalid': submitted && f['price'].errors }" />
+                <label for="price">{{appStrings['price']}} :</label>&nbsp;<i class="fa fa-asterisk"
+                  style="color:red; font-size:10px;"></i>
+                <input type="number" class="form-control" formControlName="price" id="price"
+                  placeholder="{{appStrings['price']}}" [ngClass]="{ 'is-invalid': submitted && f['price'].errors }" />
                 <div *ngIf="submitted && f['price'].errors" class="text-danger">
-                  <!-- <div *ngIf="f['price'].errors?.required"> Please enter price.</div> -->
+                  <div *ngIf="f['price'].errors?.['required']"> {{appStrings['priceWarningText']}}</div>
                 </div>
               </div>
+            </div>
+            <div class="col-md-12">
+              <div *ngIf="currentFileUpload" class="progress">
+                <div class="progress-bar progress-bar-info progress-bar-striped" role="progressbar"
+                  attr.aria-valuenow="{{percentage}}" aria-valuemin="0" aria-valuemax="100"
+                  [ngStyle]="{width:percentage+'%'}">
+                  {{percentage}}%</div>
               </div>
-              <!-- <div class="col-md-12">
-                <div class="form-group">
-                  <label for="file">Image :</label>&nbsp;<i class="fa fa-asterisk" style="color:red; font-size:10px;"></i>
-                  <input type="file" class="form-control" formControlName="productImage" id="file" placeholder="file" (change)="onFileSelected($event)"  [ngClass]="{ 'is-invalid': submitted && f.productImage.errors }"/>
-                  <div *ngIf="submitted && f.productImage.errors" class="text-danger">
-                    <div *ngIf="f.productImage.errors.required"> Please select file.</div>
-                  </div>
-                </div>
-                </div> -->
-                <div class="col-md-12">
-                  <div *ngIf="currentFileUpload" class="progress">
-                    <div class="progress-bar progress-bar-info progress-bar-striped"
-                      role="progressbar" attr.aria-valuenow="{{percentage}}"
-                      aria-valuemin="0" aria-valuemax="100"
-                      [ngStyle]="{width:percentage+'%'}">
-                      {{percentage}}%</div>
-                  </div>
-                  <div class="for-group">
-                    <label for="file">Select Image :</label>&nbsp;<i class="fa fa-asterisk" style="color:red; font-size:10px;"></i>
-                  <input type="file"
-                    (change)="onFileSelected($event)" class="form-control" id="file" formControlName="productImage" [ngClass]="{ 'is-invalid': submitted && f['productImage'].errors }">
-                    <div *ngIf="submitted && f['productImage'].errors" class="text-danger">
-                      <!-- <div *ngIf="f['productImage'].errors.required"> Please select file.</div> -->
-                    </div>
-                  </div>
+              <div class="for-group">
+                <label for="file">{{appStrings['selectImage']}} :</label>&nbsp;<i class="fa fa-asterisk"
+                  style="color:red; font-size:10px;"></i>
+                <input type="file" (change)="onFileSelected($event)" class="form-control" id="file"
+                  formControlName="productImage" [ngClass]="{ 'is-invalid': submitted && f['productImage'].errors }">
+                <div *ngIf="submitted && f['productImage'].errors" class="text-danger">
+                  <div *ngIf="f['productImage'].errors['required']"> {{appStrings['selectImageWarningText']}}</div>
                 </div>
               </div>
-                <div class="modal-footer ">
-                  <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Save</button>
-                  <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fas fa-times"></i> Close</button>
-                </div>
-          <!-- /.card-body -->
+            </div>
+          </div>
+          @if (isUpdate) {
+          <!-- <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-4">
+              <p>Product Image</p>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-4">
+              <img src="{{selectedProduct.productImage}}" alt="product image" style="width: 120px;height: 120px;">
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-4">
+              <i class="fas fa-trash text-danger cursor" (click)="deleteProductImage(selectedProduct)"></i>
+            </div>
+          </div> -->
+
+          <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 align-center">
+              <img src="{{selectedProduct.productImage}}" alt="product image" class="product-image" >
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-12 align-center">
+              <p>({{selectedProduct.name}})</p>
+              <p class="cursor delete-image-action" (click)="deleteProductImage(selectedProduct)">Remove Image</p>
+
+            </div>
+          </div>
+          }
+          <div class="modal-footer ">
+            <button type="submit" class="btn btn-primary btn-sm" [disabled]="frmProduct.invalid"><i
+                class="fas fa-save"></i>
+              {{appStrings['save']}}</button>
+            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fas fa-times"></i>
+              {{appStrings['close']}}</button>
+          </div>
         </form>
       </div>
 
     </div>
-    <!-- /.modal-content -->
   </div>
-  <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->

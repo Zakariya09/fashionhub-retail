@@ -76,5 +76,17 @@ export class AppStrings {
         quantity: 'Quantity',
         rate: 'Rate',
         add: 'Add',
+        receiptWarningText:'Please enter receipt name.',
+        optionPlaceholder:'Please select option',
+        manageProduct:'Manage Product',
+        newProduct:'New Product',
+        addProduct:'Add Product',
+        updateProduct:'Update Product',
+        productNameWarningText:' Please enter product name.',
+        price:'Price',
+        priceWarningText:'Please enter price.',
+        selectImage:'Select Image',
+        selectImageWarningText:'Please select file.',
+        save:'Save',
     }
 }

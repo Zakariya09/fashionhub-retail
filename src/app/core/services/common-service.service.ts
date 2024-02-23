@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
@@ -7,6 +7,8 @@ import { ConfirmModalModel } from '../../common/confirm-modal/confirm-modal.comp
 import { Loader } from '../../common/loader/loader.component';
 import { SaleModel } from '../../models/sale.model';
 import { CreditModel } from '../../models/credit.model';
+import { Firestore } from '@angular/fire/firestore';
+import { ProductModel } from '../../models/product.model';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +18,7 @@ export class CommonServiceService {
   $alertSubject = new Subject();
   $confirmSubject = new Subject<ConfirmModalModel>();
   $loaderSubject = new Subject<Loader>();
+  firestore = inject(Firestore);
 
   constructor(
     private http: HttpClient,
@@ -23,30 +26,8 @@ export class CommonServiceService {
   private baseUrl = 'https://fashionhub-retail-default-rtdb.firebaseio.com/';
   private basePath = '/products';
 
-
   //Upload Fire Storage Doc
-  pushFileToStorage(fileUpload: any, data: any): Observable<number> {
-    const filePath = `${this.basePath}/${fileUpload.file.name}`;
-    // const storageRef = this.storage.ref(filePath);
-    // const uploadTask = this.storage.upload(filePath, fileUpload.file);
-
-    // uploadTask.snapshotChanges().pipe(
-    //   finalize(() => {
-    //     storageRef.getDownloadURL().subscribe(downloadURL => {
-    //       this.toastr.successToastr('File Uploaded Successfully!', 'Success',{showCloseButton: true});
-    //       fileUpload.url = downloadURL;
-    //       fileUpload.name = fileUpload.file.name;
-    //       fileUpload.price = data.price;
-    //       fileUpload.productName = data.productName;
-    //       this.saveFileData(fileUpload);
-    //     });
-    //   })
-    //   ).subscribe();
-    //   return uploadTask.percentageChanges();
-
-    return new Observable();
-  }
-
+ 
 
   //Push File to the Doc
   private saveFileData(fileUpload: any) {
@@ -64,11 +45,6 @@ export class CommonServiceService {
     // this.documentsList = this.firebase.list('products');
     // return this.documentsList.snapshotChanges();
     return new Observable();
-  }
-
-  //POST Product
-  saveProduct(product: any) {
-    return this.http.post(this.baseUrl + 'products/', product);
   }
 
   //POST Product
@@ -96,17 +72,30 @@ export class CommonServiceService {
    * @returns 
    */
   getProducts() {
-    return this.http.get<ImportModel>(`${this.baseUrl}products.json`)?.pipe(map((resp: any) => {
-      const importsArr: ImportModel[] = [];
+    return this.http.get<ProductModel>(`${this.baseUrl}products.json`)?.pipe(map((resp: any) => {
+      const importsArr: ProductModel[] = [];
       for (const key in resp) {
         if (resp.hasOwnProperty(key)) {
-          importsArr.push({ id: key, ...resp[key] })
+          importsArr.push({ id: key, ...resp[key] });
         }
       }
       return importsArr;
     }))
   }
 
+  /**
+   * 
+   * @param productData 
+   * @param isUpdate 
+   * @returns 
+   */
+  saveProduct(productData: ProductModel, isUpdate: boolean) {
+    if (isUpdate) {
+      return this.http.put(`${this.baseUrl}products/${productData?.id}.json`, productData)
+    } else {
+      return this.http.post<ProductModel>(`${this.baseUrl}products.json`, productData);
+    }
+  }
 
   //Delete Product
   deleteProduct(id: any) {

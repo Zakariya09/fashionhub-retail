@@ -1,0 +1,9 @@
+{
+  "hosting": [
+    {
+      "target": "fashionhub-retail",
+      "source": ".",
+      "frameworksBackend": {}
+    }
+  ]
+}

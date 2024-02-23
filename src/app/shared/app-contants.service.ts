@@ -36,5 +36,9 @@ export class AppConstants {
         'IGST',
         'Total',
         'Action'
-    ]
+    ];
+
+    PRODUCT_GRID_COLUMNS: string[] = [
+        '#', 'Name', 'Price', 'Image', 'Action'
+    ];
 }

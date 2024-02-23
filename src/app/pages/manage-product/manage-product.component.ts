@@ -1,11 +1,15 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProductModel } from '../../models/product.model';
 import { CommonServiceService } from '../../core/services/common-service.service';
-import { FileUpload } from '../../models/fileupload.model';
+import { Subject, takeUntil } from 'rxjs';
+import { AppConstants } from '../../shared/app-contants.service';
+import { AppStrings } from '../../shared/app-strings.service';
+import { AppUtilityService } from '../../core/services/app-utility.service';
+import { Firestore } from '@angular/fire/firestore';
 declare var jQuery: any;
-
+import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
 @Component({
   selector: 'app-manage-product',
   templateUrl: './manage-product.component.html',
@@ -13,199 +17,204 @@ declare var jQuery: any;
 })
 export class ManageProductComponent implements OnInit {
   frmProduct!: FormGroup;
-  dir = 'http://localhost:3000/';
-  product!: ProductModel;
-  subscription: any;
-  p =1;
+  p = 1;
   submitted = false;
-  textSearch = '';
-  products!:any [];
+  products!: any[];
   selectedFile!: FileList;
-  selectedFiles!: FileList;
-  percentage!: number;
-  currentFileUpload:any;
-  productDetails!:{};
-  // @ViewChild('addProduct', {static: false}) public addProduct: ModalDirective;
+  percentage: number = 0;
+  currentFileUpload: boolean = false;
+  productDetails!: ProductModel;
+  textSearch: string = '';
+  isUpdate!: boolean;
+  subscription = new Subject();
+  warningText: string = '';
+  appStrings: any;
+  PRODUCT_GRID_COLUMNS: string[] = [];
+  firestore = inject(Firestore);
+  selectedProduct!: ProductModel;
 
-  constructor(private commonService: CommonServiceService, private formBuilder: FormBuilder) { }
+  constructor(
+    private commonService: CommonServiceService,
+    private formBuilder: FormBuilder,
+    private appConstants: AppConstants,
+    private appStringsService: AppStrings,
+    private utilityService: AppUtilityService
+  ) { }
 
   ngOnInit() {
-    this.frmProduct =  this.formBuilder.group({
-      $key: [0],
-      productName: [, ],
+    this.frmProduct = this.formBuilder.group({
+      id: [],
+      name: [, Validators.required],
       price: [, Validators.required],
       productImage: [, Validators.required]
-    })
+    });
+    this.PRODUCT_GRID_COLUMNS = this.appConstants.PRODUCT_GRID_COLUMNS;
+    this.appStrings = this.appStringsService.appStrings;
     this.getProducts();
   }
 
-  // save project data
-  onSubmit() {
-    const payload = new FormData();
-    payload.append('name', this.frmProduct?.get('name')?.value);
-    payload.append('price', this.frmProduct?.get('price')?.value);
-    // payload.append('productImage', this.selectedFile, this.selectedFile.name);
-
+  /**
+   * upload image and save product data
+   */
+  upload() {
     this.submitted = true;
 
-    // stop here if form is invalid
-    if (this.frmProduct.invalid) {
-      // // this.toaster.warningToastr('Please enter mendatory fields.', 'Invalid!', {showCloseButton: true});
-      return;
-    }
-    this.subscription = this.commonService.saveProduct(payload).subscribe((response: any) => {
-      if (response.status) {
-        // this.toaster.successToastr('Product saved successfully. ', 'Success!',{showCloseButton: true});
-        jQuery('#addProduct').modal('hide');
-        this.getProducts();
-      } else {
-        // this.toaster.errorToastr(response.message, 'Oops!',{showCloseButton: true});
+    const file: any = this.selectedFile?.item(0);
+    this.productDetails = this.frmProduct.value;
+    this.currentFileUpload = true;
+
+    console.log(this.productDetails);
+
+    const storage = getStorage();
+    const storageRef = ref(storage, `products/${file?.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on('state_changed',
+      (snapshot) => {
+        this.percentage = Math.trunc((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+
+        switch (snapshot.state) {
+          case 'paused':
+            console.log('Upload is paused');
+            break;
+          case 'running':
+            console.log('Upload is running');
+            break;
+        }
+      },
+      (error) => {
+        console.log('error here...')
+        this.currentFileUpload = false;
+        this.commonService.$alertSubject?.next({
+          type: 'danger',
+          showAlert: true,
+          message: this.utilityService.getErrorText(error?.message)
+        });
+      },
+      () => {
+        this.f['productImage'].setValue(null);
+        this.currentFileUpload = false;
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          console.log('File available at', downloadURL);
+          this.productDetails.productImage = downloadURL;
+          this.saveProduct();
+        });
       }
+    );
+  }
+
+  /**
+   * save product data
+   */
+  saveProduct(): void {
+    this.commonService.$loaderSubject?.next({ showLoader: true });
+    this.commonService.saveProduct(this.productDetails, this.isUpdate)?.pipe(takeUntil(this.subscription)).subscribe(() => {
+      this.getProducts();
+      this.commonService.$loaderSubject?.next({ showLoader: false });
+      this.isUpdate = false;
+      jQuery('#addProduct').modal('hide');
     }, (error: HttpErrorResponse) => {
-      // this.toaster.errorToastr('Error while saving product!', 'Oops!',{showCloseButton: true});
-      return;
+      console.log('error text')
+      console.log(error)
+      this.commonService.$loaderSubject?.next({ showLoader: false });
+      this.commonService.$alertSubject?.next({
+        type: 'danger',
+        showAlert: true,
+        message: this.utilityService.getErrorText(error?.message)
+      });
     });
   }
+
   get f() { return this.frmProduct.controls; }
 
-  //GET products
-  // getProducts(){
-  //   this.commonService.getProducts().subscribe((response : any)=>{
-  //     if (response.status) {
-  //       this.products = response.products;
-  //     }else {
-  // //       this.toaster.errorToastr('No product found!.', 'Oops!',{showCloseButton: true});
-  //     }
-  //   }, (error: HttpErrorResponse) => {
-  // //     this.toaster.errorToastr('No product found!.', 'Oops!',{showCloseButton: true});
-  //     return;
-  //   });
-  // }
-
-  editProduct(data: ProductModel){
-    //  data.productImage = data.productImage.slice(7);
-    this.frmProduct?.controls['name'].setValue(data.name);
-    this.frmProduct?.controls['price'].setValue(data.price);
-    this.frmProduct?.controls['productImage'].patchValue(data.productImage);
-    this.frmProduct?.controls['_id'].setValue(data._id);
+  getProducts(): void {
+    this.warningText = 'Loading Data...';
+    this.commonService.getProducts().pipe(takeUntil(this.subscription)).subscribe((response: ProductModel[]) => {
+      this.products = response;
+      console.log('this.products');
+      console.log(this.products);
+      this.warningText = 'No Data Found!';
+    }, (error: HttpErrorResponse) => {
+      console.log('error text')
+      console.log(error)
+      this.warningText = 'No Data Found!';
+      this.commonService.$alertSubject?.next({
+        type: 'danger',
+        showAlert: true,
+        message: this.utilityService.getErrorText(error?.message)
+      });
+    });
   }
 
-  //Delete Product
-  // deleteProduct(id){
-  //   Swal.fire({
-  //     title: 'Are you sure?',
-  //     text: 'You will not be able to recover this record!',
-  //     icon: 'warning',
-  //     showCancelButton: true,
-  //     cancelButtonColor: '#d33',
-  //     confirmButtonText: 'Delete',
-  //     cancelButtonText: 'Cancel'
-  //   })
-  //   .then((result) => {
-  //     if (result.value) {
-  //       this.commonService.deleteProduct(id).subscribe((response : any)=>{
-  //         if (response.status) {
-  // //           this.toaster.successToastr('Deleted successfully. ', 'Success!',{showCloseButton: true});
-  //           this.getProducts();
 
-  //         }else {
-  // //           this.toaster.errorToastr('Error while deleting import.', 'Oops!',{showCloseButton: true});
-  //         }
-  //       }, (error: HttpErrorResponse) => {
-  // //         this.toaster.errorToastr('Error while deleting import.', 'Oops!',{showCloseButton: true});
-  //         return;
-  //       });
-  //     }});
+  editProduct(data: ProductModel) {
+    this.isUpdate = true;
+    this.frmProduct.reset();
+    this.frmProduct.get('name')?.setValue(data.name);
+    this.frmProduct.get('id')?.setValue(data.id);
+    this.frmProduct.get('price')?.setValue(data.price);
+    this.selectedProduct = JSON.parse(JSON.stringify(data));
+    // delete data.productImage;
+    // this.frmProduct.patchValue(data);
+  }
 
-  //   }
-    //Image assignment
-    onFileSelected(event:any) {
-      this.selectedFile = event.target.files;
-    }
-    // clear form value
-    clearForm() {
-      this.frmProduct.reset();
-      this.submitted = false;
-    }
+  //Image assignment
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files;
+  }
+  // clear form value
+  clearForm() {
+    this.frmProduct.reset();
+    this.submitted = false;
+  }
 
-    //Upload Images
-    upload() {
-      const file = this.selectedFile?.item(0);
-     this.productDetails = this.frmProduct.value;
-      console.log('productDetails');
-      console.log(this.productDetails);
-      // this.selectedFile = undefined;
-      // this.currentFileUpload = new FileUpload(file);
-      this.commonService.pushFileToStorage(this.currentFileUpload,this.productDetails ).subscribe(
-        percentage => {
-          this.percentage = Math.round(percentage);
-          if(this.percentage == 100){
-            jQuery('#addProduct').modal('hide');
-          }
-        },
-        error => {
-          console.log(error);
-        }
-        );
-      }
 
-      //GET Produsct
-      getProducts() {
-        this.subscription = this.commonService.getDocuments(
-          ).subscribe((response: any) => {
-            if (response) {
-              this.products = response.map((item:any, index:any)=>{
-                return {
-                  $key: item.key,
-                  ...item.payload.val(),
-                  index : index
-                }
-              });
-console.log('this.products');
-console.log(this.products);
+  deleteProductImage(product: ProductModel) {
 
-            } else {
-              // this.toaster.errorToastr(response.message, 'Oops!', {showCloseButton: true});
-              // if (!this.check) {
-              //   this.dtTrigger.next();
-              //   this.check = true;
-              // } else {
-              //   this.rerender();
-              // }
-            }
-          }, (error: HttpErrorResponse) => {
-            // this.toaster.errorToastr(error.error.message, 'Oops!',{showCloseButton: true});
-            // if (!this.check) {
-            //   this.dtTrigger.next();
-            //   this.check = true;
-            // } else {
-            //   this.rerender();
-            // }
-            return;
-          });
-        }
+    const storage = getStorage();
 
-        //Delete Document
-        delete(id:any) {
-          // Swal.fire({
-          //   title: "Are you sure?",
-          //   text: "You will not be able to recover this record!",
-          //   icon: "warning",
-          //   showCancelButton: true,
-          //   cancelButtonColor: "#d33",
-          //   confirmButtonText: "Delete",
-          //   cancelButtonText: "Cancel",
-          // }).then((result) => {
-          //   if (result.value) {
-          //     let response =   this.commonService.deleteDocument(id)
-          //     if(response){
-          //       Swal.fire("Deleted!", "Record has been deleted.", "success");
-          //       this.getProducts();
-          //     }else {
-          //       // this.toaster.errorToastr('Error while deleting client', "Oops!", {
-          //         showCloseButton: true,
-          //       });
-              }
+    // Create a reference to the file to delete
+    const desertRef = ref(storage, product.productImage);
 
-            }
-        
+    // Delete the file
+    deleteObject(desertRef).then(() => {
+      jQuery('#addProduct').modal('hide');
+      this.getProducts();
+    }).catch((error) => {
+      console.log('error text')
+      console.log(error)
+      this.commonService.$alertSubject?.next({
+        type: 'danger',
+        showAlert: true,
+        message: this.utilityService.getErrorText(error?.message)
+      });
+    });
+
+
+    console.log('product');
+    console.log(product);
+  }
+  //Delete Document
+  delete(id: any) {
+    // Swal.fire({
+    //   title: "Are you sure?",
+    //   text: "You will not be able to recover this record!",
+    //   icon: "warning",
+    //   showCancelButton: true,
+    //   cancelButtonColor: "#d33",
+    //   confirmButtonText: "Delete",
+    //   cancelButtonText: "Cancel",
+    // }).then((result) => {
+    //   if (result.value) {
+    //     let response =   this.commonService.deleteDocument(id)
+    //     if(response){
+    //       Swal.fire("Deleted!", "Record has been deleted.", "success");
+    //       this.getProducts();
+    //     }else {
+    //       // this.toaster.errorToastr('Error while deleting client', "Oops!", {
+    //         showCloseButton: true,
+    //       });
+  }
+
+}
+

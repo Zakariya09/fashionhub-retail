@@ -129,6 +129,23 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {
+            "version": 2
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "fashionhub-retail:build:production",
+              "serveTarget": "fashionhub-retail:serve:production"
+            },
+            "development": {
+              "buildTarget": "fashionhub-retail:build:development",
+              "serveTarget": "fashionhub-retail:serve:development"
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }

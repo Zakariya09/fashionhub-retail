@@ -1,6 +1,6 @@
 export interface ProductModel{
-  _id: Number
-  name: String,
-  price: Number,
-  productImage: String
+  id: number
+  name: string,
+  price: number,
+  productImage: string
 }

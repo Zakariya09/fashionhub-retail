@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "fashionhub-retail": {
+      "hosting": {
+        "fashionhub-retail": [
+          "fashionhub-retail"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "fashionhub-retail"
+  }
+}

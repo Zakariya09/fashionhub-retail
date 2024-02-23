@@ -1,16 +1,49 @@
-.container{
+.container {
   padding: 15px;
 }
-.row{
+
+.row {
   margin: 5px;
 }
-.gradient{
+
+.gradient {
   background: linear-gradient(to top, #901962e0, #FF0099);
   color: white;
-  }
-.modal-head{
+}
+
+.modal-head {
   color: whitesmoke;
-  background: #FF0099;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, #493240, #FF0099);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to right, #493240, #FF0099); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: #FF0099;
+  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #493240, #FF0099);
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #493240, #FF0099);
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.align-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.delete-image-action {
+  color: blue;
+
+  &:hover {
+    font-weight: 500;
+    color: blue;
+    text-decoration: underline;
+  }
+}
+
+.product-image {
+  width: 120px;
+  height: 120px;
+  margin-top: 12px;
+}
+
+p {
+  margin-bottom: 0px;
 }
