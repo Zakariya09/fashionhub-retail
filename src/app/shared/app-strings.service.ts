@@ -88,5 +88,6 @@ export class AppStrings {
         selectImage:'Select Image',
         selectImageWarningText:'Please select file.',
         save:'Save',
+        removeImage:'Remove Image',
     }
 }

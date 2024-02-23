@@ -48,7 +48,7 @@
         <td>
           <i class="fas fa-edit text-primary cursor" (click)="editProduct(item)" data-toggle="modal"
             data-target="#addProduct"></i> &nbsp;
-          <i class="fas fa-trash text-danger cursor" (click)="delete(item.$key)"></i>
+          <i class="fas fa-trash text-danger cursor" (click)="confirmDelete(item, 'record')"></i>
         </td>
       </tr>
       }@empty {
@@ -115,27 +115,15 @@
               </div>
             </div>
           </div>
-          @if (isUpdate) {
-          <!-- <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-4">
-              <p>Product Image</p>
-            </div>
-            <div class="col-xs-12 col-sm-12 col-md-4">
-              <img src="{{selectedProduct.productImage}}" alt="product image" style="width: 120px;height: 120px;">
-            </div>
-            <div class="col-xs-12 col-sm-12 col-md-4">
-              <i class="fas fa-trash text-danger cursor" (click)="deleteProductImage(selectedProduct)"></i>
-            </div>
-          </div> -->
-
+          @if (isUpdate && selectedProduct.productImage) {
           <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12 align-center">
-              <img src="{{selectedProduct.productImage}}" alt="product image" class="product-image" >
+              <img src="{{selectedProduct.productImage}}" alt="product image" class="product-image">
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12 align-center">
               <p>({{selectedProduct.name}})</p>
-              <p class="cursor delete-image-action" (click)="deleteProductImage(selectedProduct)">Remove Image</p>
-
+              <p class="cursor delete-image-action" (click)="confirmDelete(selectedProduct, 'file')">
+                {{appStrings['removeImage']}}</p>
             </div>
           </div>
           }
@@ -148,7 +136,8 @@
           </div>
         </form>
       </div>
-
     </div>
   </div>
 </div>
+
+<app-confirm-modal [module]="'Import'" (onConfirmCallback)="deleteProductImage()"></app-confirm-modal>

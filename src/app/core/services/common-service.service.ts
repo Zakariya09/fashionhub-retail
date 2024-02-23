@@ -27,7 +27,7 @@ export class CommonServiceService {
   private basePath = '/products';
 
   //Upload Fire Storage Doc
- 
+
 
   //Push File to the Doc
   private saveFileData(fileUpload: any) {
@@ -97,9 +97,13 @@ export class CommonServiceService {
     }
   }
 
-  //Delete Product
+  /**
+  * 
+  * @param id 
+  * @returns 
+  */
   deleteProduct(id: any) {
-    return this.http.delete(this.baseUrl + 'products/' + id);
+    return this.http.delete(`${this.baseUrl}products/${id}.json`)
   }
 
   /**

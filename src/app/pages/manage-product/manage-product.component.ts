@@ -23,7 +23,6 @@ export class ManageProductComponent implements OnInit {
   selectedFile!: FileList;
   percentage: number = 0;
   currentFileUpload: boolean = false;
-  productDetails!: ProductModel;
   textSearch: string = '';
   isUpdate!: boolean;
   subscription = new Subject();
@@ -32,7 +31,7 @@ export class ManageProductComponent implements OnInit {
   PRODUCT_GRID_COLUMNS: string[] = [];
   firestore = inject(Firestore);
   selectedProduct!: ProductModel;
-
+  isRecordDelete: boolean = false;
   constructor(
     private commonService: CommonServiceService,
     private formBuilder: FormBuilder,
@@ -60,10 +59,9 @@ export class ManageProductComponent implements OnInit {
     this.submitted = true;
 
     const file: any = this.selectedFile?.item(0);
-    this.productDetails = this.frmProduct.value;
+    this.selectedProduct = this.frmProduct.value;
     this.currentFileUpload = true;
 
-    console.log(this.productDetails);
 
     const storage = getStorage();
     const storageRef = ref(storage, `products/${file?.name}`);
@@ -96,7 +94,7 @@ export class ManageProductComponent implements OnInit {
         this.currentFileUpload = false;
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           console.log('File available at', downloadURL);
-          this.productDetails.productImage = downloadURL;
+          this.selectedProduct.productImage = downloadURL;
           this.saveProduct();
         });
       }
@@ -108,7 +106,7 @@ export class ManageProductComponent implements OnInit {
    */
   saveProduct(): void {
     this.commonService.$loaderSubject?.next({ showLoader: true });
-    this.commonService.saveProduct(this.productDetails, this.isUpdate)?.pipe(takeUntil(this.subscription)).subscribe(() => {
+    this.commonService.saveProduct(this.selectedProduct, this.isUpdate)?.pipe(takeUntil(this.subscription)).subscribe(() => {
       this.getProducts();
       this.commonService.$loaderSubject?.next({ showLoader: false });
       this.isUpdate = false;
@@ -148,14 +146,13 @@ export class ManageProductComponent implements OnInit {
 
 
   editProduct(data: ProductModel) {
+    this.isRecordDelete = false;
     this.isUpdate = true;
     this.frmProduct.reset();
     this.frmProduct.get('name')?.setValue(data.name);
     this.frmProduct.get('id')?.setValue(data.id);
     this.frmProduct.get('price')?.setValue(data.price);
-    this.selectedProduct = JSON.parse(JSON.stringify(data));
-    // delete data.productImage;
-    // this.frmProduct.patchValue(data);
+    this.selectedProduct = data;
   }
 
   //Image assignment
@@ -164,22 +161,30 @@ export class ManageProductComponent implements OnInit {
   }
   // clear form value
   clearForm() {
+    this.isUpdate = false;
     this.frmProduct.reset();
     this.submitted = false;
   }
 
 
-  deleteProductImage(product: ProductModel) {
+  deleteProductImage() {
+    this.commonService.$loaderSubject?.next({ showLoader: true });
 
+    this.isUpdate = true;
     const storage = getStorage();
 
     // Create a reference to the file to delete
-    const desertRef = ref(storage, product.productImage);
+    const desertRef = ref(storage, this.selectedProduct.productImage);
 
     // Delete the file
     deleteObject(desertRef).then(() => {
-      jQuery('#addProduct').modal('hide');
-      this.getProducts();
+      if (this.isRecordDelete) {
+        this.deleteProduct();
+      } else {
+        this.selectedProduct = this.frmProduct.value;
+        this.saveProduct();
+        this.commonService.$confirmSubject.next({ showModal: false });
+      }
     }).catch((error) => {
       console.log('error text')
       console.log(error)
@@ -189,32 +194,37 @@ export class ManageProductComponent implements OnInit {
         message: this.utilityService.getErrorText(error?.message)
       });
     });
-
-
     console.log('product');
-    console.log(product);
-  }
-  //Delete Document
-  delete(id: any) {
-    // Swal.fire({
-    //   title: "Are you sure?",
-    //   text: "You will not be able to recover this record!",
-    //   icon: "warning",
-    //   showCancelButton: true,
-    //   cancelButtonColor: "#d33",
-    //   confirmButtonText: "Delete",
-    //   cancelButtonText: "Cancel",
-    // }).then((result) => {
-    //   if (result.value) {
-    //     let response =   this.commonService.deleteDocument(id)
-    //     if(response){
-    //       Swal.fire("Deleted!", "Record has been deleted.", "success");
-    //       this.getProducts();
-    //     }else {
-    //       // this.toaster.errorToastr('Error while deleting client', "Oops!", {
-    //         showCloseButton: true,
-    //       });
   }
 
+  /**
+   * confirm delete popup
+   * @param data 
+   */
+  confirmDelete(data: ProductModel, mode: string) {
+    this.selectedProduct = data;
+    this.commonService.$confirmSubject.next({ showModal: true, type: 'delete' });
+    this.isRecordDelete = mode == 'record';
+  }
+
+  /**
+  * delete import record
+  */
+  deleteProduct() {
+    this.commonService.$loaderSubject?.next({ showLoader: true });
+    this.commonService.deleteProduct(this.selectedProduct?.id)?.pipe(takeUntil(this.subscription)).subscribe((response: any) => {
+      this.commonService.$confirmSubject.next({ showModal: false });
+      this.commonService.$loaderSubject?.next({ showLoader: false });
+      jQuery('#addProduct').modal('hide');
+      this.getProducts();
+    }, (error: HttpErrorResponse) => {
+      this.commonService.$loaderSubject?.next({ showLoader: false });
+      this.commonService.$alertSubject?.next({
+        type: 'danger',
+        showAlert: true,
+        message: this.utilityService.getErrorText(error?.message)
+      });
+    });
+  }
 }
 
