@@ -11,7 +11,7 @@
         </ol>
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
 </section>
 <div class="container card">
   <div class="row">
@@ -77,8 +77,7 @@
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
-                <label for="name">{{appStrings['name']}} :</label>&nbsp;<i class="fa fa-asterisk"
-                  style="color:red; font-size:10px;"></i>
+                <label for="name">{{appStrings['name']}} :</label>&nbsp;<i class="fa fa-asterisk f-required"></i>
                 <input type="text" name="name" class="form-control" formControlName="name" id="name"
                   placeholder="{{appStrings['name']}}" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }" />
                 <div *ngIf="submitted && f['name'].errors" class="text-danger">
@@ -88,8 +87,7 @@
             </div>
             <div class="col-md-12">
               <div class="form-group">
-                <label for="price">{{appStrings['price']}} :</label>&nbsp;<i class="fa fa-asterisk"
-                  style="color:red; font-size:10px;"></i>
+                <label for="price">{{appStrings['price']}} :</label>&nbsp;<i class="fa fa-asterisk f-required"></i>
                 <input type="number" class="form-control" formControlName="price" id="price"
                   placeholder="{{appStrings['price']}}" [ngClass]="{ 'is-invalid': submitted && f['price'].errors }" />
                 <div *ngIf="submitted && f['price'].errors" class="text-danger">
@@ -98,24 +96,25 @@
               </div>
             </div>
             <div class="col-md-12">
-              <div *ngIf="currentFileUpload" class="progress">
-                <div class="progress-bar progress-bar-info progress-bar-striped" role="progressbar"
-                  attr.aria-valuenow="{{percentage}}" aria-valuemin="0" aria-valuemax="100"
-                  [ngStyle]="{width:percentage+'%'}">
-                  {{percentage}}%</div>
-              </div>
               <div class="for-group">
-                <label for="file">{{appStrings['selectImage']}} :</label>&nbsp;<i class="fa fa-asterisk"
-                  style="color:red; font-size:10px;"></i>
+                <label for="file">{{appStrings['selectImage']}} :</label>&nbsp;
+                <i class="fa fa-asterisk f-required"></i>
                 <input type="file" (change)="onFileSelected($event)" class="form-control" id="file"
                   formControlName="productImage" [ngClass]="{ 'is-invalid': submitted && f['productImage'].errors }">
                 <div *ngIf="submitted && f['productImage'].errors" class="text-danger">
                   <div *ngIf="f['productImage'].errors['required']"> {{appStrings['selectImageWarningText']}}</div>
                 </div>
               </div>
+              <div *ngIf="currentFileUpload" class="progress">
+                <div class="progress-bar progress-bar-info progress-bar-striped"
+                  [ngClass]="percentage == 0 ? 'c-info' : null" role="progressbar" attr.aria-valuenow="{{percentage}}"
+                  aria-valuemin="0" aria-valuemax="100" [ngStyle]="{width:percentage+'%'}">
+                  {{percentage}}%
+                </div>
+              </div>
             </div>
           </div>
-          @if (isUpdate && selectedProduct.productImage) {
+          @if (isUpdate && selectedProduct.productImage && !selectedProduct.productImage.includes('C:')) {
           <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12 align-center">
               <img src="{{selectedProduct.productImage}}" alt="product image" class="product-image">
@@ -139,5 +138,4 @@
     </div>
   </div>
 </div>
-
 <app-confirm-modal [module]="'Import'" (onConfirmCallback)="deleteProductImage()"></app-confirm-modal>

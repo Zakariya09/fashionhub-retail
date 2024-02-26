@@ -10,3 +10,8 @@
 .cursor {
     cursor: pointer;
 }
+
+.f-required {
+    color: red;
+    font-size: 10px;
+}

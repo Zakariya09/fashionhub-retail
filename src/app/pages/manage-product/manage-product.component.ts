@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProductModel } from '../../models/product.model';
@@ -30,7 +30,7 @@ export class ManageProductComponent implements OnInit {
   appStrings: any;
   PRODUCT_GRID_COLUMNS: string[] = [];
   firestore = inject(Firestore);
-  selectedProduct!: ProductModel;
+  selectedProduct!: any;
   isRecordDelete: boolean = false;
   constructor(
     private commonService: CommonServiceService,
@@ -41,28 +41,41 @@ export class ManageProductComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.frmProduct = this.formBuilder.group({
-      id: [],
-      name: [, Validators.required],
-      price: [, Validators.required],
-      productImage: [, Validators.required]
-    });
+    this.initializeForm();
     this.PRODUCT_GRID_COLUMNS = this.appConstants.PRODUCT_GRID_COLUMNS;
     this.appStrings = this.appStringsService.appStrings;
     this.getProducts();
   }
 
   /**
+   * initializing product form
+   */
+  initializeForm() {
+    this.frmProduct = this.formBuilder.group({
+      id: [],
+      name: [, Validators.required],
+      price: [, Validators.required],
+      productImage: [, Validators.required]
+    });
+  }
+
+  /**
    * upload image and save product data
    */
   upload() {
+    const imageUrl = this.selectedProduct?.productImage;
     this.submitted = true;
-
     const file: any = this.selectedFile?.item(0);
+    if (this.selectedProduct?.productImage && file == undefined) {
+      this.selectedProduct = this.frmProduct.value;
+      this.selectedProduct.productImage = imageUrl;
+      this.saveProduct();
+      return
+    } else if (this.selectedProduct?.productImage && file) {
+      this.deleteExtraImage(imageUrl)
+    }
     this.selectedProduct = this.frmProduct.value;
     this.currentFileUpload = true;
-
-
     const storage = getStorage();
     const storageRef = ref(storage, `products/${file?.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
@@ -73,15 +86,12 @@ export class ManageProductComponent implements OnInit {
 
         switch (snapshot.state) {
           case 'paused':
-            console.log('Upload is paused');
             break;
           case 'running':
-            console.log('Upload is running');
             break;
         }
       },
       (error) => {
-        console.log('error here...')
         this.currentFileUpload = false;
         this.commonService.$alertSubject?.next({
           type: 'danger',
@@ -90,10 +100,8 @@ export class ManageProductComponent implements OnInit {
         });
       },
       () => {
-        this.f['productImage'].setValue(null);
         this.currentFileUpload = false;
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          console.log('File available at', downloadURL);
           this.selectedProduct.productImage = downloadURL;
           this.saveProduct();
         });
@@ -111,9 +119,8 @@ export class ManageProductComponent implements OnInit {
       this.commonService.$loaderSubject?.next({ showLoader: false });
       this.isUpdate = false;
       jQuery('#addProduct').modal('hide');
+      this.f['productImage'].setValue(null);
     }, (error: HttpErrorResponse) => {
-      console.log('error text')
-      console.log(error)
       this.commonService.$loaderSubject?.next({ showLoader: false });
       this.commonService.$alertSubject?.next({
         type: 'danger',
@@ -123,18 +130,20 @@ export class ManageProductComponent implements OnInit {
     });
   }
 
+  /**
+   * returning product form controls
+   */
   get f() { return this.frmProduct.controls; }
 
+  /**
+   * get product list
+   */
   getProducts(): void {
     this.warningText = 'Loading Data...';
     this.commonService.getProducts().pipe(takeUntil(this.subscription)).subscribe((response: ProductModel[]) => {
       this.products = response;
-      console.log('this.products');
-      console.log(this.products);
       this.warningText = 'No Data Found!';
     }, (error: HttpErrorResponse) => {
-      console.log('error text')
-      console.log(error)
       this.warningText = 'No Data Found!';
       this.commonService.$alertSubject?.next({
         type: 'danger',
@@ -144,8 +153,40 @@ export class ManageProductComponent implements OnInit {
     });
   }
 
+  /**
+   * 
+   * @param imageUrl 
+   */
+  deleteExtraImage(imageUrl: string) {
+    const storage = getStorage();
 
+    // Create a reference to the file to delete
+    const desertRef = ref(storage, imageUrl);
+
+    // Delete the file
+    deleteObject(desertRef).then(() => {
+
+    }).catch((error) => {
+      this.commonService.$alertSubject?.next({
+        type: 'danger',
+        showAlert: true,
+        message: this.utilityService.getErrorText(error?.message)
+      });
+    });
+  }
+
+  /**
+   * 
+   * @param data 
+   */
   editProduct(data: ProductModel) {
+    if (data.productImage) {
+      this.frmProduct.get('productImage')?.clearValidators();
+      this.frmProduct.get('productImage')?.updateValueAndValidity();
+    } else {
+      this.frmProduct.get('productImage')?.setValidators(Validators.required)
+      this.frmProduct.get('productImage')?.updateValueAndValidity();
+    }
     this.isRecordDelete = false;
     this.isUpdate = true;
     this.frmProduct.reset();
@@ -155,24 +196,26 @@ export class ManageProductComponent implements OnInit {
     this.selectedProduct = data;
   }
 
-  //Image assignment
+  /**
+   * 
+   * @param event 
+   */
   onFileSelected(event: any) {
     this.selectedFile = event.target.files;
   }
-  // clear form value
-  clearForm() {
-    this.isUpdate = false;
-    this.frmProduct.reset();
-    this.submitted = false;
-  }
 
-
+  /**
+   * deleting product image
+   * @returns 
+   */
   deleteProductImage() {
     this.commonService.$loaderSubject?.next({ showLoader: true });
-
     this.isUpdate = true;
     const storage = getStorage();
-
+    if (this.isRecordDelete && !this.selectedProduct.productImage) {
+      this.deleteProduct();
+      return
+    }
     // Create a reference to the file to delete
     const desertRef = ref(storage, this.selectedProduct.productImage);
 
@@ -186,15 +229,13 @@ export class ManageProductComponent implements OnInit {
         this.commonService.$confirmSubject.next({ showModal: false });
       }
     }).catch((error) => {
-      console.log('error text')
-      console.log(error)
       this.commonService.$alertSubject?.next({
         type: 'danger',
         showAlert: true,
         message: this.utilityService.getErrorText(error?.message)
       });
+      this.commonService.$loaderSubject?.next({ showLoader: false });
     });
-    console.log('product');
   }
 
   /**
@@ -208,10 +249,9 @@ export class ManageProductComponent implements OnInit {
   }
 
   /**
-  * delete import record
+  * delete product record
   */
   deleteProduct() {
-    this.commonService.$loaderSubject?.next({ showLoader: true });
     this.commonService.deleteProduct(this.selectedProduct?.id)?.pipe(takeUntil(this.subscription)).subscribe((response: any) => {
       this.commonService.$confirmSubject.next({ showModal: false });
       this.commonService.$loaderSubject?.next({ showLoader: false });
@@ -225,6 +265,17 @@ export class ManageProductComponent implements OnInit {
         message: this.utilityService.getErrorText(error?.message)
       });
     });
+  }
+
+  /**
+   * clearing data & resetting form values
+   */
+  clearForm() {
+    this.selectedProduct = {};
+    this.initializeForm();
+    this.frmProduct.reset();
+    this.isUpdate = false;
+    this.submitted = false;
   }
 }
 

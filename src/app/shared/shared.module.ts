@@ -11,7 +11,6 @@ import { AuthTokenInterceptorService } from "../core/intercepter/auth-token-inte
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { firebaseConfig } from "../core/services/environment";
-import { CommonServiceService } from "../core/services/common-service.service";
 
 @NgModule({
   declarations: [
@@ -41,7 +40,6 @@ import { CommonServiceService } from "../core/services/common-service.service";
       useClass: AuthTokenInterceptorService,
       multi: true,
     },
-    CommonServiceService,
   ],
   exports: [
     AlertComponent,

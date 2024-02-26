@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { DefaultlayoutComponent } from './defaultlayout.component';
 import { Routes, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
 import { ManageReceiptComponent } from '../pages/manage-receipt/manage-receipt.component';
 import { AddReceiptComponent } from '../pages/add-receipt/add-receipt.component';
 import { DashboardComponent } from '../pages/dashboard/dashboard.component';

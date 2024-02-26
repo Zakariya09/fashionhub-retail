@@ -1,7 +1,7 @@
-import { Injectable, NgZone, inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { ImportModel } from '../../models/import.model';
 import { ConfirmModalModel } from '../../common/confirm-modal/confirm-modal.component';
 import { Loader } from '../../common/loader/loader.component';
@@ -24,28 +24,6 @@ export class CommonServiceService {
     private http: HttpClient,
   ) { }
   private baseUrl = 'https://fashionhub-retail-default-rtdb.firebaseio.com/';
-  private basePath = '/products';
-
-  //Upload Fire Storage Doc
-
-
-  //Push File to the Doc
-  private saveFileData(fileUpload: any) {
-    // this.firebase.list(this.basePath).push(fileUpload);
-  }
-
-  //Delete Client
-  deleteDocument(id: any) {
-    // this.documentsList.remove(id);
-    return this.response;
-  }
-
-  //GET Documents
-  getDocuments() {
-    // this.documentsList = this.firebase.list('products');
-    // return this.documentsList.snapshotChanges();
-    return new Observable();
-  }
 
   //POST Product
   saveReceipt(receipt: any) {
