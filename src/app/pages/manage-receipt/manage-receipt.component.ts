@@ -10,7 +10,8 @@ import { CommonServiceService } from '../../core/services/common-service.service
 import { AppConstants } from '../../shared/app-contants.service';
 import { AppStrings } from '../../shared/app-strings.service';
 import { AppUtilityService } from '../../core/services/app-utility.service';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
+import { ReceiptModel } from '../../models/receipt.model';
 
 
 @Component({
@@ -56,7 +57,7 @@ export class ManageReceiptComponent implements OnInit {
     private utilityService: AppUtilityService
   ) {
 
-   }
+  }
 
   ngOnInit() {
     this.frmreceipt = this.formBuilder.group({
@@ -72,7 +73,7 @@ export class ManageReceiptComponent implements OnInit {
     this.RECEIPT_GRID_COLUMNS = this.appConstants.RECEIPT_GRID_COLUMNS;
     this.RECEIPT_PRINT_GRID_COLUMNS = this.appConstants.RECEIPT_PRINT_GRID_COLUMNS;
 
-    // this.getReceipt();
+    this.getReceipts();
   }
 
   addReceipt() {
@@ -84,17 +85,21 @@ export class ManageReceiptComponent implements OnInit {
   get f() { return this.frmreceipt.controls; }
 
 
-  //GET receipts
-  getReceipt() {
-    this.commonService.getReceipt().subscribe((response: any) => {
-      if (response.status) {
-        this.receipts = response.data;
-      } else {
-        // this.toaster.errorToastr('No receipt found!.', 'Oops!',{showCloseButton: true});
-      }
+  /**
+  * get receipts data
+  */
+  getReceipts(): void {
+    this.commonService.$loaderSubject?.next({ showLoader: true });
+    this.commonService.getReceipts().pipe(takeUntil(this.subscription)).subscribe((response: any) => {
+      this.receipts = response;
+      this.commonService.$loaderSubject?.next({ showLoader: false });
     }, (error: HttpErrorResponse) => {
-      // this.toaster.errorToastr('No receipt found!.', 'Oops!',{showCloseButton: true});
-      return;
+      this.commonService.$loaderSubject?.next({ showLoader: false });
+      this.commonService.$alertSubject?.next({
+        type: 'danger',
+        showAlert: true,
+        message: this.utilityService.getErrorText(error?.message)
+      });
     });
   }
   //Edit package

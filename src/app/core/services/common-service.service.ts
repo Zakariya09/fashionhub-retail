@@ -9,6 +9,7 @@ import { SaleModel } from '../../models/sale.model';
 import { CreditModel } from '../../models/credit.model';
 import { Firestore } from '@angular/fire/firestore';
 import { ProductModel } from '../../models/product.model';
+import { ReceiptModel } from '../../models/receipt.model';
 
 @Injectable({
   providedIn: 'root',
@@ -25,9 +26,35 @@ export class CommonServiceService {
   ) { }
   private baseUrl = 'https://fashionhub-retail-default-rtdb.firebaseio.com/';
 
-  //POST Product
-  saveReceipt(receipt: any) {
-    return this.http.post(this.baseUrl + 'receipt/', receipt);
+    /**
+   * 
+   * @returns 
+   */
+    getReceipts() {
+      return this.http.get<ReceiptModel>(`${this.baseUrl}receipts.json`)?.pipe(map((resp: any) => {
+        const importsArr: ReceiptModel[] = [];
+        for (const key in resp) {
+          if (resp.hasOwnProperty(key)) {
+            importsArr.push({ id: key, ...resp[key] });
+          }
+        }
+        return importsArr;
+      }))
+    }
+
+
+  /**
+   * 
+   * @param receiptData 
+   * @param isUpdate 
+   * @returns 
+   */
+  saveReceipt(receiptData: ReceiptModel, isUpdate: boolean) {
+    if (isUpdate) {
+      return this.http.put(`${this.baseUrl}receipts/${receiptData?.id}.json`, receiptData)
+    } else {
+      return this.http.post<ProductModel>(`${this.baseUrl}receipts.json`, receiptData);
+    }
   }
 
   //Update Product
@@ -35,10 +62,7 @@ export class CommonServiceService {
     return this.http.put(this.baseUrl + 'receipt/' + id, data);
   }
 
-  //GET Rceipt
-  getReceipt() {
-    return this.http.get(this.baseUrl + 'receipt');
-  }
+  
 
   //Delete Receipt
   deleteReceipt(id: any) {
