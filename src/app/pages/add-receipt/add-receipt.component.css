@@ -34,3 +34,7 @@ background: linear-gradient(to right, #69c9d8, #75c5d1); /* W3C, IE 10+/ Edge, F
 .w-78{
   width: 78px;
 }
+
+.mt-20{
+  margin-top: 20px;
+}

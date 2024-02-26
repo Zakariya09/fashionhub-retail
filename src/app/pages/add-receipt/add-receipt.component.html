@@ -18,7 +18,7 @@
     <div class="col-md-8">
       <input type="text" class="form-control" [(ngModel)]="textSearch" placeholder="Type here to search..." />
     </div>
-    <div class="col-md-4 pull-right">
+    <div class="col-md-4 align-right">
       <button type="button" class="btn btn-sm btn-primary" (click)="backToReceipt()">
         <i class="fas fa-arrow-left"></i> {{appStrings['back']}}
       </button>
@@ -28,8 +28,8 @@
     <form (ngSubmit)="onSubmit()" class="form-horizontal" role="form" [formGroup]='frmReceipt' autocomplete="off">
       <div class="row">
         <div class="col-md-2">
-          <label for="customerName">{{appStrings['customerName']}} :</label>&nbsp;<i class="fa fa-asterisk"
-            style="color:red; font-size:10px;"></i>
+          <label for="customerName">{{appStrings['customerName']}} :</label>&nbsp;
+          <i class="fa fa-asterisk f-required"></i>
         </div>
         <div class="col-md-5">
           <div class="form-group">
@@ -41,13 +41,12 @@
           </div>
         </div>
         <div class="col-md-2">
-          <label for="receiptDate">{{appStrings['receiptDate']}} :</label>&nbsp;<i class="fa fa-asterisk"
-            style="color:red; font-size:10px;"></i>
+          <label for="receiptDate">{{appStrings['receiptDate']}} :</label>&nbsp;
+          <i class="fa fa-asterisk f-required"></i>
         </div>
         <div class="col-md-3">
           <div class="form-group">
-            <input type="date" name="receiptDate" class="form-control" formControlName="receiptDate"
-              style="margin-left: -28px;">
+            <input type="date" name="receiptDate" class="form-control" formControlName="receiptDate">
             <div *ngIf="submitted && f.receiptDate.errors" class="text-danger">
               <div *ngIf="f['receiptDate'].errors['required']"> {{appStrings['receiptWarningText']}}</div>
             </div>
@@ -57,70 +56,66 @@
           <label for="mobileNumber" class="w-78">{{appStrings['mobile']}} : </label>
         </div>
         <div class="col-md-2">
-          <input type="text" name="mobileNumber" class="form-control" formControlName="mobileNumber" id="mobileNumber"
+          <input type="number" name="mobileNumber" class="form-control" formControlName="mobileNumber" id="mobileNumber"
             placeholder="Mobile number" />
         </div>
         <div class="col-md-1">
           <label for="gst" class="w-78">{{appStrings['gst']}} : (%)</label>
         </div>
         <div class="col-md-2">
-          <input type="text" name="gst" class="form-control" formControlName="gst" id="gst" [(ngModel)]="gst"
-            (ngModelChange)="claculateGST()" placeholder="{{appStrings['gst']}}" />
+          <input type="number" name="gst" class="form-control" formControlName="gst" id="gst" (keyup)="claculateGST()"
+            placeholder="{{appStrings['gst']}}" />
         </div>
         <div class="col-md-1">
           <label for="cgst" class="w-78">{{appStrings['cgst']}} : (%)</label>
         </div>
         <div class="col-md-2">
-          <input type="text" name="cgst" class="form-control" formControlName="cgst" id="cgst"
+          <input type="number" name="cgst" class="form-control" formControlName="cgst" id="cgst"
             placeholder="{{appStrings['cgst']}}" [disabled]="true" />
         </div>
         <div class="col-md-1">
           <label for="sgst" class="w-78">{{appStrings['sgst']}} : (%)</label>
         </div>
         <div class="col-md-2">
-          <input type="text" name="sgst" class="form-control" formControlName="sgst" id="sgst"
+          <input type="number" name="sgst" class="form-control" formControlName="sgst" id="sgst"
             placeholder="{{appStrings['sgst']}}" [disabled]="true" />
         </div>
-
       </div>
-      <div class="row" style="margin-top: 20px">
+      <div class="row mt-20">
         <div class="col-md-2">
           <label for="productName">{{appStrings['selectProduct']}} :</label>
+          &nbsp;<i class="fa fa-asterisk f-required"></i>
         </div>
         <div class="col-md-3">
           <div class="form-group">
-            <!-- <ng-select
-            [items]="products"
-            name="productName"
-            bindLabel="name"
-            bindValue="name"
-            formControlName="productName"
-            placeholder="Select type" >
-          </ng-select> -->
-            <select name="productName" id="productName" formControlName="productName" placeholder="Select type">
+            <select name="productName" class="form-control" id="productName" formControlName="productName"
+              (change)="setProductPrice()" placeholder="Select type">
               <option value="" class="form-control" disabled selected>{{appStrings['optionPlaceholder']}} </option>
               @for (item of products; track $index) {
-              <option value="item.name">{{item.name}}</option>
+              <option [value]="item.name">{{item.name}}</option>
               }
             </select>
           </div>
         </div>
         <div class="col-md-1">
           <label for="quantity" class="w-78">{{appStrings['quantity']}} :</label>
+          <i class="fa fa-asterisk f-required"></i>
         </div>
         <div class="col-md-2">
-          <input type="text" name="quantity" class="form-control" formControlName="quantity" id="quantity"
+          <input type="number" name="quantity" class="form-control" formControlName="quantity" id="quantity"
             placeholder="{{appStrings['quantity']}}" />
         </div>
         <div class="col-md-1">
           <label for="rate" class="w-78">{{appStrings['rate']}} :</label>
+          <i class="fa fa-asterisk f-required"></i>
         </div>
         <div class="col-md-2">
-          <input type="text" name="rate" class="form-control" formControlName="rate" id="rate"
+          <input type="number" name="rate" class="form-control" formControlName="rate" id="rate"
             placeholder="{{appStrings['rate']}}" />
         </div>
         <div class="col-md-1">
-          <button type="button" class="btn btn-info btn-sm" (click)="calc()"><i class="fas fa-plus"></i>
+          <button type="button" class="btn btn-info btn-sm" (click)="calc()" [disabled]="frmReceipt.invalid">
+            <i class="fas fa-plus"></i>
             {{appStrings['add']}}</button>
         </div>
       </div>
@@ -133,25 +128,10 @@
         <th>{{column}}</th>
         }
       </tr>
-      <!-- <tr>
-        <th>#</th>
-        <th>Product</th>
-        <th>Quantity</th>
-        <th>Rate</th>
-        <th>Taxable Amount</th>
-        <th>GST (%)</th>
-        <th>CGST</th>
-        <th>SGST</th>
-        <th>IGST</th>
-        <th>Total</th>
-        <th>Action</th>
-      </tr> -->
     </thead>
     <tbody>
       @for (data of invoiceArray | filter: textSearch | paginate: { itemsPerPage: 10, currentPage: p } ; track $index )
       {
-      <!-- <tr *ngFor="let data of invoiceArray| filter: textSearch | paginate: { itemsPerPage: 10, currentPage: p }; let i = index "> -->
-      <!-- <tr *ngFor="let data of invoiceArray; let i = index "> -->
       <tr>
         <td>{{$index+1}}</td>
         <td>
