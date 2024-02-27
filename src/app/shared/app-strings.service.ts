@@ -93,5 +93,6 @@ export class AppStrings {
         loadingDataText:'Loading Data...',
         receiptDetails:'Receipt Details',
         percent:'(%)',
+        dashboard:'Dashboard'
     }
 }

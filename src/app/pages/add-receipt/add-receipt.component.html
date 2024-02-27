@@ -6,29 +6,21 @@
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="#">{{appStrings['home']}}</a></li>
+          <li class="breadcrumb-item"><a [routerLink]="['/default/receipt']">{{appStrings['manageReciept']}}</a></li>
           <li class="breadcrumb-item active">{{appStrings['addReceipt']}}</li>
         </ol>
       </div>
     </div>
   </div>
 </section>
+
 <div class="container card">
-  <div class="row">
-    <div class="col-md-12 align-right">
-      <button type="button" class="btn btn-sm btn-primary" (click)="routeToReceipt()">
-        <i class="fas fa-arrow-left"></i> {{appStrings['back']}}
-      </button>
-    </div>
-  </div>
   <div>
     <form (ngSubmit)="onSubmit()" class="form-horizontal" role="form" [formGroup]='frmReceipt' autocomplete="off">
       <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-2">
+        <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5">
           <label for="customerName">{{appStrings['customerName']}} :</label>&nbsp;
           <i class="fa fa-asterisk f-required"></i>
-        </div>
-        <div class="col-md-5">
           <div class="form-group">
             <input type="text" name="customerName" class="form-control" formControlName="customerName" id="customerName"
               placeholder="Customer name" [ngClass]="{ 'is-invalid': submitted && f['customerName'].errors }" />
@@ -37,11 +29,9 @@
             </div>
           </div>
         </div>
-        <div class="col-md-2">
+        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
           <label for="receiptDate">{{appStrings['receiptDate']}} :</label>&nbsp;
           <i class="fa fa-asterisk f-required"></i>
-        </div>
-        <div class="col-md-3">
           <div class="form-group">
             <input type="date" name="receiptDate" class="form-control" formControlName="receiptDate">
             <div *ngIf="submitted && f['receiptDate'].errors" class="text-danger">
@@ -49,41 +39,31 @@
             </div>
           </div>
         </div>
-        <div class="col-md-1">
-          <label for="mobileNumber" class="w-78">{{appStrings['mobile']}} : </label>
-        </div>
-        <div class="col-md-2">
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+          <label for="mobileNumber">{{appStrings['mobile']}} : </label>
           <input type="number" name="mobileNumber" class="form-control" formControlName="mobileNumber" id="mobileNumber"
             placeholder="Mobile number" />
         </div>
-        <div class="col-md-1">
-          <label for="gst" class="w-78">{{appStrings['gst']}} : {{appStrings['percent']}}</label>
-        </div>
-        <div class="col-md-2">
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+          <label for="gst">{{appStrings['gst']}} {{appStrings['percent']}} : </label>
           <input type="number" name="gst" class="form-control" formControlName="gst" id="gst" (keyup)="claculateGST()"
             placeholder="{{appStrings['gst']}}" />
         </div>
-        <div class="col-md-1">
-          <label for="cgst" class="w-78">{{appStrings['cgst']}} : {{appStrings['percent']}}</label>
-        </div>
-        <div class="col-md-2">
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+          <label for="cgst">{{appStrings['cgst']}} {{appStrings['percent']}} : </label>
           <input type="number" name="cgst" class="form-control" formControlName="cgst" id="cgst"
             placeholder="{{appStrings['cgst']}}" readonly="true" />
         </div>
-        <div class="col-md-1">
-          <label for="sgst" class="w-78">{{appStrings['sgst']}} : {{appStrings['percent']}}</label>
-        </div>
-        <div class="col-md-2">
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+          <label for="sgst">{{appStrings['sgst']}} {{appStrings['percent']}} : </label>
           <input type="number" name="sgst" class="form-control" formControlName="sgst" id="sgst"
             placeholder="{{appStrings['sgst']}}" readonly="true" />
         </div>
       </div>
       <div class="row mt-20">
-        <div class="col-md-2">
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
           <label for="productName">{{appStrings['selectProduct']}} :</label>
           &nbsp;<i class="fa fa-asterisk f-required"></i>
-        </div>
-        <div class="col-md-3">
           <div class="form-group">
             <select name="productName" class="form-control" id="productName" formControlName="productName"
               (change)="setProductPrice()" placeholder="Select type">
@@ -94,23 +74,19 @@
             </select>
           </div>
         </div>
-        <div class="col-md-1">
-          <label for="quantity" class="w-78">{{appStrings['quantity']}} :</label>
-          <i class="fa fa-asterisk f-required"></i>
-        </div>
-        <div class="col-md-2">
+        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+          <label for="quantity">{{appStrings['quantity']}} :</label>
+          &nbsp;<i class="fa fa-asterisk f-required"></i>
           <input type="number" name="quantity" class="form-control" formControlName="quantity" id="quantity"
             placeholder="{{appStrings['quantity']}}" />
         </div>
-        <div class="col-md-1">
-          <label for="rate" class="w-78">{{appStrings['rate']}} :</label>
-          <i class="fa fa-asterisk f-required"></i>
-        </div>
-        <div class="col-md-2">
+        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+          <label for="rate">{{appStrings['rate']}} :</label>
+          &nbsp;<i class="fa fa-asterisk f-required"></i>
           <input type="number" name="rate" class="form-control" formControlName="rate" id="rate"
             placeholder="{{appStrings['rate']}}" />
         </div>
-        <div class="col-md-1">
+        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2 align-add-action">
           <button type="button" class="btn btn-info btn-sm" (click)="calc()" [disabled]="frmReceipt.invalid">
             <i class="fas fa-plus"></i>
             {{appStrings['add']}}</button>
@@ -118,6 +94,8 @@
       </div>
     </form>
   </div>
+</div>
+<div class="container card">
   <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-8">
       <input type="text" class="form-control" [(ngModel)]="textSearch" placeholder="Search product" />
