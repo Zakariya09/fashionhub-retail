@@ -139,7 +139,11 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
       this.routeToReceipt();
     }, (error: HttpErrorResponse) => {
       this.commonService.$loaderSubject?.next({ showLoader: false });
-      return;
+      this.commonService.$alertSubject?.next({
+        type: 'danger',
+        showAlert: true,
+        message: this.utilityService.getErrorText(error?.message)
+      });
     });
   }
 
