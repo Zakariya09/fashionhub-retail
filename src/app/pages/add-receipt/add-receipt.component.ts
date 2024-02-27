@@ -54,7 +54,7 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.initializeForm();
-    // this.getProducts();
+    this.getProducts();
     this.appStrings = this.appStringsService.appStrings;
     this.RECEIPT_INVOICE_COLUMNS = this.appConstants.RECEIPT_INVOICE_COLUMNS;
   }
