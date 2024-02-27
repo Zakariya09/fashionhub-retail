@@ -92,16 +92,16 @@ export class ManageImportComponent implements OnInit, OnDestroy {
    * get Imports data
    */
   getImports(): void {
-    this.warningText = 'Loading Data...';
+    this.warningText = this.appStrings['loadingDataText'];
     this.commonService.getImports().pipe(takeUntil(this.subscription)).subscribe((response: ImportModel[]) => {
       this.imports = response;
-      console.log('this.imports');
-      console.log(this.imports);
-      this.warningText = 'No Data Found!';
+   if(this.imports.length == 0){
+    this.warningText = this.appStrings['noDataFound'];
+   }
     }, (error: HttpErrorResponse) => {
       console.log('error text')
       console.log(error)
-      this.warningText = 'No Data Found!';
+      this.warningText = this.appStrings['noDataFound'];
       this.commonService.$alertSubject?.next({
         type: 'danger',
         showAlert: true,
@@ -133,13 +133,10 @@ export class ManageImportComponent implements OnInit, OnDestroy {
    * delete import record
    */
   deleteImport() {
-    this.commonService.$loaderSubject?.next({ showLoader: true });
     this.commonService.deleteImport(this.selectedRecord?.id)?.pipe(takeUntil(this.subscription)).subscribe((response) => {
       this.commonService.$confirmSubject.next({ showModal: false });
-      this.commonService.$loaderSubject?.next({ showLoader: false });
       this.getImports();
     }, (error: HttpErrorResponse) => {
-      this.commonService.$loaderSubject?.next({ showLoader: false });
       this.commonService.$alertSubject?.next({
         type: 'danger',
         showAlert: true,

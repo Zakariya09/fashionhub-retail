@@ -134,7 +134,7 @@ export class ManageSalesComponent implements OnInit, OnDestroy {
  * get Sales data
  */
   getSales(): void {
-    this.warningText = 'Loading Data...';
+    this.warningText = this.appStrings['loadingDataText'];
     this.commonService.getSales().pipe(takeUntil(this.subscription)).subscribe((response: SaleModel[]) => {
       this.sales = response;
       this.warningText = 'No Data Found!';

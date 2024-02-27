@@ -38,7 +38,7 @@
       <tr>
         <td>{{$index+1}}</td>
         <td>
-          {{data.receiptDate}}
+          {{data.receiptDate | date:'dd-MM-yyyy'}}
         </td>
         <td>{{data.name}}</td>
         <td>{{data.grandTotal}}</td>
@@ -46,9 +46,15 @@
           <i class="fas fa-eye text-success curser" (click)="viewRecipt(data)" data-toggle="modal"
             data-target="#viewReceipt"></i> &nbsp;
           <i class="fas fa-edit text-primary curser" (click)="editReceipt(data)"></i> &nbsp;
-          <i class="fas fa-trash text-danger curser" (click)="deleteReceipt(data?._id)"></i>
+          <i class="fas fa-trash text-danger curser" (click)="confirmDelete(data)"></i>
         </td>
       </tr>
+      }@empty {
+        <tr>
+          <td colspan="5">
+            <h2 class="text-center text-danger">{{warningText}}</h2>
+          </td>
+        </tr>
       }
     </tbody>
   </table>
@@ -59,7 +65,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header modal-head">
-        <h4 class="modal-title">{{appStrings['addReceipt']}}</h4>
+        <h4 class="modal-title">{{appStrings['receiptDetails']}}</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -97,7 +103,7 @@
                   {{appStrings['date']}} :
                 </th>
                 <td style="padding: 5px; text-align: left;font-size: 12px;font-family:Calibri;">
-                  {{receiptData.receiptDate}} </td>
+                  {{receiptData.receiptDate | date:'dd-MM-yyyy'}} </td>
 
                 <th style="padding: 5px;text-align: left;font-size: 12px;font-family:Calibri;">
                   {{appStrings['mobileNumber']}}
@@ -112,7 +118,7 @@
             </tbody>
           </table>
           <table class="table table-bordered table-responsive  tooltipstered" name="table" id="table" cellspacing="0"
-            style="margin-bottom: 12px;" width="100%">
+            style="margin-bottom: 12px;border-collapse: collapse" width="100%">
             <thead>
               <tr>
                 <th colspan="10" style="font-size: 13px;font-family:Calibri;text-align: center;">
@@ -123,29 +129,12 @@
                 <th style="padding: 5px;font-size: 12px;font-family:Calibri;">{{column}}</th>
                 }
               </tr>
-
-              <!-- <tr>
-                <th style="padding: 5px;font-size: 12px;font-family:Calibri;" width=10%>Sr. No.</th>
-                <th style="padding: 5px;font-size: 12px;font-family:Calibri;width: 50%">Particulars</th>
-                <th style="padding: 5px;font-size: 12px;font-family:Calibri;">Qty.</th>
-                <th style="padding: 5px;font-size: 12px;font-family:Calibri;">Rate</th>
-                <th style="padding: 5px;font-size: 12px;font-family:Calibri;">Taxable Amount</th>
-                <th style="padding: 5px;font-size: 12px;font-family:Calibri;">GST (%)</th>
-                <th style="padding: 5px;font-size: 12px;font-family:Calibri;">CGST Amount</th>
-                <th style="padding: 5px;font-size: 12px;font-family:Calibri;">SGST Amount</th>
-                <th style="padding: 5px;font-size: 12px;font-family:Calibri;">IGST Amount</th>
-                <th style="padding: 5px;font-size: 12px;font-family:Calibri;">TOTAL</th>
-              </tr> -->
             </thead>
             <tbody>
-              @for (item of receiptData.products | filter: textSearch | paginate: { itemsPerPage: 10, currentPage: p } ;
-              track $index ) {
-              <!-- <tr *ngFor="let item of receiptData.products| filter: textSearch | paginate: { itemsPerPage: 5, currentPage: p }; let i = index "> -->
-              <!-- <tr *ngFor="let item of receiptData.products; let i = index "> -->
+              @for (item of receiptData.products;track $index ) {
               <tr>
                 <td style="padding: 5px;font-size: 12px;font-family:Calibri;">{{$index + 1}}</td>
                 <td style="padding: 5px; text-align: left; font-size: 11px;line-height: 13px;font-family:Calibri;">
-                  <!-- {{data.particular}} -->
                   <span ng-repeat="part in data.name">{{item['productName']}}<br></span>
                 </td>
                 <td style="padding: 5px;font-size: 12px;font-family:Calibri;">{{item['quantity']}}</td>
@@ -178,7 +167,6 @@
                   {{receiptData.totalInWords}} /-
                 </td>
               </tr>
-
             </tbody>
           </table>
           <table class="table table-bordered   tooltipstered" name="table" id="table" cellspacing="0"
@@ -207,11 +195,7 @@
                           {{appStrings['igstAmount']}}
                         </td>
                       </tr>
-                      @for (item of receiptData.products | filter: textSearch | paginate: { itemsPerPage: 10,
-                      currentPage: p } ;
-                      track $index ) {
-                      <!-- <tr *ngFor="let item of receiptData.products| filter: textSearch | paginate: { itemsPerPage: 5, currentPage: p }; let i = index "> -->
-                      <!-- <tr *ngFor="let item of receiptData.products; let i = index "> -->
+                      @for (item of receiptData.products;track $index ) {
                       <tr>
                         <td style="font-size: 12px;font-family:Calibri;">{{item['gst']}}</td>
                         <td style="font-size: 12px;font-family:Calibri;">{{item['taxableAmount']}}</td>
@@ -223,17 +207,17 @@
                       <tr>
                         <td colspan="3"></td>
                         <td style="font-size: 12px;font-family:Calibri;">{{appStrings['total']}}</td>
-                        <td style="font-size: 12px;font-size: 12px;font-family:Calibri;">{{receiptData.cgst}}</td>
+                        <td style="font-size: 12px;font-size: 12px;font-family:Calibri;">{{receiptData.cgst + receiptData.sgst}}</td>
                       </tr>
                     </tbody>
                   </table>
                 </td>
                 <th style="font-size: 12px;font-family:Calibri;width: 20%;">{{appStrings['total']}}</th>
-                <td style="padding: 5px;font-size: 12px;font-family:Calibri;">{{receiptData.cgst}}</td>
+                <td style="padding: 5px;font-size: 12px;font-family:Calibri;">{{receiptData.taxableAmount}}</td>
               </tr>
               <tr>
                 <td style="font-size: 12px;font-family:Calibri;width: 20%;">{{appStrings['totalAmountGST']}}</td>
-                <td style="padding: 5px;font-size: 12px;font-family:Calibri;">{{receiptData.cgst}}</td>
+                <td style="padding: 5px;font-size: 12px;font-family:Calibri;">{{receiptData.cgst + receiptData.sgst}}</td>
               </tr>
               <tr>
                 <td style="font-size: 12px;font-family:Calibri;width: 20%;">{{appStrings['packing']}}</td>
@@ -247,7 +231,7 @@
           </table>
         </div>
         <div class="modal-footer ">
-          <button type="submit" class="btn btn-primary btn-sm" (click)="PrintPanel('printNew')"><i
+          <button type="submit" class="btn btn-primary btn-sm" (click)="printReceipt('printNew')"><i
               class="fas fa-print"></i> {{appStrings['print']}}</button>
           <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fas fa-times"></i>
             {{appStrings['close']}}</button>
@@ -256,3 +240,4 @@
     </div>
   </div>
 </div>
+<app-confirm-modal [module]="'Receipt'" (onConfirmCallback)="deleteReceipt()"></app-confirm-modal>

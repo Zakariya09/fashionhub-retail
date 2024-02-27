@@ -11,6 +11,7 @@ import { AuthTokenInterceptorService } from "../core/intercepter/auth-token-inte
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { firebaseConfig } from "../core/services/environment";
+import { NgxPaginationModule } from "ngx-pagination";
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { firebaseConfig } from "../core/services/environment";
     CommonModule,
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideFirestore(() => getFirestore()),
+    NgxPaginationModule
   ],
   providers: [
     {
@@ -45,7 +47,8 @@ import { firebaseConfig } from "../core/services/environment";
     AlertComponent,
     ConfirmModal,
     AppLoader,
-    FilterPipe
+    FilterPipe,
+    NgxPaginationModule
   ]
 })
 export class SharedModule { }

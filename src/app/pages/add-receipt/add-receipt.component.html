@@ -15,10 +15,7 @@
 </section>
 <div class="container card">
   <div class="row">
-    <div class="col-md-8">
-      <input type="text" class="form-control" [(ngModel)]="textSearch" placeholder="Type here to search..." />
-    </div>
-    <div class="col-md-4 align-right">
+    <div class="col-md-12 align-right">
       <button type="button" class="btn btn-sm btn-primary" (click)="routeToReceipt()">
         <i class="fas fa-arrow-left"></i> {{appStrings['back']}}
       </button>
@@ -27,16 +24,16 @@
   <div>
     <form (ngSubmit)="onSubmit()" class="form-horizontal" role="form" [formGroup]='frmReceipt' autocomplete="off">
       <div class="row">
-        <div class="col-md-2">
+        <div class="col-xs-12 col-sm-12 col-md-2">
           <label for="customerName">{{appStrings['customerName']}} :</label>&nbsp;
           <i class="fa fa-asterisk f-required"></i>
         </div>
         <div class="col-md-5">
           <div class="form-group">
             <input type="text" name="customerName" class="form-control" formControlName="customerName" id="customerName"
-              placeholder="Customer name" [ngClass]="{ 'is-invalid': submitted && f.customerName.errors }" />
-            <div *ngIf="submitted && f.customerName.errors" class="text-danger">
-              <div *ngIf="f.customerName.errors.required">{{appStrings['customerNameWarningText']}}</div>
+              placeholder="Customer name" [ngClass]="{ 'is-invalid': submitted && f['customerName'].errors }" />
+            <div *ngIf="submitted && f['customerName'].errors" class="text-danger">
+              <div *ngIf="f['customerName'].errors['required']">{{appStrings['customerNameWarningText']}}</div>
             </div>
           </div>
         </div>
@@ -47,7 +44,7 @@
         <div class="col-md-3">
           <div class="form-group">
             <input type="date" name="receiptDate" class="form-control" formControlName="receiptDate">
-            <div *ngIf="submitted && f.receiptDate.errors" class="text-danger">
+            <div *ngIf="submitted && f['receiptDate'].errors" class="text-danger">
               <div *ngIf="f['receiptDate'].errors['required']"> {{appStrings['receiptWarningText']}}</div>
             </div>
           </div>
@@ -60,25 +57,25 @@
             placeholder="Mobile number" />
         </div>
         <div class="col-md-1">
-          <label for="gst" class="w-78">{{appStrings['gst']}} : (%)</label>
+          <label for="gst" class="w-78">{{appStrings['gst']}} : {{appStrings['percent']}}</label>
         </div>
         <div class="col-md-2">
           <input type="number" name="gst" class="form-control" formControlName="gst" id="gst" (keyup)="claculateGST()"
             placeholder="{{appStrings['gst']}}" />
         </div>
         <div class="col-md-1">
-          <label for="cgst" class="w-78">{{appStrings['cgst']}} : (%)</label>
+          <label for="cgst" class="w-78">{{appStrings['cgst']}} : {{appStrings['percent']}}</label>
         </div>
         <div class="col-md-2">
           <input type="number" name="cgst" class="form-control" formControlName="cgst" id="cgst"
-            placeholder="{{appStrings['cgst']}}" [disabled]="true" />
+            placeholder="{{appStrings['cgst']}}" readonly="true" />
         </div>
         <div class="col-md-1">
-          <label for="sgst" class="w-78">{{appStrings['sgst']}} : (%)</label>
+          <label for="sgst" class="w-78">{{appStrings['sgst']}} : {{appStrings['percent']}}</label>
         </div>
         <div class="col-md-2">
           <input type="number" name="sgst" class="form-control" formControlName="sgst" id="sgst"
-            placeholder="{{appStrings['sgst']}}" [disabled]="true" />
+            placeholder="{{appStrings['sgst']}}" readonly="true" />
         </div>
       </div>
       <div class="row mt-20">
@@ -120,6 +117,11 @@
         </div>
       </div>
     </form>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-8">
+      <input type="text" class="form-control" [(ngModel)]="textSearch" placeholder="Search product" />
+    </div>
   </div>
   <table class="table table-bordered table-striped">
     <thead class="gradient">
@@ -166,7 +168,8 @@
   <div class="row">
     <div class="col-md-8"></div>
     <div class="col-md-4">
-      <button class="btn btn-primary btn-sm float-right" (click)="onSubmit()" [disabled]="frmReceipt.invalid && !invoiceArray?.length"><i class="fas fa-save"></i>
+      <button class="btn btn-primary btn-sm float-right" (click)="onSubmit()"
+        [disabled]="frmReceipt.invalid && !invoiceArray?.length"><i class="fas fa-save"></i>
         {{appStrings['save']}}</button>
     </div>
   </div>

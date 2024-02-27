@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ImportModel } from '../../models/import.model';
 import { ConfirmModalModel } from '../../common/confirm-modal/confirm-modal.component';
@@ -26,22 +26,29 @@ export class CommonServiceService {
   ) { }
   private baseUrl = 'https://fashionhub-retail-default-rtdb.firebaseio.com/';
 
-    /**
-   * 
-   * @returns 
-   */
-    getReceipts() {
-      return this.http.get<ReceiptModel>(`${this.baseUrl}receipts.json`)?.pipe(map((resp: any) => {
-        const importsArr: ReceiptModel[] = [];
-        for (const key in resp) {
-          if (resp.hasOwnProperty(key)) {
-            importsArr.push({ id: key, ...resp[key] });
-          }
+  /**
+ * 
+ * @returns 
+ */
+  getReceipts() {
+    return this.http.get<ReceiptModel>(`${this.baseUrl}receipts.json`)?.pipe(map((resp: any) => {
+      const receiptsArr: ReceiptModel[] = [];
+      for (const key in resp) {
+        if (resp.hasOwnProperty(key)) {
+          receiptsArr.push({ id: key, ...resp[key] });
         }
-        return importsArr;
-      }))
-    }
+      }
+      return receiptsArr;
+    }))
+  }
 
+  /**
+* 
+* @returns 
+*/
+  getReceiptById(id: string) {
+    return this.http.get<ReceiptModel>(`${this.baseUrl}receipts/${id}.json`);
+  }
 
   /**
    * 
@@ -62,11 +69,13 @@ export class CommonServiceService {
     return this.http.put(this.baseUrl + 'receipt/' + id, data);
   }
 
-  
-
-  //Delete Receipt
+  /**
+  * 
+  * @param id 
+  * @returns 
+  */
   deleteReceipt(id: any) {
-    return this.http.delete(this.baseUrl + 'receipt/' + id);
+    return this.http.delete(`${this.baseUrl}receipts/${id}.json`)
   }
 
   /**

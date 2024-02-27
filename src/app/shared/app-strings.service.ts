@@ -45,7 +45,7 @@ export class AppStrings {
         newReciept: 'New Receipt',
         filterPlaceholder: 'Type here to search...',
         addReceipt: 'Add Receipt',
-        brandName: 'KHAN fashio-hub',
+        brandName: 'KHAN fashion-hub',
         address: 'Address',
         addressText: '13b/12 Ganeshpuri, mehrun linking road, mehrun, jalgaon - 425001',
         emailId: 'Email Id',
@@ -89,5 +89,9 @@ export class AppStrings {
         selectImageWarningText:'Please select file.',
         save:'Save',
         removeImage:'Remove Image',
+        noDataFound:'No Data Found!',
+        loadingDataText:'Loading Data...',
+        receiptDetails:'Receipt Details',
+        percent:'(%)',
     }
 }

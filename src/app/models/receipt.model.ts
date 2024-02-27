@@ -1,12 +1,12 @@
 export interface ProductModel {
-  _id: Number
+  id: Number
   name: String,
   receiptDate: String,
   taxableAmount: Number,
   cgst: Number,
   sgst: Number,
   grandTotal: Number,
-  products: String
+  products: String,
 }
 
 export class InvoiceModel {
@@ -34,4 +34,29 @@ export class ReceiptModel {
   grandTotal!: number;
   products!: ProductModel[];
   gst!: number
+}
+
+export class ReceiptProduct {
+  name!: string;
+  taxableAmount!: number;
+  totalInWords!: string;
+  mobileNumber!: string;
+  igst!: number;
+  cgst!: number;
+  sgst!: number;
+  receiptDate!: string;
+  grandTotal!: number;
+  products!: Product[];
+}
+
+export interface Product {
+  productName: string,
+  quantity: number,
+  rate: number,
+  taxableAmount: number,
+  gst: number,
+  cgst: number,
+  sgst: number,
+  igst: number,
+  total: number
 }

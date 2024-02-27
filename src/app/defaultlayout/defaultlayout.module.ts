@@ -85,6 +85,13 @@ const routes: Routes = [
                   }
                 },
                 {
+                  path:'default/editReceipt/:id',
+                  component:AddReceiptComponent,
+                  data:{
+                    title:'Edit Receipt'
+                  }
+                },
+                {
                   path:'default/change-password',
                   component: ChangePasswordComponent,
                   data:{
@@ -118,7 +125,6 @@ const routes: Routes = [
     ReactiveFormsModule,
     RouterModule.forChild(routes),
     SharedModule,
-    NgxPaginationModule,
   ],
   exports: [RouterModule],
   bootstrap: [DefaultlayoutComponent],

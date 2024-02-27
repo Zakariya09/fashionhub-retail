@@ -130,12 +130,11 @@ export class ManageCreditsComponent implements OnInit, OnDestroy {
  * get Sales data
  */
   getCredit(): void {
-    this.warningText = 'Loading Data...';
+    this.warningText = this.appStrings['loadingDataText'];
     this.commonService.getCredits().pipe(takeUntil(this.subscription)).subscribe((response: CreditModel[]) => {
       this.credits = response;
-      this.warningText = 'No Data Found!';
     }, (error: HttpErrorResponse) => {
-      this.warningText = 'No Data Found!';
+      this.warningText = this.appStrings['noDataFound'];
       this.commonService.$alertSubject?.next({
         type: 'danger',
         showAlert: true,

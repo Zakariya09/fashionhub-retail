@@ -139,7 +139,7 @@ export class ManageProductComponent implements OnInit {
    * get product list
    */
   getProducts(): void {
-    this.warningText = 'Loading Data...';
+    this.warningText = this.appStrings['loadingDataText'];
     this.commonService.getProducts().pipe(takeUntil(this.subscription)).subscribe((response: ProductModel[]) => {
       this.products = response;
       this.warningText = 'No Data Found!';
