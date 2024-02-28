@@ -99,6 +99,11 @@ export class AppStrings {
         totalSales:'Total Sales',
         totalCredits:'Total Credits',
         totalImports:'Total Imports',
-        productOptionPlaceholder:'Please select product'
+        productOptionPlaceholder:'Please select product',
+        logout:'Logout',
+        stock:'Stock',
+        stockWarningText:'Please enter stock',
+        availableColors:'Available Colors',
+        availableColorsWarningText:'Please add available colors',
     }
 }

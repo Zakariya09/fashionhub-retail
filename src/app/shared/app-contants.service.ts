@@ -39,6 +39,6 @@ export class AppConstants {
     ];
 
     PRODUCT_GRID_COLUMNS: string[] = [
-        '#', 'Name', 'Price', 'Image', 'Action'
+        '#', 'Name', 'Actual Price', 'Selling Price', 'Stock', 'Image', 'Action'
     ];
 }

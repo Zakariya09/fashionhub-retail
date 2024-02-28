@@ -32,6 +32,7 @@ export class ManageProductComponent implements OnInit, OnDestroy {
   firestore = inject(Firestore);
   selectedProduct!: any;
   isRecordDelete: boolean = false;
+  availableColors: string[] = [];
   constructor(
     private commonService: CommonServiceService,
     private formBuilder: FormBuilder,
@@ -48,14 +49,37 @@ export class ManageProductComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Updating available product colors
+   */
+  addColors() {
+    const slectedColor = this.frmProduct.get('availableColors')?.value;
+    if (slectedColor && !this.availableColors.includes(slectedColor)) {
+      this.availableColors.push(this.frmProduct.get('availableColors')?.value);
+      console.log('this.availableColors')
+      console.log(this.availableColors?.toString())
+    }
+  }
+
+  /**
+   * removing product color
+   * @param index 
+   */
+  removeColors(index: number) {
+    this.availableColors.splice(index, 1);
+  }
+
+  /**
    * initializing product form
    */
   initializeForm() {
     this.frmProduct = this.formBuilder.group({
       id: [],
       name: [, Validators.required],
-      price: [, Validators.required],
-      productImage: [, Validators.required]
+      actualPrice: [, Validators.required],
+      sellingPrice: [, Validators.required],
+      stock: [, Validators.required],
+      productImage: [, Validators.required],
+      availableColors: ['#000000', Validators.required]
     });
   }
 
@@ -112,6 +136,7 @@ export class ManageProductComponent implements OnInit, OnDestroy {
    * save product data
    */
   saveProduct(): void {
+    this.selectedProduct.availableColors = this.availableColors?.toString();
     this.commonService.$loaderSubject?.next({ showLoader: true });
     this.commonService.saveProduct(this.selectedProduct, this.isUpdate)?.pipe(takeUntil(this.subscription)).subscribe(() => {
       this.getProducts();
@@ -188,7 +213,15 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     this.frmProduct.reset();
     this.frmProduct.get('name')?.setValue(data.name);
     this.frmProduct.get('id')?.setValue(data.id);
-    this.frmProduct.get('price')?.setValue(data.price);
+    this.frmProduct.get('actualPrice')?.setValue(data.actualPrice);
+    this.frmProduct.get('sellingPrice')?.setValue(data.sellingPrice);
+    // this.frmProduct.get('availableColors')?.setValue(data.availableColors);
+    if(data.availableColors){
+      this.availableColors = [...data.availableColors?.split(',')];
+    }else{
+      this.availableColors = [];
+    }
+    this.frmProduct.get('stock')?.setValue(data.stock);
     this.selectedProduct = data;
   }
 
@@ -225,6 +258,12 @@ export class ManageProductComponent implements OnInit, OnDestroy {
         this.commonService.$confirmSubject.next({ showModal: false });
       }
     }).catch((error) => {
+      console.log('error');
+      console.log((error?.message).includes('does not exist'));
+      if ((error?.message)?.includes('does not exist')) {
+        this.deleteProduct();
+        return;
+      }
       this.commonService.$alertSubject?.next({
         type: 'danger',
         showAlert: true,

@@ -1,18 +1,12 @@
-<aside class="main-sidebar sidebar-dark-info nav-bar-light-new" id="sidebar" [ngClass]="toggleMenu ? 'w-0p' : ''">
-  <!-- Brand Logo -->
+<aside class="main-sidebar sidebar-dark-info nav-bar-light-new" id="sidebar" [ngClass]="toggleMenu ? 'w-0p' : 'ml-0'">
   <a class="brand-link navbar-purple">
     <img src="../../../assets/dist/img/logo.jpg" alt="AdminLTE Logo" class="brand-image elevation-3"
       style="opacity: .8">
     <span class="brand font-weight-light"><b>KHAN fashion-hub</b></span>
   </a>
-
-  <!-- Sidebar -->
   <div class="sidebar">
-    <!-- Sidebar Menu -->
     <nav class="mt-2">
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-        <!-- Add icons to the links using the .nav-icon class
-             with font-awesome or any other icon font library -->
         <li class="nav-item">
           <a routerLink="/default/dashboard" routerLinkActive="active" class="nav-link">
             <i class="nav-icon fas fa-home"></i>
@@ -79,18 +73,11 @@
           <a (click)="logOut()" class="nav-link">
             <i class="nav-icon fas fa-sign-out-alt"></i>
             <p>
-              Logout
-
+              {{appStrings['logout']}}
             </p>
           </a>
         </li>
       </ul>
     </nav>
-    <!-- /.sidebar-menu -->
   </div>
-  <!-- /.sidebar -->
 </aside>
-
-<!-- <aside class="control-sidebar control-sidebar-dark"> -->
-<!-- Control sidebar content goes here -->
-<!-- </aside> -->

@@ -35,7 +35,9 @@
         <td>
           {{item?.name}}
         </td>
-        <td>{{item?.price}}</td>
+        <td>{{item?.actualPrice}}</td>
+        <td>{{item?.sellingPrice}}</td>
+        <td>{{item?.stock}}</td>
         <td>
           <img src="{{item.url}}{{item.productImage}}" alt="product image" style="width: 120px;height: 120px;">
         </td>
@@ -47,7 +49,7 @@
       </tr>
       }@empty {
       <tr>
-        <td colspan="5">
+        <td colspan="7">
           <h2 class="text-center text-danger">{{warningText}}</h2>
         </td>
       </tr>
@@ -81,13 +83,59 @@
             </div>
             <div class="col-md-12">
               <div class="form-group">
-                <label for="price">{{appStrings['price']}} :</label>&nbsp;<i class="fa fa-asterisk f-required"></i>
-                <input type="number" class="form-control" formControlName="price" id="price"
-                  placeholder="{{appStrings['price']}}" [ngClass]="{ 'is-invalid': submitted && f['price'].errors }" />
-                <div *ngIf="submitted && f['price'].errors" class="text-danger">
-                  <div *ngIf="f['price'].errors?.['required']"> {{appStrings['priceWarningText']}}</div>
+                <label for="actualPrice">{{appStrings['actualPrice']}} :</label>&nbsp;<i
+                  class="fa fa-asterisk f-required"></i>
+                <input type="number" class="form-control" formControlName="actualPrice" id="actualPrice"
+                  placeholder="{{appStrings['actualPrice']}}"
+                  [ngClass]="{ 'is-invalid': submitted && f['actualPrice'].errors }" />
+                <div *ngIf="submitted && f['actualPrice'].errors" class="text-danger">
+                  <div *ngIf="f['actualPrice'].errors?.['required']"> {{appStrings['enterActualPrice']}}</div>
                 </div>
               </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="sellingPrice">{{appStrings['sellingPrice']}} :</label>&nbsp;<i
+                  class="fa fa-asterisk f-required"></i>
+                <input type="number" class="form-control" formControlName="sellingPrice" id="sellingPrice"
+                  placeholder="{{appStrings['sellingPrice']}}"
+                  [ngClass]="{ 'is-invalid': submitted && f['sellingPrice'].errors }" />
+                <div *ngIf="submitted && f['sellingPrice'].errors" class="text-danger">
+                  <div *ngIf="f['sellingPrice'].errors?.['required']"> {{appStrings['enterSellingPrice']}}</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="stock">{{appStrings['stock']}} :</label>&nbsp;<i class="fa fa-asterisk f-required"></i>
+                <input type="number" class="form-control" formControlName="stock" id="stock"
+                  placeholder="{{appStrings['stock']}}" [ngClass]="{ 'is-invalid': submitted && f['stock'].errors }" />
+                <div *ngIf="submitted && f['stock'].errors" class="text-danger">
+                  <div *ngIf="f['stock'].errors?.['required']"> {{appStrings['stockWarningText']}}</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 align-color-picker">
+              <div class="form-group">
+                <label for="availableColors">{{appStrings['availableColors']}} :</label>&nbsp;<i
+                  class="fa fa-asterisk f-required"></i>
+                <input type="color" [value]="'#000000'" class="form-control" formControlName="availableColors"
+                  id="availableColors" placeholder="{{appStrings['availableColors']}}"
+                  [ngClass]="{ 'is-invalid': submitted && f['availableColors'].errors }" />
+                <div *ngIf="submitted && f['availableColors'].errors" class="text-danger">
+                  <!-- <div *ngIf="f['availableColors'].errors?.['required']"> {{appStrings['availableColorsWarningText']}}
+                  </div> -->
+                </div>
+              </div>
+              <button class="btn btn-primary" type="button" (click)="addColors()">{{appStrings['add']}}</button>
+            </div>
+            <div class="col-md-12 colors-container">
+              @for (color of availableColors; track $index) {
+              <div>
+                <span class="color-bullet" [ngStyle]="{'background': color}"></span>
+                <span class="close-icon" (click)="removeColors($index)" title="Remove color">_</span>
+              </div>
+              }
             </div>
             <div class="col-md-12">
               <div class="for-group">

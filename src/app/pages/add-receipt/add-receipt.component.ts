@@ -282,7 +282,7 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
   setProductPrice(): void {
     const product = this.products?.find(item => item.name == this.frmReceipt.get('productName')?.value);
     if (product) {
-      this.frmReceipt.get('rate')?.setValue(product?.price);
+      this.frmReceipt.get('rate')?.setValue(product?.actualPrice);
     } else {
       this.frmReceipt.get('rate')?.setValue('');
     }

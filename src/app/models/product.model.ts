@@ -1,6 +1,9 @@
-export interface ProductModel{
+export interface ProductModel {
   id: number
   name: string,
-  price: number,
+  actualPrice: number,
+  sellingPrice: number,
+  availableColors: string,
+  stock: number,
   productImage: string
 }
