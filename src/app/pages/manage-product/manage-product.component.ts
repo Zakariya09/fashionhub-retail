@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProductModel } from '../../models/product.model';
@@ -15,7 +15,7 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } f
   templateUrl: './manage-product.component.html',
   styleUrls: ['./manage-product.component.css']
 })
-export class ManageProductComponent implements OnInit {
+export class ManageProductComponent implements OnInit, OnDestroy {
   frmProduct!: FormGroup;
   p = 1;
   submitted = false;
@@ -62,7 +62,7 @@ export class ManageProductComponent implements OnInit {
   /**
    * upload image and save product data
    */
-  upload() {
+  upload(): void {
     const imageUrl = this.selectedProduct?.productImage;
     this.submitted = true;
     const file: any = this.selectedFile?.item(0);
@@ -79,7 +79,6 @@ export class ManageProductComponent implements OnInit {
     const storage = getStorage();
     const storageRef = ref(storage, `products/${file?.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
-
     uploadTask.on('state_changed',
       (snapshot) => {
         this.percentage = Math.trunc((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
@@ -142,9 +141,11 @@ export class ManageProductComponent implements OnInit {
     this.warningText = this.appStrings['loadingDataText'];
     this.commonService.getProducts().pipe(takeUntil(this.subscription)).subscribe((response: ProductModel[]) => {
       this.products = response;
-      this.warningText = 'No Data Found!';
+      if (this.products?.length == 0) {
+        this.warningText = this.appStrings['noDataFound'];
+      }
     }, (error: HttpErrorResponse) => {
-      this.warningText = 'No Data Found!';
+      this.warningText = this.appStrings['noDataFound'];
       this.commonService.$alertSubject?.next({
         type: 'danger',
         showAlert: true,
@@ -157,15 +158,10 @@ export class ManageProductComponent implements OnInit {
    * 
    * @param imageUrl 
    */
-  deleteExtraImage(imageUrl: string) {
+  deleteExtraImage(imageUrl: string): void {
     const storage = getStorage();
-
-    // Create a reference to the file to delete
     const desertRef = ref(storage, imageUrl);
-
-    // Delete the file
     deleteObject(desertRef).then(() => {
-
     }).catch((error) => {
       this.commonService.$alertSubject?.next({
         type: 'danger',
@@ -179,7 +175,7 @@ export class ManageProductComponent implements OnInit {
    * 
    * @param data 
    */
-  editProduct(data: ProductModel) {
+  editProduct(data: ProductModel): void {
     if (data.productImage) {
       this.frmProduct.get('productImage')?.clearValidators();
       this.frmProduct.get('productImage')?.updateValueAndValidity();
@@ -200,7 +196,7 @@ export class ManageProductComponent implements OnInit {
    * 
    * @param event 
    */
-  onFileSelected(event: any) {
+  onFileSelected(event: any): void {
     this.selectedFile = event.target.files;
   }
 
@@ -208,7 +204,7 @@ export class ManageProductComponent implements OnInit {
    * deleting product image
    * @returns 
    */
-  deleteProductImage() {
+  deleteProductImage(): void {
     this.commonService.$loaderSubject?.next({ showLoader: true });
     this.isUpdate = true;
     const storage = getStorage();
@@ -242,7 +238,7 @@ export class ManageProductComponent implements OnInit {
    * confirm delete popup
    * @param data 
    */
-  confirmDelete(data: ProductModel, mode: string) {
+  confirmDelete(data: ProductModel, mode: string): void {
     this.selectedProduct = data;
     this.commonService.$confirmSubject.next({ showModal: true, type: 'delete' });
     this.isRecordDelete = mode == 'record';
@@ -251,7 +247,7 @@ export class ManageProductComponent implements OnInit {
   /**
   * delete product record
   */
-  deleteProduct() {
+  deleteProduct(): void {
     this.commonService.deleteProduct(this.selectedProduct?.id)?.pipe(takeUntil(this.subscription)).subscribe((response: any) => {
       this.commonService.$confirmSubject.next({ showModal: false });
       this.commonService.$loaderSubject?.next({ showLoader: false });
@@ -270,12 +266,16 @@ export class ManageProductComponent implements OnInit {
   /**
    * clearing data & resetting form values
    */
-  clearForm() {
+  clearForm(): void {
     this.selectedProduct = {};
     this.initializeForm();
     this.frmProduct.reset();
     this.isUpdate = false;
     this.submitted = false;
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.next(false);
   }
 }
 

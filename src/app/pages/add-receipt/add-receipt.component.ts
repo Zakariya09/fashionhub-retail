@@ -36,6 +36,7 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
   appStrings: any;
   isUpdate: boolean = false;
   timeout: any;
+  formToggler: boolean = false;
 
   constructor(
     private commonService: CommonServiceService,
@@ -71,7 +72,7 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
       gst: [],
       cgst: [],
       sgst: [],
-      igst: [],
+      igst: [0],
       tax: [],
       productName: [null, Validators.required],
       quantity: [, Validators.required],
@@ -101,13 +102,14 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
    * 
    * @returns 
    */
-  onSubmit() {
+  onSubmit(): void {
     this.receipt.id = this.id;
     this.receipt.name = this.frmReceipt.get('customerName')?.value;
     this.receipt.receiptDate = this.frmReceipt.get('receiptDate')?.value;
     this.receipt.taxableAmount = this.taxableAmountSum;
     this.receipt.cgst = this.cgstSum;
     this.receipt.sgst = this.sgstSum;
+    this.receipt.igst = 0;
     this.receipt.grandTotal = this.grandTotal;
     this.receipt.products = this.invoiceArray;
     this.receipt.mobileNumber = this.frmReceipt.get('mobileNumber')?.value;
@@ -124,6 +126,7 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
         taxableAmount: 0,
         cgst: 0,
         sgst: 0,
+        igst: 0,
         grandTotal: 0,
         products: [],
         gst: 0
@@ -131,7 +134,7 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
       this.taxableAmountSum = 0;
       this.cgstSum = 0;
       this.sgstSum = 0;
-      this.grandTotal = 0
+      this.grandTotal = 0;
       this.id = '';
       this.invoiceArray = [];
       this.frmReceipt.reset();
@@ -180,7 +183,7 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
   /**
    * 
    */
-  claculateGST() {
+  claculateGST(): void {
     const taxPercent = (this.frmReceipt?.get('gst')?.value / 2);
     if (!isNaN(taxPercent)) {
       this.frmReceipt?.get('cgst')?.setValue(taxPercent);
@@ -191,7 +194,7 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
   /**
    * GST calculations
    */
-  calc() {
+  calc(): void {
     this.invoice.quantity = this.frmReceipt?.get('quantity')?.value;
     this.invoice.receiptDate = this.frmReceipt?.get('receiptDate')?.value;
     this.invoice.rate = this.frmReceipt?.get('rate')?.value;
@@ -209,6 +212,7 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
     let totalTaxAmount = (total * this.invoice.gst) / 100;
     this.invoice.cgst = totalTaxAmount / 2;
     this.invoice.sgst = totalTaxAmount / 2;
+    this.invoice.igst = this.frmReceipt.get('igst')?.value;
     this.cgstSum += this.invoice.cgst;
     this.sgstSum += this.invoice.cgst;
     if (isNaN(this.cgstSum)) {
@@ -243,7 +247,7 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
    * @param index 
    * @param data 
    */
-  editinvoiceRow(index: any, data: any) {
+  editinvoiceRow(index: any, data: any): void {
     this.grandTotal -= data.total;
     this.taxableAmountSum -= data.taxableAmount;
     this.cgstSum -= data.cgst;
@@ -264,7 +268,7 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
    * @param index 
    * @param data 
    */
-  removeRow(index: any, data: any) {
+  removeRow(index: any, data: any): void {
     this.invoiceArray.splice(index, 1);
     this.grandTotal = this.grandTotal - data.total;
     this.taxableAmountSum = this.taxableAmountSum - data.taxableAmount;
@@ -275,7 +279,7 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
   /**
  * 
  */
-  setProductPrice() {
+  setProductPrice(): void {
     const product = this.products?.find(item => item.name == this.frmReceipt.get('productName')?.value);
     if (product) {
       this.frmReceipt.get('rate')?.setValue(product?.price);
@@ -292,7 +296,7 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
   /**
    * Clearing form data
    */
-  clearForm() {
+  clearForm(): void {
     this.frmReceipt.reset();
     this.submitted = false;
   }
@@ -300,8 +304,15 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
   /**
  * route to receipt listing 
  */
-  routeToReceipt() {
+  routeToReceipt(): void {
     this.router.navigate(['default/receipt']);
+  }
+
+  /**
+   * Toggle receipt form
+   */
+  toggleForm(): void {
+    this.formToggler = !this.formToggler;
   }
 
   ngOnDestroy(): void {

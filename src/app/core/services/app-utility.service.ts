@@ -106,20 +106,24 @@ export class AppUtilityService {
    * Printing receipt formatted div element
    * @param div 
    */
-  printReceipt(div: any) {
-    var divToPrint = document.getElementById(div);
-    var htmlToPrint = '' +
-      '<style type="text/css">' +
-      'table th,td {' +
-      'border:1px solid #000;' +
-      'padding:0.3em;' +
-      'text-align:center;' +
-      '};' +
-      '</style>';
-    htmlToPrint += divToPrint?.outerHTML;
-    let newWin = window.open(`/default/receipt`);
-    newWin?.document.write(htmlToPrint);
-    newWin?.print();
-    newWin?.close();
-  }
+    printReceipt(div: any) {
+        var divToPrint = document.getElementById(div);
+        var htmlToPrint = '' +
+            '<style type="text/css">' +
+            'table th,td,tr {' +
+            'border:1px solid #000;' +
+            'padding:0.3em;' +
+            'border-collapse: collapse;' +
+            'text-align:center;' +
+            '};' +
+            'table {' +
+            'border-collapse: collapse;' +
+            '};' +
+            '</style>';
+        htmlToPrint += divToPrint?.outerHTML;
+        let newWin = window.open(`/default/receipt`);
+        newWin?.document.write(htmlToPrint);
+        newWin?.print();
+        newWin?.close();
+    }
 }

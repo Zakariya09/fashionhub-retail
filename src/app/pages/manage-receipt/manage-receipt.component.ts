@@ -68,7 +68,7 @@ export class ManageReceiptComponent implements OnInit, OnDestroy {
   * Confirm delete popup
   * @param data 
   */
-  confirmDelete(data: ReceiptModel) {
+  confirmDelete(data: ReceiptModel): void {
     this.selectedRecord = data;
     this.commonService.$confirmSubject.next({ showModal: true, type: 'delete' });
   }
@@ -76,7 +76,7 @@ export class ManageReceiptComponent implements OnInit, OnDestroy {
   /**
    * Delete receipt record
    */
-  deleteReceipt() {
+  deleteReceipt(): void {
     this.commonService.$loaderSubject?.next({ showLoader: true });
     this.commonService.deleteReceipt(this.selectedRecord?.id)?.pipe(takeUntil(this.subscription)).subscribe((response) => {
       this.commonService.$confirmSubject.next({ showModal: false });
@@ -95,7 +95,7 @@ export class ManageReceiptComponent implements OnInit, OnDestroy {
   /**
    * Routing to add receipt page
    */
-  addReceipt() {
+  addReceipt(): void {
     this.router.navigate(['default/addReceipt']);
   }
 
@@ -103,7 +103,7 @@ export class ManageReceiptComponent implements OnInit, OnDestroy {
    * Edit receipt
    * @param data 
    */
-  editReceipt(data: any) {
+  editReceipt(data: any): void {
     this.router.navigate([`/default/editReceipt`, data.id]);
   }
 
@@ -111,7 +111,7 @@ export class ManageReceiptComponent implements OnInit, OnDestroy {
    * View receipt
    * @param data 
    */
-  viewRecipt(data: any) {
+  viewRecipt(data: any): void {
     this.receiptData = data;
     this.receiptData.totalInWords = this.utilityService.number2text(data.grandTotal);
     jQuery('#viewReceipt').modal('show');
@@ -121,7 +121,7 @@ export class ManageReceiptComponent implements OnInit, OnDestroy {
    * Printing receipt formatted div element
    * @param div 
    */
-  printReceipt(div: any) {
+  printReceipt(div: any): void {
     this.utilityService.printReceipt(div);
   }
 

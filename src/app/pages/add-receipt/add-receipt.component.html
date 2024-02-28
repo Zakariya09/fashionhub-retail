@@ -6,7 +6,7 @@
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a [routerLink]="['/default/receipt']">{{appStrings['manageReciept']}}</a></li>
+          <li class="breadcrumb-item"><a [routerLink]="['/default/receipt']">{{appStrings['manageSales']}}</a></li>
           <li class="breadcrumb-item active">{{appStrings['addReceipt']}}</li>
         </ol>
       </div>
@@ -15,7 +15,16 @@
 </section>
 
 <div class="container card">
-  <div>
+  <div class="row">
+    <div class="col-md-12 align-right">
+      @if(formToggler){
+      <i class="fas fa-angle-down cursor f-24" (click)="toggleForm()"></i>
+      }@else{
+      <i class="fas fa-angle-up cursor f-24" (click)="toggleForm()"></i>
+      }
+    </div>
+  </div>
+  <div [ngClass]="formToggler ? 'hide' : ''">
     <form (ngSubmit)="onSubmit()" class="form-horizontal" role="form" [formGroup]='frmReceipt' autocomplete="off">
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5">
@@ -67,7 +76,7 @@
           <div class="form-group">
             <select name="productName" class="form-control" id="productName" formControlName="productName"
               (change)="setProductPrice()" placeholder="Select type">
-              <option value="" class="form-control" disabled selected>{{appStrings['optionPlaceholder']}} </option>
+              <option value="" class="form-control" disabled selected>{{appStrings['productOptionPlaceholder']}} </option>
               @for (item of products; track $index) {
               <option [value]="item.name">{{item.name}}</option>
               }

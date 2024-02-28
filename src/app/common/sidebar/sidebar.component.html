@@ -1,8 +1,8 @@
-<aside class="main-sidebar sidebar-dark-info nav-bar-light-new">
+<aside class="main-sidebar sidebar-dark-info nav-bar-light-new" id="sidebar" [ngClass]="toggleMenu ? 'w-0p' : ''">
   <!-- Brand Logo -->
   <a class="brand-link navbar-purple">
     <img src="../../../assets/dist/img/logo.jpg" alt="AdminLTE Logo" class="brand-image elevation-3"
-           style="opacity: .8">
+      style="opacity: .8">
     <span class="brand font-weight-light"><b>KHAN fashion-hub</b></span>
   </a>
 
@@ -14,15 +14,15 @@
         <!-- Add icons to the links using the .nav-icon class
              with font-awesome or any other icon font library -->
         <li class="nav-item">
-          <a href="#" routerLink="/default/dashboard" routerLinkActive="active" class="nav-link">
+          <a routerLink="/default/dashboard" routerLinkActive="active" class="nav-link">
             <i class="nav-icon fas fa-home"></i>
             <p>
-              Dashboard
+              {{appStrings['dashboard']}}
             </p>
           </a>
         </li>
         <!-- <li class="nav-item">
-          <a href="#" routerLink="/default/user" routerLinkActive="active" class="nav-link">
+          <a routerLink="/default/user" routerLinkActive="active" class="nav-link">
             <i class="nav-icon fas fa-user"></i>
             <p>
               Manage User
@@ -30,47 +30,47 @@
           </a>
         </li> -->
         <li class="nav-item">
-          <a href="#" routerLink="/default/product" routerLinkActive="active" class="nav-link">
+          <a routerLink="/default/product" routerLinkActive="active" class="nav-link">
             <i class="nav-icon fas fa-archive"></i>
             <p>
-              Manage Product
+              {{appStrings['manageProduct']}}
             </p>
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" routerLink="/default/import" routerLinkActive="active" class="nav-link">
+          <a routerLink="/default/import" routerLinkActive="active" class="nav-link">
             <i class="nav-icon fas fa-box-open"></i>
             <p>
-              Manage Import
-            </p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="#" routerLink="/default/sales" routerLinkActive="active" class="nav-link">
-            <i class="nav-icon fas fa-shopping-cart"></i>
-            <p>
-              Manage Sales
-            </p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="#" routerLink="/default/credits" routerLinkActive="active" class="nav-link">
-            <i class="nav-icon fas fa-user-tag"></i>
-            <p>
-              Manage Credits
-            </p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="#" routerLink="/default/receipt" routerLinkActive="active" class="nav-link">
-            <i class="nav-icon fas fa-receipt"></i>
-            <p>
-              Manage Receipt
+              {{appStrings['manageImport']}}
             </p>
           </a>
         </li>
         <!-- <li class="nav-item">
-          <a href="#" routerLink="/default/change-password" routerLinkActive="active" class="nav-link">
+          <a routerLink="/default/sales" routerLinkActive="active" class="nav-link">
+            <i class="nav-icon fas fa-shopping-cart"></i>
+            <p>
+              {{appStrings['manageSales']}}
+            </p>
+          </a>
+        </li> -->
+        <li class="nav-item">
+          <a routerLink="/default/credits" routerLinkActive="active" class="nav-link">
+            <i class="nav-icon fas fa-user-tag"></i>
+            <p>
+              {{appStrings['manageCredit']}}
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/default/receipt" routerLinkActive="active" class="nav-link">
+            <i class="nav-icon fas fa-receipt"></i>
+            <p>
+              {{appStrings['manageSales']}}
+            </p>
+          </a>
+        </li>
+        <!-- <li class="nav-item">
+          <a routerLink="/default/change-password" routerLinkActive="active" class="nav-link">
             <i class="nav-icon fas fa-unlock-alt"></i>
             <p>Change Password</p>
           </a>
@@ -92,5 +92,5 @@
 </aside>
 
 <!-- <aside class="control-sidebar control-sidebar-dark"> -->
-  <!-- Control sidebar content goes here -->
+<!-- Control sidebar content goes here -->
 <!-- </aside> -->

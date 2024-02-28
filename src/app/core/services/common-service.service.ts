@@ -20,6 +20,7 @@ export class CommonServiceService {
   $confirmSubject = new Subject<ConfirmModalModel>();
   $loaderSubject = new Subject<Loader>();
   firestore = inject(Firestore);
+  $toggleSubject = new Subject();
 
   constructor(
     private http: HttpClient,

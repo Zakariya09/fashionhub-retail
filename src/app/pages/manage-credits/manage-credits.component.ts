@@ -55,7 +55,7 @@ export class ManageCreditsComponent implements OnInit, OnDestroy {
    * 
    * @returns 
    */
-  calculateCredit() {
+  calculateCredit(): void {
     let productPrice = 0;
     let paidAmount = 0;
     let remainingAmount = 0;
@@ -91,9 +91,9 @@ export class ManageCreditsComponent implements OnInit, OnDestroy {
   }
 
   /**
-       * saving sale data
-       * @returns 
-       */
+  * saving sale data
+  * @returns 
+  */
   onSubmit(): void {
     this.submitted = true;
     if (this.frmCredit.invalid) {
@@ -133,6 +133,9 @@ export class ManageCreditsComponent implements OnInit, OnDestroy {
     this.warningText = this.appStrings['loadingDataText'];
     this.commonService.getCredits().pipe(takeUntil(this.subscription)).subscribe((response: CreditModel[]) => {
       this.credits = response;
+      if (this.credits?.length == 0) {
+        this.warningText = this.appStrings['noDataFound'];
+      }
     }, (error: HttpErrorResponse) => {
       this.warningText = this.appStrings['noDataFound'];
       this.commonService.$alertSubject?.next({
@@ -147,7 +150,7 @@ export class ManageCreditsComponent implements OnInit, OnDestroy {
    * 
    * @param data 
    */
-  editCredit(data: CreditModel) {
+  editCredit(data: CreditModel): void {
     this.isUpdate = true;
     this.frmCredit.reset();
     this.frmCredit.patchValue(data);
@@ -157,7 +160,7 @@ export class ManageCreditsComponent implements OnInit, OnDestroy {
     * confirm delete popup
     * @param data 
     */
-  confirmDelete(data: CreditModel) {
+  confirmDelete(data: CreditModel): void {
     this.selectedRecord = data;
     this.commonService.$confirmSubject.next({ showModal: true, type: 'delete' })
   }
@@ -165,7 +168,7 @@ export class ManageCreditsComponent implements OnInit, OnDestroy {
   /**
    * Deleting Credit record
    */
-  deleteCredit() {
+  deleteCredit(): void {
     this.commonService.$loaderSubject?.next({ showLoader: true });
     this.commonService.deleteCredit(this.selectedRecord?.id)?.pipe(takeUntil(this.subscription)).subscribe((response) => {
       this.commonService.$confirmSubject.next({ showModal: false });
@@ -184,7 +187,7 @@ export class ManageCreditsComponent implements OnInit, OnDestroy {
   /**
    * resetting credit form
    */
-  clearForm() {
+  clearForm(): void {
     this.isUpdate = false;
     this.frmCredit.reset();
     this.submitted = false;

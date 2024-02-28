@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonServiceService } from '../core/services/common-service.service';
 
 @Component({
   selector: 'app-defaultlayout',
@@ -6,10 +7,15 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./defaultlayout.component.css']
 })
 export class DefaultlayoutComponent implements OnInit {
+  toggleSideMenu: boolean = false;
 
-  constructor() { }
+  constructor(
+    private commonService: CommonServiceService,
+  ) { }
 
   ngOnInit() {
+    this.commonService.$toggleSubject?.subscribe((isToggleMenu: any) => {
+      this.toggleSideMenu = isToggleMenu;
+    })
   }
-
 }

@@ -15,3 +15,15 @@
     color: red;
     font-size: 10px;
 }
+
+.hide {
+    display: none;
+}
+
+.ml-0 {
+    margin-left: 0px !important;
+}
+
+.ml-250 {
+    margin-left: 250px !important;
+}

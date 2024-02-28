@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1>{{appStrings['manageReciept']}}</h1>
+        <h1>{{appStrings['manageSales']}}</h1>
       </div>
     </div>
   </div>
@@ -93,15 +93,14 @@
                 </td>
               </tr>
               <tr>
-                <th style="padding: 5px;text-align: left;font-size: 12px;font-family:Calibri;">
+                <td style="padding: 5px;text-align: left;font-size: 12px;font-family:Calibri;">
                   {{appStrings['date']}} :
-                </th>
+                </td>
                 <td style="padding: 5px; text-align: left;font-size: 12px;font-family:Calibri;">
                   {{receiptData.receiptDate | date:'dd-MM-yyyy'}} </td>
-
-                <th style="padding: 5px;text-align: left;font-size: 12px;font-family:Calibri;">
+                <td style="padding: 5px;text-align: left;font-size: 12px;font-family:Calibri;">
                   {{appStrings['mobileNumber']}}
-                </th>
+                </td>
                 <td style=" text-align: left;font-size: 12px;font-family:Calibri;" *ngIf="receiptData.mobileNumber">
                   {{receiptData.mobileNumber}}
                 </td>
@@ -137,7 +136,7 @@
                 <td style="font-size: 12px;font-family:Calibri;">{{item['gst']}}</td>
                 <td style="font-size: 12px;font-family:Calibri;">{{item['cgst']}}</td>
                 <td style="font-size: 12px;font-family:Calibri;">{{item['sgst']}}</td>
-                <td style="font-size: 12px;font-family:Calibri;">{{item['igst']}}</td>
+                <td style="font-size: 12px;font-family:Calibri;">{{item['igst']}} </td>
                 <td style="font-size: 12px;font-family:Calibri;">{{item['total']}}</td>
               </tr>
               }
@@ -234,4 +233,4 @@
     </div>
   </div>
 </div>
-<app-confirm-modal [module]="'Receipt'" (onConfirmCallback)="deleteReceipt()"></app-confirm-modal>
+<app-confirm-modal [module]="'Sales'" (onConfirmCallback)="deleteReceipt()"></app-confirm-modal>

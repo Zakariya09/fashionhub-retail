@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { CommonServiceService } from '../../core/services/common-service.service';
 
 @Component({
   selector: 'app-header',
@@ -7,15 +8,23 @@ import { Router } from '@angular/router';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-
-  constructor(private router: Router) { }
+  toggleSideMenu: boolean = false;
+  constructor(
+    private router: Router,
+    private commonService: CommonServiceService,
+  ) { }
 
   ngOnInit() {
   }
-  
-  logOut(){
+
+  toggleSidebar(): void {
+    this.toggleSideMenu = !this.toggleSideMenu;
+    this.commonService.$toggleSubject.next(this.toggleSideMenu);
+  }
+
+  logOut() {
     localStorage.removeItem('userData');
     this.router.navigate(['/login']);
-   }
+  }
 
 }

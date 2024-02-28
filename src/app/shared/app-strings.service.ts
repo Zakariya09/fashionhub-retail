@@ -16,7 +16,7 @@ export class AppStrings {
         enterAmountText: 'Please enter amount.',
         description: 'Description',
         close: 'Close',
-        manageSales: 'Manage Sale',
+        manageSales: 'Manage Sales',
         newSale: 'New Sale',
         addSale: 'Add Sale',
         sellingDate: 'Selling Date',
@@ -27,7 +27,7 @@ export class AppStrings {
         profit: 'Profit',
         enterProfit: 'Please enter profit.',
         updateSale: 'Update Sale',
-        manageCredit: 'Manage Credit',
+        manageCredit: 'Manage Credits',
         newCredit: 'New Credit',
         addCredit: 'Add Credit',
         updateCredit: 'Update Credit',
@@ -93,6 +93,12 @@ export class AppStrings {
         loadingDataText:'Loading Data...',
         receiptDetails:'Receipt Details',
         percent:'(%)',
-        dashboard:'Dashboard'
+        dashboard:'Dashboard',
+        moreInfo:'More info',
+        totalProducts:'Total Products',
+        totalSales:'Total Sales',
+        totalCredits:'Total Credits',
+        totalImports:'Total Imports',
+        productOptionPlaceholder:'Please select product'
     }
 }

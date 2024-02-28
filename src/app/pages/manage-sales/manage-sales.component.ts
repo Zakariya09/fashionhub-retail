@@ -51,12 +51,11 @@ export class ManageSalesComponent implements OnInit, OnDestroy {
     this.calculateProfit();
   }
 
-
   /**
    * Calculating profit on sales
    * @returns 
    */
-  calculateProfit() {
+  calculateProfit(): void {
     let actualPrice = 0;
     let sellingPrice = 0;
     let profitAmount = 0;
@@ -124,7 +123,7 @@ export class ManageSalesComponent implements OnInit, OnDestroy {
      * edit sale
      * @param data 
      */
-  editSale(data: SaleModel) {
+  editSale(data: SaleModel): void {
     this.isUpdate = true;
     this.frmSale.reset();
     this.frmSale.patchValue(data);
@@ -137,9 +136,11 @@ export class ManageSalesComponent implements OnInit, OnDestroy {
     this.warningText = this.appStrings['loadingDataText'];
     this.commonService.getSales().pipe(takeUntil(this.subscription)).subscribe((response: SaleModel[]) => {
       this.sales = response;
-      this.warningText = 'No Data Found!';
+      if (this.sales?.length == 0) {
+        this.warningText = this.appStrings['noDataFound'];
+      }
     }, (error: HttpErrorResponse) => {
-      this.warningText = 'No Data Found!';
+      this.warningText = this.appStrings['noDataFound'];
       this.commonService.$alertSubject?.next({
         type: 'danger',
         showAlert: true,
@@ -152,7 +153,7 @@ export class ManageSalesComponent implements OnInit, OnDestroy {
   * confirm delete popup
   * @param data 
   */
-  confirmDelete(data: SaleModel) {
+  confirmDelete(data: SaleModel): void {
     this.selectedRecord = data;
     this.commonService.$confirmSubject.next({ showModal: true, type: 'delete' })
   }
@@ -160,7 +161,7 @@ export class ManageSalesComponent implements OnInit, OnDestroy {
   /**
    * Deleting sale record
    */
-  deleteSale() {
+  deleteSale(): void {
     this.commonService.$loaderSubject?.next({ showLoader: true });
     this.commonService.deleteSale(this.selectedRecord?.id)?.pipe(takeUntil(this.subscription)).subscribe((response) => {
       this.commonService.$confirmSubject.next({ showModal: false });
@@ -179,7 +180,7 @@ export class ManageSalesComponent implements OnInit, OnDestroy {
   /**
    * Resetting form
    */
-  clearForm() {
+  clearForm(): void {
     this.isUpdate = false;
     this.frmSale.reset();
     this.submitted = false;

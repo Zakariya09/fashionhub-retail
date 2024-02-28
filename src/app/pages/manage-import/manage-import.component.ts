@@ -53,7 +53,6 @@ export class ManageImportComponent implements OnInit, OnDestroy {
    * @returns 
    */
   onSubmit(): void {
-    console.log(this.frmImport.value);
     this.submitted = true;
     if (this.frmImport.invalid) {
       this.commonService.$alertSubject?.next({
@@ -71,8 +70,6 @@ export class ManageImportComponent implements OnInit, OnDestroy {
       jQuery('#addImport').modal('hide');
       this.isUpdate = false;
     }, (error: HttpErrorResponse) => {
-      console.log('error text')
-      console.log(error)
       this.commonService.$loaderSubject?.next({ showLoader: false });
       this.commonService.$alertSubject?.next({
         type: 'danger',
@@ -95,12 +92,10 @@ export class ManageImportComponent implements OnInit, OnDestroy {
     this.warningText = this.appStrings['loadingDataText'];
     this.commonService.getImports().pipe(takeUntil(this.subscription)).subscribe((response: ImportModel[]) => {
       this.imports = response;
-   if(this.imports.length == 0){
-    this.warningText = this.appStrings['noDataFound'];
-   }
+      if (this.imports.length == 0) {
+        this.warningText = this.appStrings['noDataFound'];
+      }
     }, (error: HttpErrorResponse) => {
-      console.log('error text')
-      console.log(error)
       this.warningText = this.appStrings['noDataFound'];
       this.commonService.$alertSubject?.next({
         type: 'danger',
@@ -114,7 +109,7 @@ export class ManageImportComponent implements OnInit, OnDestroy {
    * edit import
    * @param data 
    */
-  editImport(data: ImportModel) {
+  editImport(data: ImportModel): void {
     this.isUpdate = true;
     this.frmImport.reset();
     this.frmImport.patchValue(data);
@@ -124,7 +119,7 @@ export class ManageImportComponent implements OnInit, OnDestroy {
    * confirm delete popup
    * @param data 
    */
-  confirmDelete(data: ImportModel) {
+  confirmDelete(data: ImportModel): void {
     this.selectedRecord = data;
     this.commonService.$confirmSubject.next({ showModal: true, type: 'delete' })
   }
@@ -132,7 +127,7 @@ export class ManageImportComponent implements OnInit, OnDestroy {
   /**
    * delete import record
    */
-  deleteImport() {
+  deleteImport(): void {
     this.commonService.deleteImport(this.selectedRecord?.id)?.pipe(takeUntil(this.subscription)).subscribe((response) => {
       this.commonService.$confirmSubject.next({ showModal: false });
       this.getImports();
@@ -148,13 +143,13 @@ export class ManageImportComponent implements OnInit, OnDestroy {
   /**
    * clearing form value
    */
-  clearForm() {
+  clearForm(): void {
     this.isUpdate = false;
     this.frmImport.reset();
     this.submitted = false;
   }
 
   ngOnDestroy(): void {
-    this.subscription.next(false)
+    this.subscription.next(false);
   }
 }

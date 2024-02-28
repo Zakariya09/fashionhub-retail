@@ -31,6 +31,7 @@ export class ReceiptModel {
   taxableAmount!: number;
   cgst!: number;
   sgst!: number;
+  igst!: number;
   grandTotal!: number;
   products!: ProductModel[];
   gst!: number
