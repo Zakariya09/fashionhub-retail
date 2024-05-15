@@ -55,7 +55,7 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     const slectedColor = this.frmProduct.get('availableColors')?.value;
     if (slectedColor && !this.availableColors.includes(slectedColor)) {
       this.availableColors.push(this.frmProduct.get('availableColors')?.value);
-      console.log('this.availableColors')
+      // console.log('this.availableColors')
       console.log(this.availableColors?.toString())
     }
   }
