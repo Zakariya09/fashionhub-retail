@@ -122,9 +122,9 @@
                 <input type="color" [value]="'#000000'" class="form-control" formControlName="availableColors"
                   id="availableColors" placeholder="{{appStrings['availableColors']}}"
                   [ngClass]="{ 'is-invalid': submitted && f['availableColors'].errors }" />
-                <div *ngIf="submitted && f['availableColors'].errors" class="text-danger">
-                  <!-- <div *ngIf="f['availableColors'].errors?.['required']"> {{appStrings['availableColorsWarningText']}}
-                  </div> -->
+                <div  class="text-danger">
+                  <p> {{appStrings['colourSelectionWarning']}}
+                  </p>
                 </div>
               </div>
               <button class="btn btn-primary" type="button" (click)="addColors()">{{appStrings['add']}}</button>
@@ -142,7 +142,7 @@
                 <label for="file">{{appStrings['selectImage']}} :</label>&nbsp;
                 <i class="fa fa-asterisk f-required"></i>
                 <input type="file" (change)="onFileSelected($event)" class="form-control" id="file"
-                  formControlName="productImage" [ngClass]="{ 'is-invalid': submitted && f['productImage'].errors }">
+                  formControlName="productImage" [ngClass]="{ 'is-invalid': submitted && f['productImage'].errors }"  accept="image/*">
                 <div *ngIf="submitted && f['productImage'].errors" class="text-danger">
                   <div *ngIf="f['productImage'].errors['required']"> {{appStrings['selectImageWarningText']}}</div>
                 </div>
@@ -162,14 +162,14 @@
               <img src="{{selectedProduct.productImage}}" alt="product image" class="product-image">
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12 align-center">
-              <p>({{selectedProduct.name}})</p>
+              <!-- <p>({{selectedProduct.name}})</p> -->
               <p class="cursor delete-image-action" (click)="confirmDelete(selectedProduct, 'file')">
                 {{appStrings['removeImage']}}</p>
             </div>
           </div>
           }
           <div class="modal-footer ">
-            <button type="submit" class="btn btn-primary btn-sm" [disabled]="frmProduct.invalid"><i
+            <button type="submit" class="btn btn-primary btn-sm" [disabled]="validateForm()"><i
                 class="fas fa-save"></i>
               {{appStrings['save']}}</button>
             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fas fa-times"></i>
@@ -180,4 +180,4 @@
     </div>
   </div>
 </div>
-<app-confirm-modal [module]="'Import'" (onConfirmCallback)="deleteProductImage()"></app-confirm-modal>
+<app-confirm-modal [module]="deleteModalTitle" (onConfirmCallback)="deleteProductImage()"></app-confirm-modal>

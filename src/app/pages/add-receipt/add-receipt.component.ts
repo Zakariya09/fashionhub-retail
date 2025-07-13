@@ -37,6 +37,8 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
   isUpdate: boolean = false;
   timeout: any;
   formToggler: boolean = false;
+  isEdit:boolean = false;
+  previousRecord!:any;
 
   constructor(
     private commonService: CommonServiceService,
@@ -194,12 +196,13 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
   /**
    * GST calculations
    */
-  calc(): void {
-    this.invoice.quantity = this.frmReceipt?.get('quantity')?.value;
-    this.invoice.receiptDate = this.frmReceipt?.get('receiptDate')?.value;
-    this.invoice.rate = this.frmReceipt?.get('rate')?.value;
-    this.invoice.customerName = this.frmReceipt?.get('customerName')?.value;
-    this.invoice.productName = this.frmReceipt?.get('productName')?.value;
+  calc(isCancel = false): void {
+    this.isEdit = false;
+    this.invoice.quantity = isCancel ? this.previousRecord[0]?.quantity:this.frmReceipt?.get('quantity')?.value;
+    this.invoice.receiptDate = isCancel ? this.previousRecord[0]?.receiptDate : this.frmReceipt?.get('receiptDate')?.value;
+    this.invoice.rate = isCancel ? this.previousRecord[0]?.rate : this.frmReceipt?.get('rate')?.value;
+    this.invoice.customerName = isCancel ? this.previousRecord[0]?.customerName : this.frmReceipt?.get('customerName')?.value;
+    this.invoice.productName = isCancel ? this.previousRecord[0]?.productName : this.frmReceipt?.get('productName')?.value;
     this.invoice.taxableAmount = this.invoice.rate * this.invoice.quantity;
     this.taxableAmountSum += this.invoice.taxableAmount;
     this.invoice.gst = this.frmReceipt?.get('gst')?.value;
@@ -240,6 +243,7 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
     this.frmReceipt.get('quantity')?.setValue('');
     this.frmReceipt.get('rate')?.setValue('');
     this.frmReceipt.get('productName')?.setValue(null);
+    this.invoiceArray.forEach((element:any) => ( element.isDisable = false ));
   }
 
   /**
@@ -248,11 +252,13 @@ export class AddReceiptComponent implements OnInit, OnDestroy {
    * @param data 
    */
   editinvoiceRow(index: any, data: any): void {
+    this.isEdit = true;
     this.grandTotal -= data.total;
     this.taxableAmountSum -= data.taxableAmount;
     this.cgstSum -= data.cgst;
     this.sgstSum -= data.sgst;
-    this.invoiceArray.splice(index, 1);
+    this.previousRecord = this.invoiceArray.splice(index, 1);
+    this.invoiceArray.forEach((element:any) => ( element.isDisable = true ));
     if (!this.invoiceArray.length) {
       this.grandTotal = 0;
       this.taxableAmountSum = 0;

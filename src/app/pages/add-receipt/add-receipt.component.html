@@ -96,6 +96,9 @@
             placeholder="{{appStrings['rate']}}" />
         </div>
         <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2 align-add-action">
+          <button type="button" class="btn btn-info btn-sm" (click)="calc(true)" [disabled]="frmReceipt.invalid" *ngIf="isEdit">
+            <i class="fas fa-undo"></i>
+            {{appStrings['cancel']}}</button> &nbsp;&nbsp;
           <button type="button" class="btn btn-info btn-sm" (click)="calc()" [disabled]="frmReceipt.invalid">
             <i class="fas fa-plus"></i>
             {{appStrings['add']}}</button>
@@ -121,7 +124,7 @@
     <tbody>
       @for (data of invoiceArray | filter: textSearch | paginate: { itemsPerPage: 10, currentPage: p } ; track $index )
       {
-      <tr>
+      <tr [ngClass]="data?.isDisable ? 'disabled-row' : ''">
         <td>{{$index+1}}</td>
         <td>
           {{data.productName}}
@@ -156,7 +159,7 @@
     <div class="col-md-8"></div>
     <div class="col-md-4">
       <button class="btn btn-primary btn-sm float-right" (click)="onSubmit()"
-        [disabled]="frmReceipt.invalid && !invoiceArray?.length"><i class="fas fa-save"></i>
+        [disabled]="!invoiceArray?.length"><i class="fas fa-save"></i>
         {{appStrings['save']}}</button>
     </div>
   </div>

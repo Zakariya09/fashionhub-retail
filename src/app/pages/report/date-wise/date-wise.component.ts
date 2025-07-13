@@ -19,9 +19,9 @@ export class DateWiseComponent implements OnInit {
       $('#end').datepicker({ autoclose: true });
 
       //Datemask dd/mm/yyyy
-      $('#start').inputmask('dd-mm-yyyy', { 'placeholder': 'dd-mm-yyyy' })
+      //$('#start').inputmask('dd-mm-yyyy', { 'placeholder': 'dd-mm-yyyy' })
       //Datemask2 mm/dd/yyyy
-      $('#end').inputmask('dd-mm-yyyy', { 'placeholder': 'dd-mm-yyyy' })
+     // $('#end').inputmask('dd-mm-yyyy', { 'placeholder': 'dd-mm-yyyy' })
 
     })
   }

@@ -63,3 +63,8 @@
 .f-24{
   font-size: 24px;
 }
+
+.disabled-row {
+  opacity: 0.5;
+  pointer-events: none; /* Prevent interaction */
+}

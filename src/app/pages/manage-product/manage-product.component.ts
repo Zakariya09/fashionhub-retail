@@ -33,6 +33,7 @@ export class ManageProductComponent implements OnInit, OnDestroy {
   selectedProduct!: any;
   isRecordDelete: boolean = false;
   availableColors: string[] = [];
+  deleteModalTitle!:string;
   constructor(
     private commonService: CommonServiceService,
     private formBuilder: FormBuilder,
@@ -65,7 +66,28 @@ export class ManageProductComponent implements OnInit, OnDestroy {
    * @param index 
    */
   removeColors(index: number) {
+    if(this.availableColors?.length > 1){
     this.availableColors.splice(index, 1);
+this.frmProduct.get('availableColors')?.setValue(this.availableColors[0])
+    }else{
+      this.commonService.$alertSubject?.next({
+        type: 'danger',
+        showAlert: true,
+        message: this.appStringsService.appStrings.leastSelectedColor
+      });
+    }
+  }
+
+  /**
+   * 
+   * @returns boolean
+   */
+  validateForm():boolean | undefined{
+  if(!this.isUpdate){
+    return   this.frmProduct.invalid || this.frmProduct.get('availableColors')?.invalid || this.availableColors?.length<=0;
+  }else{
+    return   this.frmProduct.invalid  
+  }
   }
 
   /**
@@ -136,6 +158,9 @@ export class ManageProductComponent implements OnInit, OnDestroy {
    * save product data
    */
   saveProduct(): void {
+    if(this.frmProduct.invalid){
+      return
+    }
     this.selectedProduct.availableColors = this.availableColors?.toString();
     this.commonService.$loaderSubject?.next({ showLoader: true });
     this.commonService.saveProduct(this.selectedProduct, this.isUpdate)?.pipe(takeUntil(this.subscription)).subscribe(() => {
@@ -152,6 +177,7 @@ export class ManageProductComponent implements OnInit, OnDestroy {
         message: this.utilityService.getErrorText(error?.message)
       });
     });
+    this.commonService.$confirmSubject.next({ showModal: false });
   }
 
   /**
@@ -215,9 +241,9 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     this.frmProduct.get('id')?.setValue(data.id);
     this.frmProduct.get('actualPrice')?.setValue(data.actualPrice);
     this.frmProduct.get('sellingPrice')?.setValue(data.sellingPrice);
-    // this.frmProduct.get('availableColors')?.setValue(data.availableColors);
-    if(data.availableColors){
+    if(data.availableColors?.length){
       this.availableColors = [...data.availableColors?.split(',')];
+    this.frmProduct.get('availableColors')?.setValue(this.availableColors[0]);
     }else{
       this.availableColors = [];
     }
@@ -280,7 +306,8 @@ export class ManageProductComponent implements OnInit, OnDestroy {
   confirmDelete(data: ProductModel, mode: string): void {
     this.selectedProduct = data;
     this.commonService.$confirmSubject.next({ showModal: true, type: 'delete' });
-    this.isRecordDelete = mode == 'record';
+    this.isRecordDelete = (mode == 'record');
+    this.deleteModalTitle = this.isRecordDelete? this.appStrings.record:this.appStrings.image;
   }
 
   /**
@@ -311,6 +338,7 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     this.frmProduct.reset();
     this.isUpdate = false;
     this.submitted = false;
+    this.availableColors = [];
   }
 
   ngOnDestroy(): void {

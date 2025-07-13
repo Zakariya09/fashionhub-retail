@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { CommonServiceService } from "../../core/services/common-service.service";
+import { AppStrings } from "../../shared/app-strings.service";
 declare var jQuery: any;
 
 export interface ConfirmModalModel {
@@ -15,9 +16,13 @@ export class ConfirmModal implements OnInit {
     modalType: string | undefined = 'delete';
     @Output() onConfirmCallback = new EventEmitter();
     @Input() module!: string;
+  appStrings: any;
 
-    constructor(private commonService: CommonServiceService) { }
+    constructor( private commonService: CommonServiceService,     
+        private appStringsService: AppStrings
+    ) { }
     ngOnInit(): void {
+        this.appStrings = this.appStringsService.appStrings;
         this.commonService.$confirmSubject.subscribe((data: ConfirmModalModel) => {
             this.modalType = data.type;
             if (data.showModal) {

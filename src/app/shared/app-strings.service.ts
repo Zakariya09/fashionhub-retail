@@ -105,5 +105,13 @@ export class AppStrings {
         stockWarningText:'Please enter stock',
         availableColors:'Available Colors',
         availableColorsWarningText:'Please add available colors',
+        leastSelectedColor:'Product should have atleast one color option',
+        colourSelectionWarning:'Click on Add to attach colour options.',
+        image:'Image',
+        record:'Record',
+        areYouSure:'Are you sure?',
+        recoverWarning:'You will not be able to recover this record!',
+        delete:'Delete', 
+        cancel:'Cancel'
     }
 }
