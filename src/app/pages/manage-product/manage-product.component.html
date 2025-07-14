@@ -81,6 +81,42 @@
                 </div>
               </div>
             </div>
+             <div class="col-md-12">
+               <div class="form-group">
+                <label for="name">{{appStrings['clothType']}} :</label>&nbsp;<i class="fa fa-asterisk f-required"></i>
+            <select name="clothType" class="form-control" id="clothType" formControlName="clothType"
+              placeholder="Select type">
+              <option value="" class="form-control" disabled selected>{{appStrings['clothOptionPlaceholder']}} </option>
+              @for (item of CLOTH_TYPES; track $index) {
+              <option [value]="item">{{item}}</option>
+              }
+            </select>
+          </div>
+            </div>
+             <div class="col-md-12">
+               <div class="form-group">
+                <label for="name">{{appStrings['fittingType']}} :</label>&nbsp;<i class="fa fa-asterisk f-required"></i>
+            <select name="fittingType" class="form-control" id="fittingType" formControlName="fittingType"
+              placeholder="Select type">
+              <option value="" class="form-control" disabled selected>{{appStrings['fittingTypenPlaceholder']}} </option>
+              @for (item of FITTING_TYPES; track $index) {
+              <option [value]="item">{{item}}</option>
+              }
+            </select>
+          </div>
+            </div>
+             <div class="col-md-12">
+               <div class="form-group">
+                <label for="name">{{appStrings['size']}} :</label>&nbsp;<i class="fa fa-asterisk f-required"></i>
+            <select name="size" class="form-control" id="size" formControlName="size"
+              placeholder="Select type">
+              <option value="" class="form-control" disabled selected>{{appStrings['sizesnPlaceholder']}} </option>
+              @for (item of sizes; track $index) {
+              <option [value]="item">{{item}}</option>
+              }
+            </select>
+          </div>
+            </div>
             <div class="col-md-12">
               <div class="form-group">
                 <label for="actualPrice">{{appStrings['actualPrice']}} :</label>&nbsp;<i

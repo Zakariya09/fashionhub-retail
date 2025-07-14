@@ -112,6 +112,13 @@ export class AppStrings {
         areYouSure:'Are you sure?',
         recoverWarning:'You will not be able to recover this record!',
         delete:'Delete', 
-        cancel:'Cancel'
+        cancel:'Cancel',
+        clothType:'Cloth Type',
+        clothOptionPlaceholder:'Please select cloth type',
+        fittingType:'Fitting Type',
+        fittingTypenPlaceholder:'Please select fitting type',
+        sizesnPlaceholder:'Please select size',
+        size:'Size'
+
     }
 }

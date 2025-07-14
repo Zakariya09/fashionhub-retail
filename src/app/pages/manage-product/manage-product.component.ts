@@ -34,6 +34,12 @@ export class ManageProductComponent implements OnInit, OnDestroy {
   isRecordDelete: boolean = false;
   availableColors: string[] = [];
   deleteModalTitle!:string;
+  CLOTH_TYPES!:string[];
+  FITTING_TYPES!:string[];
+  TOP_SIZES!:string[];
+  BOTTOM_SIZES!:string[];
+  sizes!:string[];
+
   constructor(
     private commonService: CommonServiceService,
     private formBuilder: FormBuilder,
@@ -46,6 +52,11 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.PRODUCT_GRID_COLUMNS = this.appConstants.PRODUCT_GRID_COLUMNS;
     this.appStrings = this.appStringsService.appStrings;
+    this.CLOTH_TYPES = this.appConstants?.CLOTH_TYPES;
+  this.TOP_SIZES = this.appConstants?.TOP_SIZES;
+    this.FITTING_TYPES = this.appConstants?.TOP_FITTING_TYPES;
+  this.BOTTOM_SIZES = this.appConstants?.BOTTOM_SIZES;
+
     this.getProducts();
   }
 
@@ -101,7 +112,14 @@ this.frmProduct.get('availableColors')?.setValue(this.availableColors[0])
       sellingPrice: [, Validators.required],
       stock: [, Validators.required],
       productImage: [, Validators.required],
-      availableColors: ['#000000', Validators.required]
+      availableColors: ['#000000', Validators.required],
+        clothType: [, Validators.required],
+        fittingType: [, Validators.required],
+        size: [, Validators.required],
+    });
+
+    this.frmProduct.valueChanges.subscribe(values => {
+      this.sizes =  values.clothType == "Top" ? this.TOP_SIZES: this.BOTTOM_SIZES
     });
   }
 

@@ -41,4 +41,12 @@ export class AppConstants {
     PRODUCT_GRID_COLUMNS: string[] = [
         '#', 'Name', 'Actual Price', 'Selling Price', 'Stock', 'Image', 'Action'
     ];
+
+    CLOTH_TYPES:string[]=[ 'Top','Bottom'];
+
+    TOP_FITTING_TYPES:string[]=[ 'Skinny Fit', 'Slim Fit', 'Regular Fit', 'Relaxed Fit', 'Loose Fit'];
+
+    TOP_SIZES:string[]=['S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+
+    BOTTOM_SIZES:string[]=['28','30', '32', '34', '36', '38', '40' ];
 }
