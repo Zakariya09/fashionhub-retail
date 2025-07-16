@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1>{{appStrings['manageProduct']}}</h1>
+        <h1>{{ appStrings["manageProduct"] }}</h1>
       </div>
     </div>
   </div>
@@ -10,13 +10,22 @@
 <div class="container card">
   <div class="row">
     <div class="col-md-8">
-      <input type="text" class="form-control" [(ngModel)]="textSearch"
-        placeholder="{{appStrings['filterPlaceholder']}}" />
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="textSearch"
+        placeholder="{{ appStrings['filterPlaceholder'] }}"
+      />
     </div>
     <div class="col-md-4 align-right">
-      <button type="button" class="btn btn-sm btn-primary " (click)="clearForm()" data-toggle="modal"
-        data-target="#addProduct">
-        <i class="fas fa-plus"></i> {{appStrings['newProduct']}}
+      <button
+        type="button"
+        class="btn btn-sm btn-primary"
+        (click)="clearForm()"
+        data-toggle="modal"
+        data-target="#addProduct"
+      >
+        <i class="fas fa-plus"></i> {{ appStrings["newProduct"] }}
       </button>
     </div>
   </div>
@@ -24,33 +33,46 @@
     <thead class="gradient">
       <tr>
         @for (column of PRODUCT_GRID_COLUMNS; track $index) {
-        <th>{{column}}</th>
+        <th>{{ column }}</th>
         }
       </tr>
     </thead>
     <tbody>
-      @for (item of products | filter: textSearch | paginate: { itemsPerPage: 10, currentPage: p } ; track $index ) {
+      @for (item of products | filter: textSearch | paginate: { itemsPerPage:
+      10, currentPage: p } ; track $index ) {
       <tr>
-        <td>{{$index+1}}</td>
+        <td>{{ $index + 1 }}</td>
         <td>
-          {{item?.name}}
+          {{ item?.name }}
         </td>
-        <td>{{item?.actualPrice}}</td>
-        <td>{{item?.sellingPrice}}</td>
-        <td>{{item?.stock}}</td>
+        <td>{{ item?.actualPrice }}</td>
+        <td>{{ item?.sellingPrice }}</td>
+        <td>{{ item?.stock }}</td>
         <td>
-          <img src="{{item.url}}{{item.productImage}}" alt="product image" style="width: 120px;height: 120px;">
+          <img
+            src="{{ item.url }}{{ item.productImage }}"
+            alt="product image"
+            style="width: 120px; height: 120px"
+          />
         </td>
         <td>
-          <i class="fas fa-edit text-primary cursor" (click)="editProduct(item)" data-toggle="modal"
-            data-target="#addProduct"></i> &nbsp;
-          <i class="fas fa-trash text-danger cursor" (click)="confirmDelete(item, 'record')"></i>
+          <i
+            class="fas fa-edit text-primary cursor"
+            (click)="editProduct(item)"
+            data-toggle="modal"
+            data-target="#addProduct"
+          ></i>
+          &nbsp;
+          <i
+            class="fas fa-trash text-danger cursor"
+            (click)="confirmDelete(item, 'record')"
+          ></i>
         </td>
       </tr>
       }@empty {
       <tr>
         <td colspan="7">
-          <h2 class="text-center text-danger">{{warningText}}</h2>
+          <h2 class="text-center text-danger">{{ warningText }}</h2>
         </td>
       </tr>
       }
@@ -59,161 +81,329 @@
   <pagination-controls (pageChange)="p = $event"></pagination-controls>
 </div>
 
-<div class="modal fade" bsModal #addProduct id="addProduct" data-keyboard="false" data-backdrop="static">
+<div
+  class="modal fade"
+  bsModal
+  #addProduct
+  id="addProduct"
+  data-keyboard="false"
+  data-backdrop="static"
+>
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header modal-head">
-        <h4 class="modal-title">{{isUpdate ? appStrings['updateProduct'] : appStrings['addProduct']}}</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <h4 class="modal-title">
+          {{
+            isUpdate ? appStrings["updateProduct"] : appStrings["addProduct"]
+          }}
+        </h4>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <form (ngSubmit)="upload()" role="form" [formGroup]='frmProduct' autocomplete="off">
+        <form
+          (ngSubmit)="upload()"
+          role="form"
+          [formGroup]="frmProduct"
+          autocomplete="off"
+        >
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
-                <label for="name">{{appStrings['name']}} :</label>&nbsp;<i class="fa fa-asterisk f-required"></i>
-                <input type="text" name="name" class="form-control" formControlName="name" id="name"
-                  placeholder="{{appStrings['name']}}" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }" />
+                <label for="name">{{ appStrings["name"] }} :</label>&nbsp;<i
+                  class="fa fa-asterisk f-required"
+                ></i>
+                <input
+                  type="text"
+                  name="name"
+                  class="form-control"
+                  formControlName="name"
+                  id="name"
+                  placeholder="{{ appStrings['name'] }}"
+                  [ngClass]="{ 'is-invalid': submitted && f['name'].errors }"
+                />
                 <div *ngIf="submitted && f['name'].errors" class="text-danger">
-                  <div *ngIf="f['name']?.errors?.['required']">{{appStrings['productNameWarningText']}}</div>
+                  <div *ngIf="f['name']?.errors?.['required']">
+                    {{ appStrings["productNameWarningText"] }}
+                  </div>
                 </div>
               </div>
             </div>
-             <div class="col-md-12">
-               <div class="form-group">
-                <label for="name">{{appStrings['clothType']}} :</label>&nbsp;<i class="fa fa-asterisk f-required"></i>
-            <select name="clothType" class="form-control" id="clothType" formControlName="clothType"
-              placeholder="Select type">
-              <option value="" class="form-control" disabled selected>{{appStrings['clothOptionPlaceholder']}} </option>
-              @for (item of CLOTH_TYPES; track $index) {
-              <option [value]="item">{{item}}</option>
-              }
-            </select>
-          </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="name">{{ appStrings["clothType"] }} :</label
+                >&nbsp;<i class="fa fa-asterisk f-required"></i>
+                <select
+                  name="clothType"
+                  class="form-control"
+                  id="clothType"
+                  formControlName="clothType"
+                  placeholder="Select type"
+                  (change)="changeClothType($event)"
+                >
+                  <option value="" class="form-control" disabled selected>
+                    {{ appStrings["clothOptionPlaceholder"] }}
+                  </option>
+                  @for (item of CLOTH_TYPES; track $index) {
+                  <option [value]="item" (change)="changeClothType(item)">
+                    {{ item }}
+                  </option>
+                  }
+                </select>
+              </div>
             </div>
-             <div class="col-md-12">
-               <div class="form-group">
-                <label for="name">{{appStrings['fittingType']}} :</label>&nbsp;<i class="fa fa-asterisk f-required"></i>
-            <select name="fittingType" class="form-control" id="fittingType" formControlName="fittingType"
-              placeholder="Select type">
-              <option value="" class="form-control" disabled selected>{{appStrings['fittingTypenPlaceholder']}} </option>
-              @for (item of FITTING_TYPES; track $index) {
-              <option [value]="item">{{item}}</option>
-              }
-            </select>
-          </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="name">{{ appStrings["fittingType"] }} :</label
+                >&nbsp;<i class="fa fa-asterisk f-required"></i>
+                <select
+                  name="fittingType"
+                  class="form-control"
+                  id="fittingType"
+                  formControlName="fittingType"
+                  placeholder="Select type"
+                >
+                  <option value="" class="form-control" disabled selected>
+                    {{ appStrings["fittingTypenPlaceholder"] }}
+                  </option>
+                  @for (item of FITTING_TYPES; track $index) {
+                  <option [value]="item">{{ item }}</option>
+                  }
+                </select>
+              </div>
             </div>
-             <div class="col-md-12">
-               <div class="form-group">
-                <label for="name">{{appStrings['size']}} :</label>&nbsp;<i class="fa fa-asterisk f-required"></i>
-            <select name="size" class="form-control" id="size" formControlName="size"
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="name">{{ appStrings["sizes"] }} :</label>&nbsp;<i
+                  class="fa fa-asterisk f-required"
+                ></i>
+                <!-- <select name="size" class="form-control" id="size" formControlName="size"
               placeholder="Select type">
               <option value="" class="form-control" disabled selected>{{appStrings['sizesnPlaceholder']}} </option>
               @for (item of sizes; track $index) {
               <option [value]="item">{{item}}</option>
               }
-            </select>
-          </div>
-            </div>
-            <div class="col-md-12">
-              <div class="form-group">
-                <label for="actualPrice">{{appStrings['actualPrice']}} :</label>&nbsp;<i
-                  class="fa fa-asterisk f-required"></i>
-                <input type="number" class="form-control" formControlName="actualPrice" id="actualPrice"
-                  placeholder="{{appStrings['actualPrice']}}"
-                  [ngClass]="{ 'is-invalid': submitted && f['actualPrice'].errors }" />
-                <div *ngIf="submitted && f['actualPrice'].errors" class="text-danger">
-                  <div *ngIf="f['actualPrice'].errors?.['required']"> {{appStrings['enterActualPrice']}}</div>
+            </select> -->
+                <div class="align-sizes">
+                  @for (size of sizes; track $index) {
+                  <div class="align-size">
+                    <input
+                      class=""
+                      type="checkbox"
+                      id="{{ size.id }}"
+                      [checked]="size.isChecked ? true : false"
+                      value="{{ size.isChecked }}"
+                      (change)="addSizes(size.value)"
+                    />
+                    <label for="{{ size.id }}" class="">{{ size.value }}</label>
+                  </div>
+                  }
                 </div>
               </div>
             </div>
             <div class="col-md-12">
               <div class="form-group">
-                <label for="sellingPrice">{{appStrings['sellingPrice']}} :</label>&nbsp;<i
-                  class="fa fa-asterisk f-required"></i>
-                <input type="number" class="form-control" formControlName="sellingPrice" id="sellingPrice"
-                  placeholder="{{appStrings['sellingPrice']}}"
-                  [ngClass]="{ 'is-invalid': submitted && f['sellingPrice'].errors }" />
-                <div *ngIf="submitted && f['sellingPrice'].errors" class="text-danger">
-                  <div *ngIf="f['sellingPrice'].errors?.['required']"> {{appStrings['enterSellingPrice']}}</div>
+                <label for="actualPrice"
+                  >{{ appStrings["actualPrice"] }} :</label
+                >&nbsp;<i class="fa fa-asterisk f-required"></i>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="actualPrice"
+                  id="actualPrice"
+                  placeholder="{{ appStrings['actualPrice'] }}"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['actualPrice'].errors
+                  }"
+                />
+                <div
+                  *ngIf="submitted && f['actualPrice'].errors"
+                  class="text-danger"
+                >
+                  <div *ngIf="f['actualPrice'].errors?.['required']">
+                    {{ appStrings["enterActualPrice"] }}
+                  </div>
                 </div>
               </div>
             </div>
             <div class="col-md-12">
               <div class="form-group">
-                <label for="stock">{{appStrings['stock']}} :</label>&nbsp;<i class="fa fa-asterisk f-required"></i>
-                <input type="number" class="form-control" formControlName="stock" id="stock"
-                  placeholder="{{appStrings['stock']}}" [ngClass]="{ 'is-invalid': submitted && f['stock'].errors }" />
+                <label for="sellingPrice"
+                  >{{ appStrings["sellingPrice"] }} :</label
+                >&nbsp;<i class="fa fa-asterisk f-required"></i>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="sellingPrice"
+                  id="sellingPrice"
+                  placeholder="{{ appStrings['sellingPrice'] }}"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['sellingPrice'].errors
+                  }"
+                />
+                <div
+                  *ngIf="submitted && f['sellingPrice'].errors"
+                  class="text-danger"
+                >
+                  <div *ngIf="f['sellingPrice'].errors?.['required']">
+                    {{ appStrings["enterSellingPrice"] }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="stock">{{ appStrings["stock"] }} :</label>&nbsp;<i
+                  class="fa fa-asterisk f-required"
+                ></i>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="stock"
+                  id="stock"
+                  placeholder="{{ appStrings['stock'] }}"
+                  [ngClass]="{ 'is-invalid': submitted && f['stock'].errors }"
+                />
                 <div *ngIf="submitted && f['stock'].errors" class="text-danger">
-                  <div *ngIf="f['stock'].errors?.['required']"> {{appStrings['stockWarningText']}}</div>
+                  <div *ngIf="f['stock'].errors?.['required']">
+                    {{ appStrings["stockWarningText"] }}
+                  </div>
                 </div>
               </div>
             </div>
             <div class="col-md-12 align-color-picker">
               <div class="form-group">
-                <label for="availableColors">{{appStrings['availableColors']}} :</label>&nbsp;<i
-                  class="fa fa-asterisk f-required"></i>
-                <input type="color" [value]="'#000000'" class="form-control" formControlName="availableColors"
-                  id="availableColors" placeholder="{{appStrings['availableColors']}}"
-                  [ngClass]="{ 'is-invalid': submitted && f['availableColors'].errors }" />
-                <div  class="text-danger">
-                  <p> {{appStrings['colourSelectionWarning']}}
-                  </p>
+                <label for="availableColors"
+                  >{{ appStrings["availableColors"] }} :</label
+                >&nbsp;<i class="fa fa-asterisk f-required"></i>
+                <input
+                  type="color"
+                  [value]="'#000000'"
+                  class="form-control"
+                  formControlName="availableColors"
+                  id="availableColors"
+                  placeholder="{{ appStrings['availableColors'] }}"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['availableColors'].errors
+                  }"
+                />
+                <div class="text-danger">
+                  <p>{{ appStrings["colourSelectionWarning"] }}</p>
                 </div>
               </div>
-              <button class="btn btn-primary" type="button" (click)="addColors()">{{appStrings['add']}}</button>
+              <button
+                class="btn btn-primary"
+                type="button"
+                (click)="addColors()"
+              >
+                {{ appStrings["add"] }}
+              </button>
             </div>
             <div class="col-md-12 colors-container">
               @for (color of availableColors; track $index) {
               <div>
-                <span class="color-bullet" [ngStyle]="{'background': color}"></span>
-                <span class="close-icon" (click)="removeColors($index)" title="Remove color">_</span>
+                <span
+                  class="color-bullet"
+                  [ngStyle]="{ background: color }"
+                ></span>
+                <span
+                  class="close-icon"
+                  (click)="removeColors($index)"
+                  title="Remove color"
+                  >_</span
+                >
               </div>
               }
             </div>
             <div class="col-md-12">
               <div class="for-group">
-                <label for="file">{{appStrings['selectImage']}} :</label>&nbsp;
+                <label for="file">{{ appStrings["selectImage"] }} :</label
+                >&nbsp;
                 <i class="fa fa-asterisk f-required"></i>
-                <input type="file" (change)="onFileSelected($event)" class="form-control" id="file"
-                  formControlName="productImage" [ngClass]="{ 'is-invalid': submitted && f['productImage'].errors }"  accept="image/*">
-                <div *ngIf="submitted && f['productImage'].errors" class="text-danger">
-                  <div *ngIf="f['productImage'].errors['required']"> {{appStrings['selectImageWarningText']}}</div>
+                <input
+                  type="file"
+                  (change)="onFileSelected($event)"
+                  class="form-control"
+                  id="file"
+                  formControlName="productImage"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['productImage'].errors
+                  }"
+                  accept="image/*"
+                />
+                <div
+                  *ngIf="submitted && f['productImage'].errors"
+                  class="text-danger"
+                >
+                  <div *ngIf="f['productImage'].errors['required']">
+                    {{ appStrings["selectImageWarningText"] }}
+                  </div>
                 </div>
               </div>
               <div *ngIf="currentFileUpload" class="progress">
-                <div class="progress-bar progress-bar-info progress-bar-striped"
-                  [ngClass]="percentage == 0 ? 'c-info' : null" role="progressbar" attr.aria-valuenow="{{percentage}}"
-                  aria-valuemin="0" aria-valuemax="100" [ngStyle]="{width:percentage+'%'}">
-                  {{percentage}}%
+                <div
+                  class="progress-bar progress-bar-info progress-bar-striped"
+                  [ngClass]="percentage == 0 ? 'c-info' : null"
+                  role="progressbar"
+                  attr.aria-valuenow="{{ percentage }}"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  [ngStyle]="{ width: percentage + '%' }"
+                >
+                  {{ percentage }}%
                 </div>
               </div>
             </div>
           </div>
-          @if (isUpdate && selectedProduct.productImage && !selectedProduct.productImage.includes('C:')) {
+          @if (isUpdate && selectedProduct.productImage &&
+          !selectedProduct.productImage.includes('C:')) {
           <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12 align-center">
-              <img src="{{selectedProduct.productImage}}" alt="product image" class="product-image">
+              <img
+                src="{{ selectedProduct.productImage }}"
+                alt="product image"
+                class="product-image"
+              />
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12 align-center">
               <!-- <p>({{selectedProduct.name}})</p> -->
-              <p class="cursor delete-image-action" (click)="confirmDelete(selectedProduct, 'file')">
-                {{appStrings['removeImage']}}</p>
+              <p
+                class="cursor delete-image-action"
+                (click)="confirmDelete(selectedProduct, 'file')"
+              >
+                {{ appStrings["removeImage"] }}
+              </p>
             </div>
           </div>
           }
-          <div class="modal-footer ">
-            <button type="submit" class="btn btn-primary btn-sm" [disabled]="validateForm()"><i
-                class="fas fa-save"></i>
-              {{appStrings['save']}}</button>
-            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fas fa-times"></i>
-              {{appStrings['close']}}</button>
+          <div class="modal-footer">
+            <button
+              type="submit"
+              class="btn btn-primary btn-sm"
+              [disabled]="validateForm()"
+            >
+              <i class="fas fa-save"></i> {{ appStrings["save"] }}
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger btn-sm"
+              data-dismiss="modal"
+            >
+              <i class="fas fa-times"></i> {{ appStrings["close"] }}
+            </button>
           </div>
         </form>
       </div>
     </div>
   </div>
 </div>
-<app-confirm-modal [module]="deleteModalTitle" (onConfirmCallback)="deleteProductImage()"></app-confirm-modal>
+<app-confirm-modal
+  [module]="deleteModalTitle"
+  (onConfirmCallback)="deleteProductImage()"
+></app-confirm-modal>

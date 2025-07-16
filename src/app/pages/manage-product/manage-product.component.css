@@ -7,17 +7,17 @@
 }
 
 .gradient {
-  background: linear-gradient(to top, #901962e0, #FF0099);
+  background: linear-gradient(to top, #901962e0, #ff0099);
   color: white;
 }
 
 .modal-head {
   color: whitesmoke;
-  background: #FF0099;
+  background: #ff0099;
   /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, #493240, #FF0099);
+  background: -webkit-linear-gradient(to right, #493240, #ff0099);
   /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to right, #493240, #FF0099);
+  background: linear-gradient(to right, #493240, #ff0099);
   /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
@@ -59,7 +59,7 @@ p {
   align-items: center;
 
   & div:first-child {
-    width: 300px
+    width: 300px;
   }
 
   & button {
@@ -90,4 +90,22 @@ p {
   display: flex;
   flex-direction: row;
   gap: 10px;
+}
+
+.align-sizes {
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+}
+
+.mgl-40 {
+  margin-left: -40px;
+}
+
+.align-size {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 10px;
+  padding-right: 30px;
 }

@@ -118,7 +118,7 @@ export class AppStrings {
         fittingType:'Fitting Type',
         fittingTypenPlaceholder:'Please select fitting type',
         sizesnPlaceholder:'Please select size',
-        size:'Size'
+        sizes:'Sizes'
 
     }
 }
