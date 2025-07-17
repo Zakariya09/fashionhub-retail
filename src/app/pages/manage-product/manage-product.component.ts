@@ -127,16 +127,7 @@ export class ManageProductComponent implements OnInit, OnDestroy {
       availableColors: ['#000000', Validators.required],
       clothType: [, Validators.required],
       fittingType: [, Validators.required],
-      size: [, Validators.required],
-    });
-
-    this.frmProduct.valueChanges.subscribe((values) => {
-      // this.sizes =
-      //   values.clothType == 'Top'
-      //     ? [...this.TOP_SIZES]
-      //     : [...this.BOTTOM_SIZES];
-      // this.sizes.forEach((size) => (size.isChecked = false));
-      // console.log(this.sizes);
+      size: [],
     });
   }
 
@@ -232,7 +223,10 @@ export class ManageProductComponent implements OnInit, OnDestroy {
       return;
     }
     this.selectedProduct.availableColors = this.availableColors?.toString();
+    this.selectedProduct.size = this.selectedSizes?.toString();
     this.commonService.$loaderSubject?.next({ showLoader: true });
+    console.log('this.selectedProduct');
+    console.log(this.selectedProduct);
     this.commonService
       .saveProduct(this.selectedProduct, this.isUpdate)
       ?.pipe(takeUntil(this.subscription))
@@ -326,6 +320,8 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     this.frmProduct.get('id')?.setValue(data.id);
     this.frmProduct.get('actualPrice')?.setValue(data.actualPrice);
     this.frmProduct.get('sellingPrice')?.setValue(data.sellingPrice);
+    this.frmProduct.get('fittingType')?.setValue(data.fittingType);
+    this.frmProduct.get('clothType')?.setValue(data.clothType);
     if (data.availableColors?.length) {
       this.availableColors = [...data.availableColors?.split(',')];
       this.frmProduct.get('availableColors')?.setValue(this.availableColors[0]);
@@ -334,6 +330,29 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     }
     this.frmProduct.get('stock')?.setValue(data.stock);
     this.selectedProduct = data;
+    console.log('data');
+    console.log(data);
+    this.selectedSizes = data?.size?.split(',');
+    if (!this.selectedSizes) {
+      this.sizes = [];
+    }
+
+    console.log('selectedSizes');
+    console.log(this.selectedSizes);
+    if (data.clothType == this.CLOTH_TYPES[0]) {
+      this.sizes = [...this.TOP_SIZES];
+      this.sizes?.forEach(
+        (item) => (item.isChecked = this.selectedSizes?.includes(item.value))
+      );
+
+      console.log('sizes');
+      console.log(this.sizes);
+    } else if (data.clothType == this.CLOTH_TYPES[1]) {
+      this.sizes = [...this.BOTTOM_SIZES];
+      this.sizes?.forEach(
+        (item) => (item.isChecked = this.selectedSizes?.includes(item.value))
+      );
+    }
   }
 
   /**
@@ -437,6 +456,7 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     this.isUpdate = false;
     this.submitted = false;
     this.availableColors = [];
+    this.sizes = [];
   }
 
   ngOnDestroy(): void {
