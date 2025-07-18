@@ -75,8 +75,6 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     const slectedColor = this.frmProduct.get('availableColors')?.value;
     if (slectedColor && !this.availableColors.includes(slectedColor)) {
       this.availableColors.push(this.frmProduct.get('availableColors')?.value);
-      // console.log('this.availableColors')
-      console.log(this.availableColors?.toString());
     }
   }
 
@@ -128,11 +126,16 @@ export class ManageProductComponent implements OnInit, OnDestroy {
       clothType: [, Validators.required],
       fittingType: [, Validators.required],
       size: [],
+      description: [],
     });
   }
 
+  /**
+   *
+   * @param event
+   * change size array based cloth type selected
+   */
   changeClothType(event: any) {
-    console.log(event.target.value);
     this.selectedSizes = [].slice();
     this.sizes =
       event.target.value == 'Top'
@@ -141,6 +144,11 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     this.sizes.forEach((size) => (size.isChecked = false));
   }
 
+  /**
+   *
+   * @param value
+   * updating size to save size for the product
+   */
   addSizes(value: string) {
     if (!this.selectedSizes.includes(value)) {
       this.sizes.forEach((item) => {
@@ -159,8 +167,6 @@ export class ManageProductComponent implements OnInit, OnDestroy {
         return item;
       });
     }
-    console.log(this.selectedSizes);
-    console.log(this.sizes);
   }
 
   /**
@@ -225,8 +231,6 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     this.selectedProduct.availableColors = this.availableColors?.toString();
     this.selectedProduct.size = this.selectedSizes?.toString();
     this.commonService.$loaderSubject?.next({ showLoader: true });
-    console.log('this.selectedProduct');
-    console.log(this.selectedProduct);
     this.commonService
       .saveProduct(this.selectedProduct, this.isUpdate)
       ?.pipe(takeUntil(this.subscription))
@@ -319,6 +323,7 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     this.frmProduct.get('name')?.setValue(data.name);
     this.frmProduct.get('id')?.setValue(data.id);
     this.frmProduct.get('actualPrice')?.setValue(data.actualPrice);
+    this.frmProduct.get('description')?.setValue(data.description);
     this.frmProduct.get('sellingPrice')?.setValue(data.sellingPrice);
     this.frmProduct.get('fittingType')?.setValue(data.fittingType);
     this.frmProduct.get('clothType')?.setValue(data.clothType);
@@ -330,23 +335,16 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     }
     this.frmProduct.get('stock')?.setValue(data.stock);
     this.selectedProduct = data;
-    console.log('data');
-    console.log(data);
     this.selectedSizes = data?.size?.split(',');
     if (!this.selectedSizes) {
       this.sizes = [];
     }
 
-    console.log('selectedSizes');
-    console.log(this.selectedSizes);
     if (data.clothType == this.CLOTH_TYPES[0]) {
       this.sizes = [...this.TOP_SIZES];
       this.sizes?.forEach(
         (item) => (item.isChecked = this.selectedSizes?.includes(item.value))
       );
-
-      console.log('sizes');
-      console.log(this.sizes);
     } else if (data.clothType == this.CLOTH_TYPES[1]) {
       this.sizes = [...this.BOTTOM_SIZES];
       this.sizes?.forEach(
@@ -375,10 +373,12 @@ export class ManageProductComponent implements OnInit, OnDestroy {
       this.deleteProduct();
       return;
     }
+
     // Create a reference to the file to delete
     const desertRef = ref(storage, this.selectedProduct.productImage);
-
-    // Delete the file
+    /**
+     * deleting file object
+     */
     deleteObject(desertRef)
       .then(() => {
         if (this.isRecordDelete) {
@@ -390,8 +390,6 @@ export class ManageProductComponent implements OnInit, OnDestroy {
         }
       })
       .catch((error) => {
-        console.log('error');
-        console.log((error?.message).includes('does not exist'));
         if (error?.message?.includes('does not exist')) {
           this.deleteProduct();
           return;

@@ -9,4 +9,5 @@ export interface ProductModel {
   size: string;
   clothType: string;
   fittingType: string;
+  description?: string;
 }

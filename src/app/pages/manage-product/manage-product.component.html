@@ -183,13 +183,6 @@
                 <label for="name">{{ appStrings["sizes"] }} :</label>&nbsp;<i
                   class="fa fa-asterisk f-required"
                 ></i>
-                <!-- <select name="size" class="form-control" id="size" formControlName="size"
-              placeholder="Select type">
-              <option value="" class="form-control" disabled selected>{{appStrings['sizesnPlaceholder']}} </option>
-              @for (item of sizes; track $index) {
-              <option [value]="item">{{item}}</option>
-              }
-            </select> -->
                 <div class="align-sizes">
                   @for (size of sizes; track $index) {
                   <div class="align-size">
@@ -320,6 +313,21 @@
                 >
               </div>
               }
+            </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="description"
+                  >{{ appStrings["description"] }} :</label
+                >
+                <textarea
+                  class="form-control"
+                  formControlName="description"
+                  id="description"
+                  placeholder="{{ appStrings['description'] }}"
+                  rows="4"
+                  cols="15"
+                ></textarea>
+              </div>
             </div>
             <div class="col-md-12">
               <div class="for-group">
