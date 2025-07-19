@@ -10,6 +10,7 @@ import { CreditModel } from '../../models/credit.model';
 import { Firestore } from '@angular/fire/firestore';
 import { ProductModel } from '../../models/product.model';
 import { ReceiptModel } from '../../models/receipt.model';
+import { ProductType } from '../../models/settings.model';
 
 @Injectable({
   providedIn: 'root',
@@ -22,46 +23,52 @@ export class CommonServiceService {
   firestore = inject(Firestore);
   $toggleSubject = new Subject();
 
-  constructor(
-    private http: HttpClient,
-  ) { }
+  constructor(private http: HttpClient) {}
   private baseUrl = 'https://fashionhub-retail-default-rtdb.firebaseio.com/';
 
   /**
- * 
- * @returns 
- */
+   *
+   * @returns
+   */
   getReceipts() {
-    return this.http.get<ReceiptModel>(`${this.baseUrl}receipts.json`)?.pipe(map((resp: any) => {
-      const receiptsArr: ReceiptModel[] = [];
-      for (const key in resp) {
-        if (resp.hasOwnProperty(key)) {
-          receiptsArr.push({ id: key, ...resp[key] });
+    return this.http.get<ReceiptModel>(`${this.baseUrl}receipts.json`)?.pipe(
+      map((resp: any) => {
+        const receiptsArr: ReceiptModel[] = [];
+        for (const key in resp) {
+          if (resp.hasOwnProperty(key)) {
+            receiptsArr.push({ id: key, ...resp[key] });
+          }
         }
-      }
-      return receiptsArr;
-    }))
+        return receiptsArr;
+      })
+    );
   }
 
   /**
-* 
-* @returns 
-*/
+   *
+   * @returns
+   */
   getReceiptById(id: string) {
     return this.http.get<ReceiptModel>(`${this.baseUrl}receipts/${id}.json`);
   }
 
   /**
-   * 
-   * @param receiptData 
-   * @param isUpdate 
-   * @returns 
+   *
+   * @param receiptData
+   * @param isUpdate
+   * @returns
    */
   saveReceipt(receiptData: ReceiptModel, isUpdate: boolean) {
     if (isUpdate) {
-      return this.http.put(`${this.baseUrl}receipts/${receiptData?.id}.json`, receiptData)
+      return this.http.put(
+        `${this.baseUrl}receipts/${receiptData?.id}.json`,
+        receiptData
+      );
     } else {
-      return this.http.post<ProductModel>(`${this.baseUrl}receipts.json`, receiptData);
+      return this.http.post<ProductModel>(
+        `${this.baseUrl}receipts.json`,
+        receiptData
+      );
     }
   }
 
@@ -71,170 +78,198 @@ export class CommonServiceService {
   }
 
   /**
-  * 
-  * @param id 
-  * @returns 
-  */
+   *
+   * @param id
+   * @returns
+   */
   deleteReceipt(id: any) {
-    return this.http.delete(`${this.baseUrl}receipts/${id}.json`)
+    return this.http.delete(`${this.baseUrl}receipts/${id}.json`);
   }
 
   /**
-   * 
-   * @returns 
+   *
+   * @returns
    */
   getProducts() {
-    return this.http.get<ProductModel>(`${this.baseUrl}products.json`)?.pipe(map((resp: any) => {
-      const importsArr: ProductModel[] = [];
-      for (const key in resp) {
-        if (resp.hasOwnProperty(key)) {
-          importsArr.push({ id: key, ...resp[key] });
+    return this.http.get<ProductModel>(`${this.baseUrl}products.json`)?.pipe(
+      map((resp: any) => {
+        const importsArr: ProductModel[] = [];
+        for (const key in resp) {
+          if (resp.hasOwnProperty(key)) {
+            importsArr.push({ id: key, ...resp[key] });
+          }
         }
-      }
-      return importsArr;
-    }))
+        return importsArr;
+      })
+    );
   }
 
   /**
-   * 
-   * @param productData 
-   * @param isUpdate 
-   * @returns 
+   *
+   * @param productData
+   * @param isUpdate
+   * @returns
    */
   saveProduct(productData: ProductModel, isUpdate: boolean) {
     if (isUpdate) {
-      return this.http.put(`${this.baseUrl}products/${productData?.id}.json`, productData)
+      return this.http.put(
+        `${this.baseUrl}products/${productData?.id}.json`,
+        productData
+      );
     } else {
-      return this.http.post<ProductModel>(`${this.baseUrl}products.json`, productData);
+      return this.http.post<ProductModel>(
+        `${this.baseUrl}products.json`,
+        productData
+      );
     }
   }
 
   /**
-  * 
-  * @param id 
-  * @returns 
-  */
+   *
+   * @param id
+   * @returns
+   */
   deleteProduct(id: any) {
-    return this.http.delete(`${this.baseUrl}products/${id}.json`)
+    return this.http.delete(`${this.baseUrl}products/${id}.json`);
   }
 
   /**
-   * 
-   * @returns 
+   *
+   * @returns
    */
   getImports() {
-    return this.http.get<ImportModel>(`${this.baseUrl}imports.json`)?.pipe(map((resp: any) => {
-      const importsArr: ImportModel[] = [];
-      for (const key in resp) {
-        if (resp.hasOwnProperty(key)) {
-          importsArr.push({ id: key, ...resp[key] })
+    return this.http.get<ImportModel>(`${this.baseUrl}imports.json`)?.pipe(
+      map((resp: any) => {
+        const importsArr: ImportModel[] = [];
+        for (const key in resp) {
+          if (resp.hasOwnProperty(key)) {
+            importsArr.push({ id: key, ...resp[key] });
+          }
         }
-      }
-      return importsArr;
-    }))
+        return importsArr;
+      })
+    );
   }
 
   /**
-   * 
-   * @param importData 
-   * @param isUpdate 
-   * @returns 
+   *
+   * @param importData
+   * @param isUpdate
+   * @returns
    */
   saveImport(importData: ImportModel, isUpdate: boolean) {
     if (isUpdate) {
-      return this.http.put(`${this.baseUrl}imports/${importData?.id}.json`, importData)
+      return this.http.put(
+        `${this.baseUrl}imports/${importData?.id}.json`,
+        importData
+      );
     } else {
-      return this.http.post<ImportModel>(`${this.baseUrl}imports.json`, importData);
+      return this.http.post<ImportModel>(
+        `${this.baseUrl}imports.json`,
+        importData
+      );
     }
   }
 
   /**
- * 
- * @param id 
- * @returns 
- */
+   *
+   * @param id
+   * @returns
+   */
   deleteImport(id: any) {
-    return this.http.delete(`${this.baseUrl}imports/${id}.json`)
+    return this.http.delete(`${this.baseUrl}imports/${id}.json`);
   }
 
   /**
-   * 
-   * @returns 
+   *
+   * @returns
    */
   getSales() {
-    return this.http.get<SaleModel>(`${this.baseUrl}sales.json`)?.pipe(map((resp: any) => {
-      const importsArr: SaleModel[] = [];
-      for (const key in resp) {
-        if (resp.hasOwnProperty(key)) {
-          importsArr.push({ id: key, ...resp[key] })
+    return this.http.get<SaleModel>(`${this.baseUrl}sales.json`)?.pipe(
+      map((resp: any) => {
+        const importsArr: SaleModel[] = [];
+        for (const key in resp) {
+          if (resp.hasOwnProperty(key)) {
+            importsArr.push({ id: key, ...resp[key] });
+          }
         }
-      }
-      return importsArr;
-    }))
+        return importsArr;
+      })
+    );
   }
 
   /**
-   * 
-   * @param saleData 
-   * @param isUpdate 
-   * @returns 
+   *
+   * @param saleData
+   * @param isUpdate
+   * @returns
    */
   saveSale(saleData: SaleModel, isUpdate: boolean) {
     if (isUpdate) {
-      return this.http.put(`${this.baseUrl}sales/${saleData?.id}.json`, saleData)
+      return this.http.put(
+        `${this.baseUrl}sales/${saleData?.id}.json`,
+        saleData
+      );
     } else {
       return this.http.post<SaleModel>(`${this.baseUrl}sales.json`, saleData);
     }
   }
 
   /**
-   * 
-   * @param id 
-   * @returns 
+   *
+   * @param id
+   * @returns
    */
   deleteSale(id: any) {
-    return this.http.delete(`${this.baseUrl}sales/${id}.json`)
+    return this.http.delete(`${this.baseUrl}sales/${id}.json`);
   }
 
   /**
-  * 
-  * @returns 
-  */
+   *
+   * @returns
+   */
   getCredits() {
-    return this.http.get<CreditModel>(`${this.baseUrl}credits.json`)?.pipe(map((resp: any) => {
-      const crediitsArr: CreditModel[] = [];
-      for (const key in resp) {
-        if (resp.hasOwnProperty(key)) {
-          crediitsArr.push({ id: key, ...resp[key] })
+    return this.http.get<CreditModel>(`${this.baseUrl}credits.json`)?.pipe(
+      map((resp: any) => {
+        const crediitsArr: CreditModel[] = [];
+        for (const key in resp) {
+          if (resp.hasOwnProperty(key)) {
+            crediitsArr.push({ id: key, ...resp[key] });
+          }
         }
-      }
-      return crediitsArr;
-    }))
+        return crediitsArr;
+      })
+    );
   }
 
   /**
-    * 
-    * @param saleData 
-    * @param isUpdate 
-    * @returns 
-    */
+   *
+   * @param saleData
+   * @param isUpdate
+   * @returns
+   */
   saveCredit(creaditData: CreditModel, isUpdate: boolean) {
     if (isUpdate) {
-      return this.http.put(`${this.baseUrl}credits/${creaditData?.id}.json`, creaditData)
+      return this.http.put(
+        `${this.baseUrl}credits/${creaditData?.id}.json`,
+        creaditData
+      );
     } else {
-      return this.http.post<CreditModel>(`${this.baseUrl}credits.json`, creaditData);
+      return this.http.post<CreditModel>(
+        `${this.baseUrl}credits.json`,
+        creaditData
+      );
     }
   }
 
   /**
-  * 
-  * @param id 
-  * @returns 
-  */
+   *
+   * @param id
+   * @returns
+   */
   deleteCredit(id: any) {
-    return this.http.delete(`${this.baseUrl}credits/${id}.json`)
+    return this.http.delete(`${this.baseUrl}credits/${id}.json`);
   }
-
 
   //GET Users
   getUsers() {
@@ -254,5 +289,54 @@ export class CommonServiceService {
   //Delete User
   deleteUser(id: any) {
     return this.http.delete(this.baseUrl + 'user/' + id);
+  }
+
+  /**
+   *
+   * @param saleData
+   * @param isUpdate
+   * @returns
+   */
+  saveProductType(productTypeData: ProductType, isUpdate: boolean) {
+    if (isUpdate) {
+      return this.http.put(
+        `${this.baseUrl}product-types/${productTypeData?.id}.json`,
+        productTypeData
+      );
+    } else {
+      return this.http.post<ProductType>(
+        `${this.baseUrl}product-types.json`,
+        productTypeData
+      );
+    }
+  }
+
+  /**
+   *
+   * @returns
+   */
+  getProductTypes() {
+    return this.http
+      .get<ProductType>(`${this.baseUrl}product-types.json`)
+      ?.pipe(
+        map((resp: any) => {
+          const crediitsArr: ProductType[] = [];
+          for (const key in resp) {
+            if (resp.hasOwnProperty(key)) {
+              crediitsArr.push({ id: key, ...resp[key] });
+            }
+          }
+          return crediitsArr;
+        })
+      );
+  }
+
+  /**
+   *
+   * @param id
+   * @returns
+   */
+  deleteProductType(id: any) {
+    return this.http.delete(`${this.baseUrl}product-types/${id}.json`);
   }
 }

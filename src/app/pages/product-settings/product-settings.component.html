@@ -1,0 +1,157 @@
+<section class="content-header card">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>{{ appStrings["productSetting"] }}</h1>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container card">
+  <div class="row">
+    <div class="col-md-8">
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="textSearch"
+        placeholder="Type here to search..."
+      />
+    </div>
+    <div class="col-md-4 align-right pull-right">
+      <button
+        type="button"
+        class="btn btn-sm btn-primary"
+        (click)="clearForm()"
+        data-toggle="modal"
+        data-target="#addSetting"
+      >
+        <i class="fas fa-plus"></i> {{ appStrings["newSettings"] }}
+      </button>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped">
+      <thead class="gradient">
+        <tr>
+          @for (column of PRODUCT_TYPE_COLUMNS; track $index) {
+          <th>{{ column }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (data of productTypes | filter: textSearch | paginate: {
+        itemsPerPage: 10, currentPage: p } ; track $index ) {
+        <tr>
+          <td>{{ $index + 1 }}</td>
+          <td>{{ data["label"] }}</td>
+          <td>
+            <i
+              class="fas fa-edit text-primary curser"
+              (click)="editProductType(data)"
+              data-toggle="modal"
+              data-target="#addSetting"
+            ></i>
+            &nbsp;
+            <i
+              class="fas fa-trash text-danger curser"
+              (click)="confirmDelete(data)"
+            ></i>
+          </td>
+        </tr>
+        }@empty {
+        <tr>
+          <td colspan="7">
+            <h2 class="text-center text-danger">{{ warningText }}</h2>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <pagination-controls (pageChange)="p = $event"></pagination-controls>
+</div>
+
+<div
+  class="modal fade"
+  bsModal
+  #addSetting
+  id="addSetting"
+  data-keyboard="false"
+  data-backdrop="static"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header modal-head">
+        <h4 class="modal-title">
+          {{
+            !isUpdate ? appStrings["addSetting"] : appStrings["updateSetting"]
+          }}
+        </h4>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form
+          (ngSubmit)="onSubmit()"
+          role="form"
+          [formGroup]="frmProductType"
+          autocomplete="off"
+        >
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="type">{{ appStrings["type"] }} :</label>&nbsp;<i
+                  class="fa fa-asterisk"
+                  style="color: red; font-size: 10px"
+                ></i>
+                <input
+                  type="text"
+                  name="label"
+                  class="form-control"
+                  formControlName="label"
+                  id="type"
+                  placeholder="{{ appStrings['type'] }}"
+                  min="0"
+                  [ngClass]="{ 'is-invalid': submitted && f['label'].errors }"
+                />
+                <div *ngIf="submitted && f['label'].errors" class="text-danger">
+                  <div *ngIf="f['label'].errors['required']">
+                    {{ appStrings["typeWarningText"] }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="submit"
+              [disabled]="frmProductType.invalid"
+              class="btn btn-primary btn-sm"
+            >
+              <i class="fas fa-save"></i>&nbsp;
+              {{ isUpdate ? "Update" : "Save" }}
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger btn-sm"
+              data-dismiss="modal"
+            >
+              <i class="fas fa-times"></i>&nbsp; {{ appStrings["close"] }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-confirm-modal
+  [module]="'Product'"
+  (onConfirmCallback)="deleteProductType()"
+></app-confirm-modal>

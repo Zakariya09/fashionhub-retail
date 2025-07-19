@@ -19,88 +19,96 @@ import { AuthGuard } from '../auth/auth.guard';
 import { AuthService } from '../auth/auth.service';
 import { SharedModule } from '../shared/shared.module';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { ProductSettingsComponent } from '../pages/product-settings/product-settings.component';
 
 const routes: Routes = [
   // { path: '', redirectTo: '/layout', pathMatch: 'full', data: { title: 'Layout' } },
   {
-      path: '', component: DefaultlayoutComponent,
-      children:
-          [
-              { path: '', redirectTo: 'default/dashboard', pathMatch: 'full' },
-              { path: 'default/dashboard', component:DashboardComponent },
-                {
-                  path:'default/dashboard',
-                  component:DashboardComponent,
-                  data:{
-                    title:'Dashboard'
-                  }
-                },
-                {
-                  path:'default/receipt',
-                  component: ManageReceiptComponent,
-                  data:{
-                    title:'Manage Receipt'
-                  }
-                },
-                {
-                  path:'default/product',
-                  component:ManageProductComponent,
-                  data:{
-                    title:'Manage Product'
-                  }
-                },
-                {
-                  path:'default/user',
-                  component:ManageUserComponent,
-                  data:{
-                    title:'Manage User'
-                  }
-                },
-                {
-                  path:'default/import',
-                  component:ManageImportComponent,
-                  data:{
-                    title:'Manage Import'
-                  }
-                },
-                {
-                  path:'default/sales',
-                  component:ManageSalesComponent,
-                  data:{
-                    title:'Manage Sales'
-                  }
-                },
-                {
-                  path:'default/credits',
-                  component:ManageCreditsComponent,
-                  data:{
-                    title:'Manage Credits'
-                  }
-                },
-                {
-                  path:'default/addReceipt',
-                  component:AddReceiptComponent,
-                  data:{
-                    title:'Add Receipt'
-                  }
-                },
-                {
-                  path:'default/editReceipt/:id',
-                  component:AddReceiptComponent,
-                  data:{
-                    title:'Edit Receipt'
-                  }
-                },
-                {
-                  path:'default/change-password',
-                  component: ChangePasswordComponent,
-                  data:{
-                    title:'Change Password'
-                  }
-                }
-          ]
+    path: '',
+    component: DefaultlayoutComponent,
+    children: [
+      { path: '', redirectTo: 'default/dashboard', pathMatch: 'full' },
+      { path: 'default/dashboard', component: DashboardComponent },
+      {
+        path: 'default/dashboard',
+        component: DashboardComponent,
+        data: {
+          title: 'Dashboard',
+        },
+      },
+      {
+        path: 'default/receipt',
+        component: ManageReceiptComponent,
+        data: {
+          title: 'Manage Receipt',
+        },
+      },
+      {
+        path: 'default/product',
+        component: ManageProductComponent,
+        data: {
+          title: 'Manage Product',
+        },
+      },
+      {
+        path: 'default/user',
+        component: ManageUserComponent,
+        data: {
+          title: 'Manage User',
+        },
+      },
+      {
+        path: 'default/import',
+        component: ManageImportComponent,
+        data: {
+          title: 'Manage Import',
+        },
+      },
+      {
+        path: 'default/sales',
+        component: ManageSalesComponent,
+        data: {
+          title: 'Manage Sales',
+        },
+      },
+      {
+        path: 'default/credits',
+        component: ManageCreditsComponent,
+        data: {
+          title: 'Manage Credits',
+        },
+      },
+      {
+        path: 'default/addReceipt',
+        component: AddReceiptComponent,
+        data: {
+          title: 'Add Receipt',
+        },
+      },
+      {
+        path: 'default/editReceipt/:id',
+        component: AddReceiptComponent,
+        data: {
+          title: 'Edit Receipt',
+        },
+      },
+      {
+        path: 'default/change-password',
+        component: ChangePasswordComponent,
+        data: {
+          title: 'Change Password',
+        },
+      },
+      {
+        path: 'default/product-settings',
+        component: ProductSettingsComponent,
+        data: {
+          title: 'Manage Product',
+        },
+      },
+    ],
   },
-]
+];
 
 @NgModule({
   declarations: [
@@ -128,6 +136,6 @@ const routes: Routes = [
   ],
   exports: [RouterModule],
   bootstrap: [DefaultlayoutComponent],
-  providers: [  { provide: AuthGuard, useClass: AuthService }]
+  providers: [{ provide: AuthGuard, useClass: AuthService }],
 })
-export class DefaultlayoutModule { }
+export class DefaultlayoutModule {}

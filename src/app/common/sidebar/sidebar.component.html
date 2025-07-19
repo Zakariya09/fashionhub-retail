@@ -1,17 +1,48 @@
-<aside class="main-sidebar sidebar-dark-info nav-bar-light-new" id="sidebar" [ngClass]="toggleMenu ? 'w-0p' : 'ml-0'">
+<aside
+  class="main-sidebar sidebar-dark-info nav-bar-light-new"
+  id="sidebar"
+  [ngClass]="toggleMenu ? 'w-0p' : 'ml-0'"
+>
   <a class="brand-link navbar-purple">
-    <img src="../../../assets/dist/img/logo.jpg" alt="AdminLTE Logo" class="brand-image elevation-3"
-      style="opacity: .8">
-    <span class="brand font-weight-light"><b>KHAN fashion-hub</b></span>
+    <img
+      src="../../../assets/dist/img/logo.jpg"
+      alt="AdminLTE Logo"
+      class="brand-image elevation-3"
+      style="opacity: 0.8"
+    />
+    <span class="brand font-weight-light"
+      ><b>{{ appStrings["brandName"] }}</b></span
+    >
   </a>
   <div class="sidebar">
     <nav class="mt-2">
-      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+      <ul
+        class="nav nav-pills nav-sidebar flex-column"
+        data-widget="treeview"
+        role="menu"
+        data-accordion="false"
+      >
         <li class="nav-item">
-          <a routerLink="/default/dashboard" routerLinkActive="active" class="nav-link">
+          <a
+            routerLink="/default/dashboard"
+            routerLinkActive="active"
+            class="nav-link"
+          >
             <i class="nav-icon fas fa-home"></i>
             <p>
-              {{appStrings['dashboard']}}
+              {{ appStrings["dashboard"] }}
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            routerLink="/default/product-settings"
+            routerLinkActive="active"
+            class="nav-link"
+          >
+            <i class="nav-icon fas fa-cog"></i>
+            <p>
+              {{ appStrings["productSetting"] }}
             </p>
           </a>
         </li>
@@ -24,18 +55,26 @@
           </a>
         </li> -->
         <li class="nav-item">
-          <a routerLink="/default/product" routerLinkActive="active" class="nav-link">
+          <a
+            routerLink="/default/product"
+            routerLinkActive="active"
+            class="nav-link"
+          >
             <i class="nav-icon fas fa-archive"></i>
             <p>
-              {{appStrings['manageProduct']}}
+              {{ appStrings["manageProduct"] }}
             </p>
           </a>
         </li>
         <li class="nav-item">
-          <a routerLink="/default/import" routerLinkActive="active" class="nav-link">
+          <a
+            routerLink="/default/import"
+            routerLinkActive="active"
+            class="nav-link"
+          >
             <i class="nav-icon fas fa-box-open"></i>
             <p>
-              {{appStrings['manageImport']}}
+              {{ appStrings["manageImport"] }}
             </p>
           </a>
         </li>
@@ -48,18 +87,26 @@
           </a>
         </li> -->
         <li class="nav-item">
-          <a routerLink="/default/credits" routerLinkActive="active" class="nav-link">
+          <a
+            routerLink="/default/credits"
+            routerLinkActive="active"
+            class="nav-link"
+          >
             <i class="nav-icon fas fa-user-tag"></i>
             <p>
-              {{appStrings['manageCredit']}}
+              {{ appStrings["manageCredit"] }}
             </p>
           </a>
         </li>
         <li class="nav-item">
-          <a routerLink="/default/receipt" routerLinkActive="active" class="nav-link">
+          <a
+            routerLink="/default/receipt"
+            routerLinkActive="active"
+            class="nav-link"
+          >
             <i class="nav-icon fas fa-receipt"></i>
             <p>
-              {{appStrings['manageSales']}}
+              {{ appStrings["manageSales"] }}
             </p>
           </a>
         </li>
@@ -69,11 +116,11 @@
             <p>Change Password</p>
           </a>
         </li> -->
-        <li class="nav-item" style="cursor: pointer;">
+        <li class="nav-item" style="cursor: pointer">
           <a (click)="logOut()" class="nav-link">
             <i class="nav-icon fas fa-sign-out-alt"></i>
             <p>
-              {{appStrings['logout']}}
+              {{ appStrings["logout"] }}
             </p>
           </a>
         </li>
