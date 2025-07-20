@@ -175,8 +175,8 @@
                   <option value="" class="form-control" disabled selected>
                     {{ appStrings["fittingTypenPlaceholder"] }}
                   </option>
-                  @for (item of FITTING_TYPES; track $index) {
-                  <option [value]="item">{{ item }}</option>
+                  @for (item of fittinngTypes; track $index) {
+                  <option [value]="item?.label">{{ item?.label }}</option>
                   }
                 </select>
               </div>

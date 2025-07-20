@@ -10,7 +10,8 @@ import { CreditModel } from '../../models/credit.model';
 import { Firestore } from '@angular/fire/firestore';
 import { ProductModel } from '../../models/product.model';
 import { ReceiptModel } from '../../models/receipt.model';
-import { ProductType } from '../../models/settings.model';
+import { Settings } from '../../models/settings.model';
+import { AppStrings } from '../../shared/app-strings.service';
 
 @Injectable({
   providedIn: 'root',
@@ -22,8 +23,11 @@ export class CommonServiceService {
   $loaderSubject = new Subject<Loader>();
   firestore = inject(Firestore);
   $toggleSubject = new Subject();
+  appStrings: any;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private appStringsService: AppStrings) {
+    this.appStrings = this.appStringsService.appStrings;
+  }
   private baseUrl = 'https://fashionhub-retail-default-rtdb.firebaseio.com/';
 
   /**
@@ -297,17 +301,15 @@ export class CommonServiceService {
    * @param isUpdate
    * @returns
    */
-  saveProductType(productTypeData: ProductType, isUpdate: boolean) {
+  saveSetting(setting: Settings, isUpdate: boolean, relation: string) {
+    const table = this.appStrings['urls'][relation];
     if (isUpdate) {
       return this.http.put(
-        `${this.baseUrl}product-types/${productTypeData?.id}.json`,
-        productTypeData
+        `${this.baseUrl}${table}/${setting?.id}.json`,
+        setting
       );
     } else {
-      return this.http.post<ProductType>(
-        `${this.baseUrl}product-types.json`,
-        productTypeData
-      );
+      return this.http.post<Settings>(`${this.baseUrl}${table}.json`, setting);
     }
   }
 
@@ -315,20 +317,19 @@ export class CommonServiceService {
    *
    * @returns
    */
-  getProductTypes() {
-    return this.http
-      .get<ProductType>(`${this.baseUrl}product-types.json`)
-      ?.pipe(
-        map((resp: any) => {
-          const crediitsArr: ProductType[] = [];
-          for (const key in resp) {
-            if (resp.hasOwnProperty(key)) {
-              crediitsArr.push({ id: key, ...resp[key] });
-            }
+  getSettings(relation: string) {
+    const table = this.appStrings['urls'][relation];
+    return this.http.get<Settings>(`${this.baseUrl}${table}.json`)?.pipe(
+      map((resp: any) => {
+        const crediitsArr: Settings[] = [];
+        for (const key in resp) {
+          if (resp.hasOwnProperty(key)) {
+            crediitsArr.push({ id: key, ...resp[key] });
           }
-          return crediitsArr;
-        })
-      );
+        }
+        return crediitsArr;
+      })
+    );
   }
 
   /**

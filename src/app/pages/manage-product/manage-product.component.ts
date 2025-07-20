@@ -17,7 +17,7 @@ import {
   deleteObject,
 } from 'firebase/storage';
 import { Event } from '@angular/router';
-import { ProductType } from '../../models/settings.model';
+import { Settings } from '../../models/settings.model';
 @Component({
   selector: 'app-manage-product',
   templateUrl: './manage-product.component.html',
@@ -42,12 +42,12 @@ export class ManageProductComponent implements OnInit, OnDestroy {
   isRecordDelete: boolean = false;
   availableColors: string[] = [];
   deleteModalTitle!: string;
-  productTypes!: ProductType[];
-  FITTING_TYPES!: string[];
+  productTypes!: Settings[];
   TOP_SIZES: Sizes[] = [];
   BOTTOM_SIZES: Sizes[] = [];
   sizes!: Sizes[];
   selectedSizes: string[] = [];
+  fittinngTypes!: Settings[];
 
   constructor(
     private commonService: CommonServiceService,
@@ -62,11 +62,11 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     this.PRODUCT_GRID_COLUMNS = this.appConstants.PRODUCT_GRID_COLUMNS;
     this.appStrings = this.appStringsService.appStrings;
     this.TOP_SIZES = this.appConstants.TOP_SIZES;
-    this.FITTING_TYPES = this.appConstants?.TOP_FITTING_TYPES;
     this.BOTTOM_SIZES = this.appConstants?.BOTTOM_SIZES;
 
     this.getProducts();
     this.getProductTypes();
+    this.getFittingTypes();
   }
 
   /**
@@ -463,11 +463,33 @@ export class ManageProductComponent implements OnInit, OnDestroy {
    */
   getProductTypes(): void {
     this.commonService
-      .getProductTypes()
+      .getSettings('productType')
       .pipe(takeUntil(this.subscription))
       .subscribe(
-        (response: ProductType[]) => {
+        (response: Settings[]) => {
           this.productTypes = response;
+        },
+        (error: HttpErrorResponse) => {
+          this.warningText = this.appStrings['noDataFound'];
+          this.commonService.$alertSubject?.next({
+            type: 'danger',
+            showAlert: true,
+            message: this.utilityService.getErrorText(error?.message),
+          });
+        }
+      );
+  }
+
+  /**
+   * get fitting types data
+   */
+  getFittingTypes(): void {
+    this.commonService
+      .getSettings('fittingType')
+      .pipe(takeUntil(this.subscription))
+      .subscribe(
+        (response: Settings[]) => {
+          this.fittinngTypes = response;
         },
         (error: HttpErrorResponse) => {
           this.warningText = this.appStrings['noDataFound'];

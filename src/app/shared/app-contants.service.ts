@@ -76,15 +76,7 @@ export class AppConstants {
     'Action',
   ];
 
-  PRODUCT_TYPE_COLUMNS: string[] = ['#', 'Label', 'Actions'];
-
-  TOP_FITTING_TYPES: string[] = [
-    'Skinny Fit',
-    'Slim Fit',
-    'Regular Fit',
-    'Relaxed Fit',
-    'Loose Fit',
-  ];
+  PRODUCT_SETTINGS_COLUMNS: string[] = ['#', 'Label', 'Actions'];
 
   TOP_SIZES: Sizes[] = [
     { id: '6', value: 'S', isChecked: false },

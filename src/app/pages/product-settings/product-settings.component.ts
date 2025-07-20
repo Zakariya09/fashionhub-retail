@@ -6,7 +6,7 @@ import { AppStrings } from '../../shared/app-strings.service';
 import { AppConstants } from '../../shared/app-contants.service';
 import { Subject, takeUntil } from 'rxjs';
 import { AppUtilityService } from '../../core/services/app-utility.service';
-import { ProductType } from '../../models/settings.model';
+import { Settings } from '../../models/settings.model';
 declare var jQuery: any;
 
 @Component({
@@ -15,18 +15,21 @@ declare var jQuery: any;
   styleUrl: './product-settings.component.css',
 })
 export class ProductSettingsComponent {
-  frmProductType!: FormGroup;
-  productType!: ProductType;
+  frmSettings!: FormGroup;
+  setting!: Settings;
   subscription = new Subject();
   p = 1;
   submitted = false;
   textSearch = '';
-  productTypes!: ProductType[];
+  productTypes!: Settings[];
   appStrings: any;
-  PRODUCT_TYPE_COLUMNS: string[] = [];
+  PRODUCT_SETTINGS_COLUMNS: string[] = [];
   warningText: string = '';
   isUpdate!: boolean;
-  selectedRecord!: ProductType;
+  selectedRecord!: Settings;
+  activeForm!: string;
+  formTitle!: string;
+  fittinngTypes!: Settings[];
 
   constructor(
     private commonService: CommonServiceService,
@@ -37,13 +40,29 @@ export class ProductSettingsComponent {
   ) {}
 
   ngOnInit() {
-    this.frmProductType = this.formBuilder.group({
+    this.initializeForms();
+    this.appStrings = this.appStringsService.appStrings;
+    this.PRODUCT_SETTINGS_COLUMNS = this.appConstants.PRODUCT_SETTINGS_COLUMNS;
+    this.getProductTypes();
+    this.getFittingTypes();
+  }
+
+  /**
+   * forms initilizer
+   */
+  initializeForms() {
+    this.frmSettings = this.buildForm();
+  }
+
+  /**
+   * building a form using form builder
+   * @returns
+   */
+  buildForm() {
+    return this.formBuilder.group({
       id: [null],
       label: [, Validators.required],
     });
-    this.appStrings = this.appStringsService.appStrings;
-    this.PRODUCT_TYPE_COLUMNS = this.appConstants.PRODUCT_TYPE_COLUMNS;
-    this.getProductTypes();
   }
 
   /**
@@ -52,7 +71,7 @@ export class ProductSettingsComponent {
    */
   onSubmit(): void {
     this.submitted = true;
-    if (this.frmProductType.invalid) {
+    if (this.frmSettings.invalid) {
       this.commonService.$alertSubject?.next({
         type: 'danger',
         showAlert: true,
@@ -60,14 +79,22 @@ export class ProductSettingsComponent {
       });
       return;
     }
-    this.productType = this.frmProductType.value;
+    this.setting = this.frmSettings.value;
+    if (this.activeForm == 'fittingType') {
+      // this.setting.isChecked = false;
+    }
+
     this.commonService.$loaderSubject?.next({ showLoader: true });
     this.commonService
-      .saveProductType(this.productType, this.isUpdate)
+      .saveSetting(this.setting, this.isUpdate, this.activeForm)
       ?.pipe(takeUntil(this.subscription))
       .subscribe(
         () => {
-          this.getProductTypes();
+          if (this.activeForm == 'fittingType') {
+            this.getFittingTypes();
+          } else {
+            this.getProductTypes();
+          }
           this.commonService.$loaderSubject?.next({ showLoader: false });
           jQuery('#addSetting').modal('hide');
           this.isUpdate = false;
@@ -87,7 +114,7 @@ export class ProductSettingsComponent {
    * @returns
    */
   get f() {
-    return this.frmProductType.controls;
+    return this.frmSettings.controls;
   }
 
   /**
@@ -96,12 +123,38 @@ export class ProductSettingsComponent {
   getProductTypes(): void {
     this.warningText = this.appStrings['loadingDataText'];
     this.commonService
-      .getProductTypes()
+      .getSettings('productType')
       .pipe(takeUntil(this.subscription))
       .subscribe(
-        (response: ProductType[]) => {
+        (response: Settings[]) => {
           this.productTypes = response;
           if (this.productTypes?.length == 0) {
+            this.warningText = this.appStrings['noDataFound'];
+          }
+        },
+        (error: HttpErrorResponse) => {
+          this.warningText = this.appStrings['noDataFound'];
+          this.commonService.$alertSubject?.next({
+            type: 'danger',
+            showAlert: true,
+            message: this.utilityService.getErrorText(error?.message),
+          });
+        }
+      );
+  }
+
+  /**
+   * get product types data
+   */
+  getFittingTypes(): void {
+    this.warningText = this.appStrings['loadingDataText'];
+    this.commonService
+      .getSettings('fittingType')
+      .pipe(takeUntil(this.subscription))
+      .subscribe(
+        (response: Settings[]) => {
+          this.fittinngTypes = response;
+          if (this.fittinngTypes?.length == 0) {
             this.warningText = this.appStrings['noDataFound'];
           }
         },
@@ -120,17 +173,18 @@ export class ProductSettingsComponent {
    *
    * @param data
    */
-  editProductType(data: ProductType): void {
+  edit(data: Settings, selectedForm: string): void {
+    this.formTitle = this.setFormTitle(this.appStrings['update'], selectedForm);
     this.isUpdate = true;
-    this.frmProductType.reset();
-    this.frmProductType.patchValue(data);
+    this.frmSettings.reset();
+    this.frmSettings.patchValue(data);
   }
 
   /**
    * confirm delete popup
    * @param data
    */
-  confirmDelete(data: ProductType): void {
+  confirmDelete(data: Settings): void {
     this.selectedRecord = data;
     this.commonService.$confirmSubject.next({
       showModal: true,
@@ -168,8 +222,17 @@ export class ProductSettingsComponent {
    */
   clearForm(): void {
     this.isUpdate = false;
-    this.frmProductType.reset();
+    this.frmSettings.reset();
     this.submitted = false;
+  }
+
+  addForm(selectedForm: any) {
+    this.formTitle = this.setFormTitle(this.appStrings['add'], selectedForm);
+    this.activeForm = selectedForm;
+  }
+
+  setFormTitle(operation: string, selectedForm: string) {
+    return operation + ' ' + this.appStrings[selectedForm];
   }
 
   ngOnDestroy(): void {

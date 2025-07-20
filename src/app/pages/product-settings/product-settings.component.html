@@ -21,7 +21,7 @@
       <button
         type="button"
         class="btn btn-sm btn-primary"
-        (click)="clearForm()"
+        (click)="clearForm(); addForm('productType')"
         data-toggle="modal"
         data-target="#addSetting"
       >
@@ -33,7 +33,7 @@
     <table class="table table-bordered table-striped">
       <thead class="gradient">
         <tr>
-          @for (column of PRODUCT_TYPE_COLUMNS; track $index) {
+          @for (column of PRODUCT_SETTINGS_COLUMNS; track $index) {
           <th>{{ column }}</th>
           }
         </tr>
@@ -47,7 +47,71 @@
           <td>
             <i
               class="fas fa-edit text-primary curser"
-              (click)="editProductType(data)"
+              (click)="edit(data, 'productType')"
+              data-toggle="modal"
+              data-target="#addSetting"
+            ></i>
+            &nbsp;
+            <i
+              class="fas fa-trash text-danger curser"
+              (click)="confirmDelete(data)"
+            ></i>
+          </td>
+        </tr>
+        }@empty {
+        <tr>
+          <td colspan="7">
+            <h2 class="text-center text-danger">{{ warningText }}</h2>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <pagination-controls (pageChange)="p = $event"></pagination-controls>
+</div>
+
+<div class="container card">
+  <div class="row">
+    <div class="col-md-8">
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="textSearch"
+        placeholder="Type here to search..."
+      />
+    </div>
+    <div class="col-md-4 align-right pull-right">
+      <button
+        type="button"
+        class="btn btn-sm btn-primary"
+        (click)="clearForm(); addForm('fittingType')"
+        data-toggle="modal"
+        data-target="#addSetting"
+      >
+        <i class="fas fa-plus"></i> {{ appStrings["newSettings"] }}
+      </button>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped">
+      <thead class="gradient">
+        <tr>
+          @for (column of PRODUCT_SETTINGS_COLUMNS; track $index) {
+          <th>{{ column }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (data of fittinngTypes | filter: textSearch | paginate: {
+        itemsPerPage: 10, currentPage: p } ; track $index ) {
+        <tr>
+          <td>{{ $index + 1 }}</td>
+          <td>{{ data["label"] }}</td>
+          <td>
+            <i
+              class="fas fa-edit text-primary curser"
+              (click)="edit(data, 'fittingType')"
               data-toggle="modal"
               data-target="#addSetting"
             ></i>
@@ -83,9 +147,7 @@
     <div class="modal-content">
       <div class="modal-header modal-head">
         <h4 class="modal-title">
-          {{
-            !isUpdate ? appStrings["addSetting"] : appStrings["updateSetting"]
-          }}
+          {{ formTitle }}
         </h4>
         <button
           type="button"
@@ -100,7 +162,7 @@
         <form
           (ngSubmit)="onSubmit()"
           role="form"
-          [formGroup]="frmProductType"
+          [formGroup]="frmSettings"
           autocomplete="off"
         >
           <div class="row">
@@ -131,7 +193,7 @@
           <div class="modal-footer">
             <button
               type="submit"
-              [disabled]="frmProductType.invalid"
+              [disabled]="frmSettings.invalid"
               class="btn btn-primary btn-sm"
             >
               <i class="fas fa-save"></i>&nbsp;

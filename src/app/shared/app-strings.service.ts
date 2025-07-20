@@ -127,5 +127,12 @@ export class AppStrings {
     valueWarningText: 'Please enter value.',
     type: 'Type',
     typeWarningText: 'Please enter type.',
+    productType: 'Product Type',
+    update: 'Update',
+    saveProductType: 'saveProductType',
+    urls: {
+      fittingType: 'fitting-types',
+      productType: 'product-types',
+    },
   };
 }
