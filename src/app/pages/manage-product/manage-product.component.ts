@@ -17,6 +17,7 @@ import {
   deleteObject,
 } from 'firebase/storage';
 import { Event } from '@angular/router';
+import { ProductType } from '../../models/settings.model';
 @Component({
   selector: 'app-manage-product',
   templateUrl: './manage-product.component.html',
@@ -41,7 +42,7 @@ export class ManageProductComponent implements OnInit, OnDestroy {
   isRecordDelete: boolean = false;
   availableColors: string[] = [];
   deleteModalTitle!: string;
-  CLOTH_TYPES!: string[];
+  productTypes!: ProductType[];
   FITTING_TYPES!: string[];
   TOP_SIZES: Sizes[] = [];
   BOTTOM_SIZES: Sizes[] = [];
@@ -60,12 +61,12 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.PRODUCT_GRID_COLUMNS = this.appConstants.PRODUCT_GRID_COLUMNS;
     this.appStrings = this.appStringsService.appStrings;
-    this.CLOTH_TYPES = this.appConstants?.CLOTH_TYPES;
     this.TOP_SIZES = this.appConstants.TOP_SIZES;
     this.FITTING_TYPES = this.appConstants?.TOP_FITTING_TYPES;
     this.BOTTOM_SIZES = this.appConstants?.BOTTOM_SIZES;
 
     this.getProducts();
+    this.getProductTypes();
   }
 
   /**
@@ -340,12 +341,12 @@ export class ManageProductComponent implements OnInit, OnDestroy {
       this.sizes = [];
     }
 
-    if (data.clothType == this.CLOTH_TYPES[0]) {
+    if (data.clothType == this.productTypes[0]?.label) {
       this.sizes = [...this.TOP_SIZES];
       this.sizes?.forEach(
         (item) => (item.isChecked = this.selectedSizes?.includes(item.value))
       );
-    } else if (data.clothType == this.CLOTH_TYPES[1]) {
+    } else if (data.clothType == this.productTypes[1]?.label) {
       this.sizes = [...this.BOTTOM_SIZES];
       this.sizes?.forEach(
         (item) => (item.isChecked = this.selectedSizes?.includes(item.value))
@@ -455,6 +456,28 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     this.submitted = false;
     this.availableColors = [];
     this.sizes = [];
+  }
+
+  /**
+   * get product types data
+   */
+  getProductTypes(): void {
+    this.commonService
+      .getProductTypes()
+      .pipe(takeUntil(this.subscription))
+      .subscribe(
+        (response: ProductType[]) => {
+          this.productTypes = response;
+        },
+        (error: HttpErrorResponse) => {
+          this.warningText = this.appStrings['noDataFound'];
+          this.commonService.$alertSubject?.next({
+            type: 'danger',
+            showAlert: true,
+            message: this.utilityService.getErrorText(error?.message),
+          });
+        }
+      );
   }
 
   ngOnDestroy(): void {

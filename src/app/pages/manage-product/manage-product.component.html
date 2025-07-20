@@ -150,9 +150,12 @@
                   <option value="" class="form-control" disabled selected>
                     {{ appStrings["clothOptionPlaceholder"] }}
                   </option>
-                  @for (item of CLOTH_TYPES; track $index) {
-                  <option [value]="item" (change)="changeClothType(item)">
-                    {{ item }}
+                  @for (item of productTypes; track $index) {
+                  <option
+                    [value]="item?.label"
+                    (change)="changeClothType(item?.label)"
+                  >
+                    {{ item?.label }}
                   </option>
                   }
                 </select>

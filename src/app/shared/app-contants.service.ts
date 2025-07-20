@@ -78,8 +78,6 @@ export class AppConstants {
 
   PRODUCT_TYPE_COLUMNS: string[] = ['#', 'Label', 'Actions'];
 
-  CLOTH_TYPES: string[] = ['Top', 'Bottom'];
-
   TOP_FITTING_TYPES: string[] = [
     'Skinny Fit',
     'Slim Fit',
