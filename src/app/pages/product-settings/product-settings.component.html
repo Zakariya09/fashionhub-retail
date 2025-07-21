@@ -54,7 +54,7 @@
             &nbsp;
             <i
               class="fas fa-trash text-danger curser"
-              (click)="confirmDelete(data)"
+              (click)="confirmDelete(data, 'productType')"
             ></i>
           </td>
         </tr>
@@ -118,7 +118,7 @@
             &nbsp;
             <i
               class="fas fa-trash text-danger curser"
-              (click)="confirmDelete(data)"
+              (click)="confirmDelete(data, 'fittingType')"
             ></i>
           </td>
         </tr>
@@ -135,6 +135,133 @@
   <pagination-controls (pageChange)="p = $event"></pagination-controls>
 </div>
 
+<div class="container card">
+  <div class="row">
+    <div class="col-md-8">
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="textSearch"
+        placeholder="Type here to search..."
+      />
+    </div>
+    <div class="col-md-4 align-right pull-right">
+      <button
+        type="button"
+        class="btn btn-sm btn-primary"
+        (click)="clearForm(); addForm('topSizes')"
+        data-toggle="modal"
+        data-target="#addSetting"
+      >
+        <i class="fas fa-plus"></i> {{ appStrings["newSettings"] }}
+      </button>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped">
+      <thead class="gradient">
+        <tr>
+          @for (column of PRODUCT_SETTINGS_COLUMNS; track $index) {
+          <th>{{ column }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (data of topSizes | filter: textSearch | paginate: { itemsPerPage:
+        10, currentPage: p } ; track $index ) {
+        <tr>
+          <td>{{ $index + 1 }}</td>
+          <td>{{ data["label"] }}</td>
+          <td>
+            <i
+              class="fas fa-edit text-primary curser"
+              (click)="edit(data, 'topSizes')"
+              data-toggle="modal"
+              data-target="#addSetting"
+            ></i>
+            &nbsp;
+            <i
+              class="fas fa-trash text-danger curser"
+              (click)="confirmDelete(data, 'topSizes')"
+            ></i>
+          </td>
+        </tr>
+        }@empty {
+        <tr>
+          <td colspan="7">
+            <h2 class="text-center text-danger">{{ warningText }}</h2>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <pagination-controls (pageChange)="p = $event"></pagination-controls>
+</div>
+
+<div class="container card">
+  <div class="row">
+    <div class="col-md-8">
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="textSearch"
+        placeholder="Type here to search..."
+      />
+    </div>
+    <div class="col-md-4 align-right pull-right">
+      <button
+        type="button"
+        class="btn btn-sm btn-primary"
+        (click)="clearForm(); addForm('bottomSizes')"
+        data-toggle="modal"
+        data-target="#addSetting"
+      >
+        <i class="fas fa-plus"></i> {{ appStrings["newSettings"] }}
+      </button>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped">
+      <thead class="gradient">
+        <tr>
+          @for (column of PRODUCT_SETTINGS_COLUMNS; track $index) {
+          <th>{{ column }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (data of bottomSizes | filter: textSearch | paginate: {
+        itemsPerPage: 10, currentPage: p } ; track $index ) {
+        <tr>
+          <td>{{ $index + 1 }}</td>
+          <td>{{ data["label"] }}</td>
+          <td>
+            <i
+              class="fas fa-edit text-primary curser"
+              (click)="edit(data, 'bottomSizes')"
+              data-toggle="modal"
+              data-target="#addSetting"
+            ></i>
+            &nbsp;
+            <i
+              class="fas fa-trash text-danger curser"
+              (click)="confirmDelete(data, 'bottomSizes')"
+            ></i>
+          </td>
+        </tr>
+        }@empty {
+        <tr>
+          <td colspan="7">
+            <h2 class="text-center text-danger">{{ warningText }}</h2>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <pagination-controls (pageChange)="p = $event"></pagination-controls>
+</div>
 <div
   class="modal fade"
   bsModal

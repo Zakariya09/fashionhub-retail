@@ -30,6 +30,8 @@ export class ProductSettingsComponent {
   activeForm!: string;
   formTitle!: string;
   fittinngTypes!: Settings[];
+  topSizes!: Settings[];
+  bottomSizes!: Settings[];
 
   constructor(
     private commonService: CommonServiceService,
@@ -45,6 +47,8 @@ export class ProductSettingsComponent {
     this.PRODUCT_SETTINGS_COLUMNS = this.appConstants.PRODUCT_SETTINGS_COLUMNS;
     this.getProductTypes();
     this.getFittingTypes();
+    this.getTopSizes();
+    this.getBottomSizes();
   }
 
   /**
@@ -80,8 +84,8 @@ export class ProductSettingsComponent {
       return;
     }
     this.setting = this.frmSettings.value;
-    if (this.activeForm == 'fittingType') {
-      // this.setting.isChecked = false;
+    if (this.activeForm == 'topSizes' || this.activeForm == 'bottomSizes') {
+      this.setting.isChecked = false;
     }
 
     this.commonService.$loaderSubject?.next({ showLoader: true });
@@ -90,10 +94,19 @@ export class ProductSettingsComponent {
       ?.pipe(takeUntil(this.subscription))
       .subscribe(
         () => {
-          if (this.activeForm == 'fittingType') {
-            this.getFittingTypes();
-          } else {
-            this.getProductTypes();
+          switch (this.activeForm) {
+            case 'fittingType':
+              this.getFittingTypes();
+              break;
+            case 'topSizes':
+              this.getTopSizes();
+              break;
+            case 'bottomSizes':
+              this.getBottomSizes();
+              break;
+            case 'productType':
+              this.getProductTypes();
+              break;
           }
           this.commonService.$loaderSubject?.next({ showLoader: false });
           jQuery('#addSetting').modal('hide');
@@ -170,10 +183,63 @@ export class ProductSettingsComponent {
   }
 
   /**
+   * get product types data
+   */
+  getTopSizes(): void {
+    this.warningText = this.appStrings['loadingDataText'];
+    this.commonService
+      .getSettings('topSizes')
+      .pipe(takeUntil(this.subscription))
+      .subscribe(
+        (response: Settings[]) => {
+          this.topSizes = response;
+          if (this.topSizes?.length == 0) {
+            this.warningText = this.appStrings['noDataFound'];
+          }
+        },
+        (error: HttpErrorResponse) => {
+          this.warningText = this.appStrings['noDataFound'];
+          this.commonService.$alertSubject?.next({
+            type: 'danger',
+            showAlert: true,
+            message: this.utilityService.getErrorText(error?.message),
+          });
+        }
+      );
+  }
+
+  /**
+   * get product types data
+   */
+  getBottomSizes(): void {
+    this.warningText = this.appStrings['loadingDataText'];
+    this.commonService
+      .getSettings('bottomSizes')
+      .pipe(takeUntil(this.subscription))
+      .subscribe(
+        (response: Settings[]) => {
+          this.bottomSizes = response;
+          if (this.bottomSizes?.length == 0) {
+            this.warningText = this.appStrings['noDataFound'];
+          }
+        },
+        (error: HttpErrorResponse) => {
+          this.warningText = this.appStrings['noDataFound'];
+          this.commonService.$alertSubject?.next({
+            type: 'danger',
+            showAlert: true,
+            message: this.utilityService.getErrorText(error?.message),
+          });
+        }
+      );
+  }
+
+  /**
    *
    * @param data
    */
   edit(data: Settings, selectedForm: string): void {
+    this.activeForm = selectedForm;
     this.formTitle = this.setFormTitle(this.appStrings['update'], selectedForm);
     this.isUpdate = true;
     this.frmSettings.reset();
@@ -184,7 +250,8 @@ export class ProductSettingsComponent {
    * confirm delete popup
    * @param data
    */
-  confirmDelete(data: Settings): void {
+  confirmDelete(data: Settings, selectedForm: string): void {
+    this.activeForm = selectedForm;
     this.selectedRecord = data;
     this.commonService.$confirmSubject.next({
       showModal: true,
@@ -198,13 +265,26 @@ export class ProductSettingsComponent {
   deleteProductType(): void {
     this.commonService.$loaderSubject?.next({ showLoader: true });
     this.commonService
-      .deleteProductType(this.selectedRecord?.id)
+      .deleteProductType(this.selectedRecord?.id, this.activeForm)
       ?.pipe(takeUntil(this.subscription))
       .subscribe(
         (response) => {
           this.commonService.$confirmSubject.next({ showModal: false });
           this.commonService.$loaderSubject?.next({ showLoader: false });
-          this.getProductTypes();
+          switch (this.activeForm) {
+            case 'fittingType':
+              this.getFittingTypes();
+              break;
+            case 'topSizes':
+              this.getTopSizes();
+              break;
+            case 'bottomSizes':
+              this.getBottomSizes();
+              break;
+            case 'productType':
+              this.getProductTypes();
+              break;
+          }
         },
         (error: HttpErrorResponse) => {
           this.commonService.$loaderSubject?.next({ showLoader: false });

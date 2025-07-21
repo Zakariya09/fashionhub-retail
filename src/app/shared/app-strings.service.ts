@@ -133,6 +133,10 @@ export class AppStrings {
     urls: {
       fittingType: 'fitting-types',
       productType: 'product-types',
+      topSizes: 'top-sizes',
+      bottomSizes: 'bottom-sizes',
     },
+    topSizes: 'Top Size',
+    bottomSizes: 'Bottom Size',
   };
 }

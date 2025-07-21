@@ -44,10 +44,11 @@ export class ManageProductComponent implements OnInit, OnDestroy {
   deleteModalTitle!: string;
   productTypes!: Settings[];
   TOP_SIZES: Sizes[] = [];
-  BOTTOM_SIZES: Sizes[] = [];
-  sizes!: Sizes[];
+  sizes!: Settings[];
   selectedSizes: string[] = [];
   fittinngTypes!: Settings[];
+  topSizes!: Settings[];
+  bottomSizes!: Settings[];
 
   constructor(
     private commonService: CommonServiceService,
@@ -61,12 +62,12 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.PRODUCT_GRID_COLUMNS = this.appConstants.PRODUCT_GRID_COLUMNS;
     this.appStrings = this.appStringsService.appStrings;
-    this.TOP_SIZES = this.appConstants.TOP_SIZES;
-    this.BOTTOM_SIZES = this.appConstants?.BOTTOM_SIZES;
 
     this.getProducts();
     this.getProductTypes();
     this.getFittingTypes();
+    this.getTopSizes();
+    this.getBottomSizes();
   }
 
   /**
@@ -139,9 +140,7 @@ export class ManageProductComponent implements OnInit, OnDestroy {
   changeClothType(event: any) {
     this.selectedSizes = [].slice();
     this.sizes =
-      event.target.value == 'Top'
-        ? [...this.TOP_SIZES]
-        : [...this.BOTTOM_SIZES];
+      event.target.value == 'Top' ? [...this.topSizes] : [...this.bottomSizes];
     this.sizes.forEach((size) => (size.isChecked = false));
   }
 
@@ -153,7 +152,7 @@ export class ManageProductComponent implements OnInit, OnDestroy {
   addSizes(value: string) {
     if (!this.selectedSizes.includes(value)) {
       this.sizes.forEach((item) => {
-        if (item.value === value) {
+        if (item.label === value) {
           item.isChecked = true;
         }
         return item;
@@ -162,7 +161,7 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     } else {
       this.selectedSizes = this.selectedSizes.filter((size) => size !== value);
       this.sizes.forEach((item) => {
-        if (item.value === value) {
+        if (item.label === value) {
           item.isChecked = false;
         }
         return item;
@@ -342,14 +341,14 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     }
 
     if (data.clothType == this.productTypes[0]?.label) {
-      this.sizes = [...this.TOP_SIZES];
+      this.sizes = [...this.topSizes];
       this.sizes?.forEach(
-        (item) => (item.isChecked = this.selectedSizes?.includes(item.value))
+        (item) => (item.isChecked = this.selectedSizes?.includes(item.label))
       );
     } else if (data.clothType == this.productTypes[1]?.label) {
-      this.sizes = [...this.BOTTOM_SIZES];
+      this.sizes = [...this.bottomSizes];
       this.sizes?.forEach(
-        (item) => (item.isChecked = this.selectedSizes?.includes(item.value))
+        (item) => (item.isChecked = this.selectedSizes?.includes(item.label))
       );
     }
   }
@@ -493,6 +492,47 @@ export class ManageProductComponent implements OnInit, OnDestroy {
         },
         (error: HttpErrorResponse) => {
           this.warningText = this.appStrings['noDataFound'];
+          this.commonService.$alertSubject?.next({
+            type: 'danger',
+            showAlert: true,
+            message: this.utilityService.getErrorText(error?.message),
+          });
+        }
+      );
+  }
+  /**
+   * get product types data
+   */
+  getTopSizes(): void {
+    this.commonService
+      .getSettings('topSizes')
+      .pipe(takeUntil(this.subscription))
+      .subscribe(
+        (response: Settings[]) => {
+          this.topSizes = response;
+        },
+        (error: HttpErrorResponse) => {
+          this.commonService.$alertSubject?.next({
+            type: 'danger',
+            showAlert: true,
+            message: this.utilityService.getErrorText(error?.message),
+          });
+        }
+      );
+  }
+
+  /**
+   * get product types data
+   */
+  getBottomSizes(): void {
+    this.commonService
+      .getSettings('bottomSizes')
+      .pipe(takeUntil(this.subscription))
+      .subscribe(
+        (response: Settings[]) => {
+          this.bottomSizes = response;
+        },
+        (error: HttpErrorResponse) => {
           this.commonService.$alertSubject?.next({
             type: 'danger',
             showAlert: true,
