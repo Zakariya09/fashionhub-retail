@@ -138,5 +138,9 @@ export class AppStrings {
     },
     topSizes: 'Top Size',
     bottomSizes: 'Bottom Size',
+    newProductType: 'New Product Type',
+    newFittingType: 'New Fitting Type',
+    newTtopSizes: 'New Top Size',
+    newBottomSizes: 'New Bottom Sizes',
   };
 }

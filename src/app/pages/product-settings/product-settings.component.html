@@ -25,7 +25,7 @@
         data-toggle="modal"
         data-target="#addSetting"
       >
-        <i class="fas fa-plus"></i> {{ appStrings["newSettings"] }}
+        <i class="fas fa-plus"></i> {{ appStrings["newProductType"] }}
       </button>
     </div>
   </div>
@@ -89,7 +89,7 @@
         data-toggle="modal"
         data-target="#addSetting"
       >
-        <i class="fas fa-plus"></i> {{ appStrings["newSettings"] }}
+        <i class="fas fa-plus"></i> {{ appStrings["newFittingType"] }}
       </button>
     </div>
   </div>
@@ -103,7 +103,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (data of fittinngTypes | filter: textSearch | paginate: {
+        @for (data of fittingTypes | filter: textSearch | paginate: {
         itemsPerPage: 10, currentPage: p } ; track $index ) {
         <tr>
           <td>{{ $index + 1 }}</td>
@@ -153,7 +153,7 @@
         data-toggle="modal"
         data-target="#addSetting"
       >
-        <i class="fas fa-plus"></i> {{ appStrings["newSettings"] }}
+        <i class="fas fa-plus"></i> {{ appStrings["newTtopSizes"] }}
       </button>
     </div>
   </div>
@@ -217,7 +217,7 @@
         data-toggle="modal"
         data-target="#addSetting"
       >
-        <i class="fas fa-plus"></i> {{ appStrings["newSettings"] }}
+        <i class="fas fa-plus"></i> {{ appStrings["newBottomSizes"] }}
       </button>
     </div>
   </div>
@@ -270,7 +270,7 @@
   data-keyboard="false"
   data-backdrop="static"
 >
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-md">
     <div class="modal-content">
       <div class="modal-header modal-head">
         <h4 class="modal-title">
@@ -293,7 +293,7 @@
           autocomplete="off"
         >
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12 col-sm-12 col-xs-12">
               <div class="form-group">
                 <label for="type">{{ appStrings["type"] }} :</label>&nbsp;<i
                   class="fa fa-asterisk"
@@ -341,6 +341,6 @@
 </div>
 
 <app-confirm-modal
-  [module]="'Product'"
+  [module]="appStrings['record']"
   (onConfirmCallback)="deleteProductType()"
 ></app-confirm-modal>

@@ -64,10 +64,10 @@ export class ManageProductComponent implements OnInit, OnDestroy {
     this.appStrings = this.appStringsService.appStrings;
 
     this.getProducts();
-    this.getProductTypes();
-    this.getFittingTypes();
-    this.getTopSizes();
-    this.getBottomSizes();
+    this.getSettingsData('productType');
+    this.getSettingsData('fittingType');
+    this.getSettingsData('topSizes');
+    this.getSettingsData('bottomSizes');
   }
 
   /**
@@ -458,81 +458,31 @@ export class ManageProductComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * get product types data
+   * get product settings data
    */
-  getProductTypes(): void {
+  getSettingsData(settingType: string): void {
     this.commonService
-      .getSettings('productType')
+      .getSettings(settingType)
       .pipe(takeUntil(this.subscription))
       .subscribe(
         (response: Settings[]) => {
-          this.productTypes = response;
+          switch (settingType) {
+            case 'productType':
+              this.productTypes = response;
+              break;
+            case 'fittingType':
+              this.fittinngTypes = response;
+              break;
+            case 'topSizes':
+              this.topSizes = response;
+              break;
+            case 'bottomSizes':
+              this.bottomSizes = response;
+              break;
+          }
         },
         (error: HttpErrorResponse) => {
           this.warningText = this.appStrings['noDataFound'];
-          this.commonService.$alertSubject?.next({
-            type: 'danger',
-            showAlert: true,
-            message: this.utilityService.getErrorText(error?.message),
-          });
-        }
-      );
-  }
-
-  /**
-   * get fitting types data
-   */
-  getFittingTypes(): void {
-    this.commonService
-      .getSettings('fittingType')
-      .pipe(takeUntil(this.subscription))
-      .subscribe(
-        (response: Settings[]) => {
-          this.fittinngTypes = response;
-        },
-        (error: HttpErrorResponse) => {
-          this.warningText = this.appStrings['noDataFound'];
-          this.commonService.$alertSubject?.next({
-            type: 'danger',
-            showAlert: true,
-            message: this.utilityService.getErrorText(error?.message),
-          });
-        }
-      );
-  }
-  /**
-   * get product types data
-   */
-  getTopSizes(): void {
-    this.commonService
-      .getSettings('topSizes')
-      .pipe(takeUntil(this.subscription))
-      .subscribe(
-        (response: Settings[]) => {
-          this.topSizes = response;
-        },
-        (error: HttpErrorResponse) => {
-          this.commonService.$alertSubject?.next({
-            type: 'danger',
-            showAlert: true,
-            message: this.utilityService.getErrorText(error?.message),
-          });
-        }
-      );
-  }
-
-  /**
-   * get product types data
-   */
-  getBottomSizes(): void {
-    this.commonService
-      .getSettings('bottomSizes')
-      .pipe(takeUntil(this.subscription))
-      .subscribe(
-        (response: Settings[]) => {
-          this.bottomSizes = response;
-        },
-        (error: HttpErrorResponse) => {
           this.commonService.$alertSubject?.next({
             type: 'danger',
             showAlert: true,

@@ -10,12 +10,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AuthGuardService } from './auth/guards/auth-guard.service';
 import { SharedModule } from './shared/shared.module';
 import { ProductSettingsComponent } from './pages/product-settings/product-settings.component';
+import { DataGridComponent } from './pages/common/data-grid/data-grid.component';
 
 @NgModule({
   declarations: [
     LoginComponent,
     AppComponent,
     ProductSettingsComponent,
+    DataGridComponent,
   ],
   imports: [
     BrowserModule,
