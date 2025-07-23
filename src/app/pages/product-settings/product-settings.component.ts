@@ -32,7 +32,6 @@ export class ProductSettingsComponent {
   fittingTypes!: Settings[];
   topSizes!: Settings[];
   bottomSizes!: Settings[];
-
   constructor(
     private commonService: CommonServiceService,
     private formBuilder: FormBuilder,
@@ -162,7 +161,9 @@ export class ProductSettingsComponent {
    * @param data
    * edit settings record
    */
-  edit(data: Settings, selectedForm: string): void {
+  edit(obj: any): void {
+    const data = obj.data;
+    const selectedForm = obj.formType;
     this.activeForm = selectedForm;
     this.formTitle = this.setFormTitle(this.appStrings['update'], selectedForm);
     this.isUpdate = true;
@@ -174,7 +175,9 @@ export class ProductSettingsComponent {
    * confirm delete popup
    * @param data
    */
-  confirmDelete(data: Settings, selectedForm: string): void {
+  confirmDelete(obj: any): void {
+    const data = obj.data;
+    const selectedForm = obj.formType;
     this.activeForm = selectedForm;
     this.selectedRecord = data;
     this.commonService.$confirmSubject.next({
@@ -186,10 +189,10 @@ export class ProductSettingsComponent {
   /**
    * delete settings record
    */
-  deleteProductType(): void {
+  deleteSettings(): void {
     this.commonService.$loaderSubject?.next({ showLoader: true });
     this.commonService
-      .deleteProductType(this.selectedRecord?.id, this.activeForm)
+      .deleteSettings(this.selectedRecord?.id, this.activeForm)
       ?.pipe(takeUntil(this.subscription))
       .subscribe(
         (response) => {

@@ -337,7 +337,7 @@ export class CommonServiceService {
    * @param id
    * @returns
    */
-  deleteProductType(id: any, relation: string) {
+  deleteSettings(id: any, relation: string) {
     const table = this.appStrings['urls'][relation];
     return this.http.delete(`${this.baseUrl}${table}/${id}.json`);
   }
