@@ -1,30 +1,34 @@
-import { NgModule } from "@angular/core";
-import { AlertComponent } from "../common/alert/alert.component";
-import { CommonModule } from "@angular/common";
-import { ConfirmModal } from "../common/confirm-modal/confirm-modal.component";
-import { AppLoader } from "../common/loader/loader.component";
-import { FilterPipe } from "./filter.pipe";
-import { HTTP_INTERCEPTORS } from "@angular/common/http";
-import { AuthInterceptorService } from "../core/intercepter/auth-interceptor.service";
-import { LoggingInterceptorService } from "../core/intercepter/logging-interceptor.service";
-import { AuthTokenInterceptorService } from "../core/intercepter/auth-token-interceptor.service";
+import { NgModule } from '@angular/core';
+import { AlertComponent } from '../common/alert/alert.component';
+import { CommonModule } from '@angular/common';
+import { ConfirmModal } from '../common/confirm-modal/confirm-modal.component';
+import { AppLoader } from '../common/loader/loader.component';
+import { FilterPipe } from './filter.pipe';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptorService } from '../core/intercepter/auth-interceptor.service';
+import { LoggingInterceptorService } from '../core/intercepter/logging-interceptor.service';
+import { AuthTokenInterceptorService } from '../core/intercepter/auth-token-interceptor.service';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
-import { firebaseConfig } from "../core/services/environment";
-import { NgxPaginationModule } from "ngx-pagination";
+import { firebaseConfig } from '../core/services/environment';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { DataGridComponent } from '../pages/common/data-grid/data-grid.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
     AlertComponent,
     ConfirmModal,
     AppLoader,
-    FilterPipe
+    FilterPipe,
+    DataGridComponent,
   ],
   imports: [
     CommonModule,
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideFirestore(() => getFirestore()),
-    NgxPaginationModule
+    NgxPaginationModule,
+    FormsModule,
   ],
   providers: [
     {
@@ -48,7 +52,8 @@ import { NgxPaginationModule } from "ngx-pagination";
     ConfirmModal,
     AppLoader,
     FilterPipe,
-    NgxPaginationModule
-  ]
+    NgxPaginationModule,
+    DataGridComponent,
+  ],
 })
-export class SharedModule { }
+export class SharedModule {}

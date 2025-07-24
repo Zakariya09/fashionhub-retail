@@ -2,20 +2,43 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1>{{appStrings['manageCredit']}}</h1>
+        <h1>{{ appStrings["manageCredit"] }}</h1>
       </div>
     </div>
   </div>
 </section>
+
+<app-data-grid
+  [columns]="CREDIT_GRID_COLUMNS"
+  [rows]="credits"
+  [warningText]="warningText"
+  (invokeEdit)="editCredit($event)"
+  (invokeDelete)="confirmDelete($event)"
+  (invokeAddForm)="clearForm()"
+  [addBtnTitle]="appStrings['newCredit']"
+  [activeGrid]="'fittingType'"
+  [targetModal]="'#addCredit'"
+></app-data-grid>
+
 <div class="container card">
   <div class="row">
     <div class="col-md-8">
-      <input type="text" class="form-control" [(ngModel)]="textSearch" placeholder="Type here to search..." />
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="textSearch"
+        placeholder="Type here to search..."
+      />
     </div>
     <div class="col-md-4 align-right pull-right">
-      <button type="button" class="btn btn-sm btn-primary" (click)="clearForm()" data-toggle="modal"
-        data-target="#addCredit">
-        <i class="fas fa-plus"></i> {{appStrings['newCredit']}}
+      <button
+        type="button"
+        class="btn btn-sm btn-primary"
+        (click)="clearForm()"
+        data-toggle="modal"
+        data-target="#addCredit"
+      >
+        <i class="fas fa-plus"></i> {{ appStrings["newCredit"] }}
       </button>
     </div>
   </div>
@@ -24,31 +47,40 @@
       <thead class="gradient">
         <tr>
           @for (column of CREDIT_GRID_COLUMNS; track $index) {
-          <th>{{column}}</th>
+          <th>{{ column }}</th>
           }
         </tr>
       </thead>
       <tbody>
-        @for (data of credits | filter: textSearch | paginate: { itemsPerPage: 10, currentPage: p } ; track $index ) {
+        @for (data of credits | filter: textSearch | paginate: { itemsPerPage:
+        10, currentPage: p } ; track $index ) {
         <tr>
-          <td>{{$index+1}}</td>
+          <td>{{ $index + 1 }}</td>
           <td>
-            {{data['date'] | date:'dd-MM-yyyy'}}
+            {{ data["date"] | date : "dd-MM-yyyy" }}
           </td>
-          <td>{{data['name']}}</td>
-          <td>{{data['productPrice']}}</td>
-          <td>{{data['paidAmount']}}</td>
-          <td>{{data['remainingAmount']}}</td>
+          <td>{{ data["name"] }}</td>
+          <td>{{ data["productPrice"] }}</td>
+          <td>{{ data["paidAmount"] }}</td>
+          <td>{{ data["remainingAmount"] }}</td>
           <td>
-            <i class="fas fa-edit text-primary curser" (click)="editCredit(data)" data-toggle="modal"
-              data-target="#addCredit"></i> &nbsp;
-            <i class="fas fa-trash text-danger curser" (click)="confirmDelete(data)"></i>
+            <i
+              class="fas fa-edit text-primary curser"
+              (click)="editCredit(data)"
+              data-toggle="modal"
+              data-target="#addCredit"
+            ></i>
+            &nbsp;
+            <i
+              class="fas fa-trash text-danger curser"
+              (click)="confirmDelete(data)"
+            ></i>
           </td>
         </tr>
         }@empty {
         <tr>
           <td colspan="7">
-            <h2 class="text-center text-danger">{{warningText}}</h2>
+            <h2 class="text-center text-danger">{{ warningText }}</h2>
           </td>
         </tr>
         }
@@ -58,94 +90,197 @@
   <pagination-controls (pageChange)="p = $event"></pagination-controls>
 </div>
 
-<div class="modal fade" bsModal #addCredit id="addCredit" data-keyboard="false" data-backdrop="static">
+<div
+  class="modal fade"
+  bsModal
+  #addCredit
+  id="addCredit"
+  data-keyboard="false"
+  data-backdrop="static"
+>
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header modal-head">
-        <h4 class="modal-title">{{!isUpdate ? appStrings['addCredit'] : appStrings['updateCredit']}}</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <h4 class="modal-title">
+          {{ !isUpdate ? appStrings["addCredit"] : appStrings["updateCredit"] }}
+        </h4>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <form (ngSubmit)="onSubmit()" role="form" [formGroup]='frmCredit' autocomplete="off">
+        <form
+          (ngSubmit)="onSubmit()"
+          role="form"
+          [formGroup]="frmCredit"
+          autocomplete="off"
+        >
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="date">{{appStrings['creditDate']}} :</label>&nbsp;<i class="fa fa-asterisk"
-                  style="color:red; font-size:10px;"></i>
-                <input type="date" name="date" class="form-control" 
-                formControlName="date"
-                [ngClass]="{ 'is-invalid': submitted && f['date'].errors }" >
+                <label for="date">{{ appStrings["creditDate"] }} :</label
+                >&nbsp;<i
+                  class="fa fa-asterisk"
+                  style="color: red; font-size: 10px"
+                ></i>
+                <input
+                  type="date"
+                  name="date"
+                  class="form-control"
+                  formControlName="date"
+                  [ngClass]="{ 'is-invalid': submitted && f['date'].errors }"
+                />
                 <div *ngIf="submitted && f['date'].errors" class="text-danger">
-                  <div *ngIf="f['date'].errors['required']"> {{appStrings['creditDateWarningText']}}</div>
+                  <div *ngIf="f['date'].errors['required']">
+                    {{ appStrings["creditDateWarningText"] }}
+                  </div>
                 </div>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
-                <label for="name">{{appStrings['customerName']}} :</label>&nbsp;<i class="fa fa-asterisk"
-                  style="color:red; font-size:10px;"></i>
-                <input type="text" class="form-control" formControlName="name" id="name" placeholder="Customer name" min="0"
-                  [ngClass]="{ 'is-invalid': submitted && f['name'].errors }" />
+                <label for="name">{{ appStrings["customerName"] }} :</label
+                >&nbsp;<i
+                  class="fa fa-asterisk"
+                  style="color: red; font-size: 10px"
+                ></i>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="name"
+                  id="name"
+                  placeholder="Customer name"
+                  min="0"
+                  [ngClass]="{ 'is-invalid': submitted && f['name'].errors }"
+                />
                 <div *ngIf="submitted && f['name'].errors" class="text-danger">
-                  <div *ngIf="f['name'].errors['required']"> {{appStrings['customerNameWarningText']}}</div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="productPrice">{{appStrings['productPrice']}} :</label>&nbsp;<i class="fa fa-asterisk"
-                  style="color:red; font-size:10px;"></i>
-                <input type="number" class="form-control" formControlName="productPrice" id="productPrice"
-                  placeholder="Product price" min="0"
-                  [ngClass]="{ 'is-invalid': submitted && f['productPrice'].errors }" />
-                <div *ngIf="submitted && f['productPrice'].errors" class="text-danger">
-                  <div *ngIf="f['productPrice'].errors['required']"> {{appStrings['productPriceText']}}</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="paidAmount">{{appStrings['paidAmount']}} :</label>&nbsp;<i class="fa fa-asterisk"
-                  style="color:red; font-size:10px;"></i>
-                <input type="number" class="form-control" formControlName="paidAmount" id="paidAmount"
-                  placeholder="Paid amount" min="0" [ngClass]="{ 'is-invalid': submitted && f['paidAmount'].errors }" />
-                <div *ngIf="submitted && f['paidAmount'].errors" class="text-danger">
-                  <div *ngIf="f['paidAmount'].errors['required']"> {{appStrings['paidAmountWarningText']}}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="remainingAmount">{{appStrings['remainingAmount']}} :</label>&nbsp;<i class="fa fa-asterisk"
-                  style="color:red; font-size:10px;"></i>
-                <input type="number" class="form-control" formControlName="remainingAmount" id="remainingAmount"
-                  placeholder="Remaining amount" min="0"
-                  [ngClass]="{ 'is-invalid': submitted && f['remainingAmount'].errors }" readonly="true"/>
-                <div *ngIf="submitted && f['remainingAmount'].errors" class="text-danger">
-                  <div *ngIf="f['remainingAmount'].errors['required']"> {{appStrings['remainingAmountWarningText']}}
+                  <div *ngIf="f['name'].errors['required']">
+                    {{ appStrings["customerNameWarningText"] }}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="modal-footer ">
-            <button type="submit" [disabled]="frmCredit.invalid" class="btn btn-primary btn-sm">
-              <i class="fas fa-save"></i>&nbsp; {{isUpdate ? 'Update': 'Save'}}</button>
-            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">
-              <i class="fas fa-times"></i>&nbsp; {{appStrings['close']}}</button>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="productPrice"
+                  >{{ appStrings["productPrice"] }} :</label
+                >&nbsp;<i
+                  class="fa fa-asterisk"
+                  style="color: red; font-size: 10px"
+                ></i>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="productPrice"
+                  id="productPrice"
+                  placeholder="Product price"
+                  min="0"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['productPrice'].errors
+                  }"
+                />
+                <div
+                  *ngIf="submitted && f['productPrice'].errors"
+                  class="text-danger"
+                >
+                  <div *ngIf="f['productPrice'].errors['required']">
+                    {{ appStrings["productPriceText"] }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="paidAmount">{{ appStrings["paidAmount"] }} :</label
+                >&nbsp;<i
+                  class="fa fa-asterisk"
+                  style="color: red; font-size: 10px"
+                ></i>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="paidAmount"
+                  id="paidAmount"
+                  placeholder="Paid amount"
+                  min="0"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['paidAmount'].errors
+                  }"
+                />
+                <div
+                  *ngIf="submitted && f['paidAmount'].errors"
+                  class="text-danger"
+                >
+                  <div *ngIf="f['paidAmount'].errors['required']">
+                    {{ appStrings["paidAmountWarningText"] }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="remainingAmount"
+                  >{{ appStrings["remainingAmount"] }} :</label
+                >&nbsp;<i
+                  class="fa fa-asterisk"
+                  style="color: red; font-size: 10px"
+                ></i>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="remainingAmount"
+                  id="remainingAmount"
+                  placeholder="Remaining amount"
+                  min="0"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['remainingAmount'].errors
+                  }"
+                  readonly="true"
+                />
+                <div
+                  *ngIf="submitted && f['remainingAmount'].errors"
+                  class="text-danger"
+                >
+                  <div *ngIf="f['remainingAmount'].errors['required']">
+                    {{ appStrings["remainingAmountWarningText"] }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="submit"
+              [disabled]="frmCredit.invalid"
+              class="btn btn-primary btn-sm"
+            >
+              <i class="fas fa-save"></i>&nbsp;
+              {{ isUpdate ? "Update" : "Save" }}
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger btn-sm"
+              data-dismiss="modal"
+            >
+              <i class="fas fa-times"></i>&nbsp; {{ appStrings["close"] }}
+            </button>
           </div>
         </form>
       </div>
-
     </div>
   </div>
 </div>
 
-<app-confirm-modal [module]="'Credit'" (onConfirmCallback)="deleteCredit()"></app-confirm-modal>
+<app-confirm-modal
+  [module]="'Credit'"
+  (onConfirmCallback)="deleteCredit()"
+></app-confirm-modal>

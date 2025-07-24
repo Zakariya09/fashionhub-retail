@@ -13,12 +13,7 @@ import { ProductSettingsComponent } from './pages/product-settings/product-setti
 import { DataGridComponent } from './pages/common/data-grid/data-grid.component';
 
 @NgModule({
-  declarations: [
-    LoginComponent,
-    AppComponent,
-    ProductSettingsComponent,
-    DataGridComponent,
-  ],
+  declarations: [LoginComponent, AppComponent, ProductSettingsComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -26,12 +21,9 @@ import { DataGridComponent } from './pages/common/data-grid/data-grid.component'
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    SharedModule
+    SharedModule,
   ],
-  providers: [
-    AuthGuardService,
-    AuthGuard,
-  ],
-  bootstrap: [AppComponent]
+  providers: [AuthGuardService, AuthGuard],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
